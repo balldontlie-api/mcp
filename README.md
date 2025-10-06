@@ -1,11 +1,11 @@
 # BALLDONTLIE Sports MCP Server
 
-A Model Context Protocol (MCP) server that provides access to comprehensive sports data from the BALLDONTLIE API, including NBA, NFL, MLB, EPL, and NHL statistics, player information, game data, and more.
+A Model Context Protocol (MCP) server that provides access to comprehensive sports data from the BALLDONTLIE API, including NBA, WNBA, NFL, MLB, EPL, and NHL statistics, player information, game data, and more.
 
 ## Features
 
-- **67+ Sports Endpoints**: Complete access to all BALLDONTLIE API endpoints
-- **5 Major Sports**: NBA, NFL, MLB, EPL, NHL
+- **81+ Sports Endpoints**: Complete access to all BALLDONTLIE API endpoints
+- **6 Major Sports**: NBA, WNBA, NFL, MLB, EPL, NHL
 - **Comprehensive Data**: Teams, players, games, statistics, standings, injuries, and advanced analytics
 - **Authentication**: Seamless API key forwarding to backend
 - **Pagination**: Full support for cursor-based pagination
@@ -82,6 +82,8 @@ The server will automatically provide all available tools. You can ask your AI a
 - "Show me LeBron James' season stats"
 - "What are today's NFL games?"
 - "Get Manchester United's recent EPL matches"
+- "Show me A'ja Wilson's WNBA season stats"
+- "What are the current WNBA standings?"
 
 ## Environment Variables
 
@@ -194,6 +196,25 @@ The server will automatically provide all available tools. You can ask your AI a
 | `nhl_get_game_by_id`           | Get specific NHL game   | `id` (required)                                                                     |
 | `nhl_get_standings`            | Get NHL standings       | `season`, `conference`, `division`                                                  |
 | `nhl_get_box_scores`           | Get NHL box scores      | `dates`, `seasons`, `team_ids`, `game_ids`, `season_type`, pagination               |
+
+### WNBA (14 tools)
+
+| Tool                            | Description                  | Parameters                                                                       |
+| ------------------------------- | ---------------------------- | -------------------------------------------------------------------------------- |
+| `wnba_get_teams`                | Get all WNBA teams           | `conference`                                                                     |
+| `wnba_get_team_by_id`           | Get specific WNBA team       | `id` (required)                                                                  |
+| `wnba_get_players`              | Get WNBA players             | `search`, `first_name`, `last_name`, `team_ids`, `player_ids`, pagination        |
+| `wnba_get_player_by_id`         | Get specific WNBA player     | `id` (required)                                                                  |
+| `wnba_get_active_players`       | Get active WNBA players      | Same as `wnba_get_players`                                                       |
+| `wnba_get_games`                | Get WNBA games               | `dates`, `seasons`, `team_ids`, `season_type`, `start_date`, `end_date`, pagination |
+| `wnba_get_game_by_id`           | Get specific WNBA game       | `id` (required)                                                                  |
+| `wnba_get_player_stats`         | Get player game statistics   | `game_ids`, `dates`, `seasons`, `player_ids`, `team_ids`, pagination             |
+| `wnba_get_team_stats`           | Get team game statistics     | `game_ids`, `dates`, `seasons`, `team_ids`, pagination                           |
+| `wnba_get_player_season_stats`  | Get player season stats      | `player_ids`, `team_ids`, `season`, `season_type`, pagination                    |
+| `wnba_get_team_season_stats`    | Get team season stats        | `team_ids`, `season`, `season_type`, pagination                                  |
+| `wnba_get_standings`            | Get WNBA standings           | `season`, `conference`                                                           |
+| `wnba_get_player_injuries`      | Get player injuries          | `player_ids`, `team_ids`, pagination                                             |
+| `wnba_get_plays`                | Get play-by-play data        | `game_id` (required)                                                             |
 
 ## Authentication
 

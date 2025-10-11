@@ -93,7 +93,7 @@ export function createMLBTools(apiClient: APIClient): MCPTool[] {
       description: "Get MLB player and game statistics with filtering options",
       inputSchema: schemas.mlbStatsSchema,
       handler: async (params: any, headers?: Record<string, string>) => {
-        return await apiClient.makeRequest("/mlb/v1/stat", params, headers);
+        return await apiClient.makeRequest("/mlb/v1/stats", params, headers);
       },
     },
 

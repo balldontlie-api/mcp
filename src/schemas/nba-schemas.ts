@@ -342,38 +342,3 @@ export const nbaPlayerInjuriesSchema = {
   },
   additionalProperties: false,
 };
-
-export const nbaOddsSchema = {
-  type: "object",
-  properties: {
-    game_id: {
-      type: "number",
-      description: "Specific game ID to get odds for",
-    },
-    date: {
-      type: "string",
-      format: "date",
-      description: "Specific date to get odds for (YYYY-MM-DD format)",
-    },
-    type: {
-      type: "string",
-      enum: ["2way", "spread", "over/under"],
-      description: "Type of betting odds",
-    },
-    live: {
-      type: "boolean",
-      description: "Filter for live odds",
-    },
-    cursor: {
-      type: "number",
-      description: "Pagination cursor",
-    },
-    per_page: {
-      type: "number",
-      minimum: 1,
-      maximum: 100,
-      description: "Number of results per page (max 100)",
-    },
-  },
-  additionalProperties: false,
-};

@@ -1,11 +1,11 @@
 # BALLDONTLIE Sports MCP Server
 
-A Model Context Protocol (MCP) server that provides access to comprehensive sports data from the BALLDONTLIE API, including NBA, WNBA, NFL, MLB, EPL, and NHL statistics, player information, game data, and more.
+A Model Context Protocol (MCP) server that provides access to comprehensive sports data from the BALLDONTLIE API, including NBA, WNBA, NFL, MLB, EPL, NHL, and NCAAF statistics, player information, game data, and more.
 
 ## Features
 
-- **81+ Sports Endpoints**: Complete access to all BALLDONTLIE API endpoints
-- **6 Major Sports**: NBA, WNBA, NFL, MLB, EPL, NHL
+- **99 Sports Endpoints**: Complete access to all BALLDONTLIE API endpoints
+- **7 Major Sports**: NBA, WNBA, NFL, MLB, EPL, NHL, NCAAF
 - **Comprehensive Data**: Teams, players, games, statistics, standings, injuries, and advanced analytics
 - **Authentication**: Seamless API key forwarding to backend
 - **Pagination**: Full support for cursor-based pagination
@@ -102,7 +102,7 @@ The server will automatically provide all available tools. You can ask your AI a
 
 ## Available Tools
 
-### NBA (16 tools)
+### NBA (15 tools)
 
 | Tool                      | Description                  | Parameters                                                                         |
 | ------------------------- | ---------------------------- | ---------------------------------------------------------------------------------- |
@@ -121,7 +121,6 @@ The server will automatically provide all available tools. You can ask your AI a
 | `nba_get_standings`       | Get team standings           | `season`, `conference`, `division`                                                 |
 | `nba_get_leaders`         | Get statistical leaders      | `season`, `stat_type`, `per_page`                                                  |
 | `nba_get_player_injuries` | Get player injuries          | `player_ids`, `team_ids`, pagination                                               |
-| `nba_get_betting_odds`    | Get betting odds             | `game_ids`, `dates`, `type`, `live`, pagination                                    |
 
 ### NFL (14 tools)
 
@@ -215,6 +214,27 @@ The server will automatically provide all available tools. You can ask your AI a
 | `wnba_get_standings`            | Get WNBA standings           | `season`, `conference`                                                           |
 | `wnba_get_player_injuries`      | Get player injuries          | `player_ids`, `team_ids`, pagination                                             |
 | `wnba_get_plays`                | Get play-by-play data        | `game_id` (required)                                                             |
+
+### NCAAF (16 tools)
+
+| Tool                             | Description                  | Parameters                                                                                  |
+| -------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------- |
+| `ncaaf_get_conferences`          | Get all NCAAF conferences    | -                                                                                           |
+| `ncaaf_get_conference_by_id`     | Get specific NCAAF conference| `id` (required)                                                                             |
+| `ncaaf_get_teams`                | Get all NCAAF teams          | `conference`, pagination                                                                    |
+| `ncaaf_get_team_by_id`           | Get specific NCAAF team      | `id` (required)                                                                             |
+| `ncaaf_get_players`              | Get NCAAF players            | `search`, `first_name`, `last_name`, `team_ids`, `player_ids`, `position`, pagination       |
+| `ncaaf_get_active_players`       | Get active NCAAF players     | Same as `ncaaf_get_players`                                                                 |
+| `ncaaf_get_player_by_id`         | Get specific NCAAF player    | `id` (required)                                                                             |
+| `ncaaf_get_standings`            | Get NCAAF standings          | `season`, `conference_id`, pagination                                                       |
+| `ncaaf_get_games`                | Get NCAAF games              | `dates`, `seasons`, `team_ids`, `weeks`, `start_date`, `end_date`, pagination               |
+| `ncaaf_get_game_by_id`           | Get specific NCAAF game      | `id` (required)                                                                             |
+| `ncaaf_get_rankings`             | Get NCAAF rankings           | `season`, `week`, pagination                                                                |
+| `ncaaf_get_plays`                | Get play-by-play data        | `game_id` (required)                                                                        |
+| `ncaaf_get_player_stats`         | Get player game statistics   | `game_ids`, `dates`, `seasons`, `player_ids`, `team_ids`, `weeks`, pagination               |
+| `ncaaf_get_team_stats`           | Get team game statistics     | `game_ids`, `dates`, `seasons`, `team_ids`, `weeks`, pagination                             |
+| `ncaaf_get_player_season_stats`  | Get player season stats      | `season` (required), `player_ids`, `team_ids`, pagination                                   |
+| `ncaaf_get_team_season_stats`    | Get team season stats        | `season` (required), `team_ids`, pagination                                                 |
 
 ## Authentication
 

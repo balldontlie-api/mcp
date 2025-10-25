@@ -374,3 +374,33 @@ export const ncaafTeamSeasonStatsSchema = {
   required: ["season"],
   additionalProperties: false,
 };
+
+export const ncaafBettingOddsSchema = {
+  type: "object",
+  properties: {
+    season: {
+      type: "number",
+      description: "Filter by season (must be provided with week)",
+    },
+    week: {
+      type: "number",
+      description: "Filter by week (must be provided with season)",
+    },
+    game_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by game IDs",
+    },
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
+  },
+  additionalProperties: false,
+};

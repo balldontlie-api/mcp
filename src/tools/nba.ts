@@ -208,5 +208,14 @@ export function createNBATools(apiClient: APIClient): MCPTool[] {
         );
       },
     },
+
+    {
+      name: "nba_get_betting_odds",
+      description: "Get NBA betting odds for games. Either dates or game_ids is required.",
+      inputSchema: schemas.nbaBettingOddsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest("/v1/odds", params, headers);
+      },
+    },
   ];
 }

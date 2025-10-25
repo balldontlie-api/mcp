@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(grep:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Read(//private/tmp/**)"
     ],
     "deny": [],
     "ask": []

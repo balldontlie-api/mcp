@@ -196,5 +196,14 @@ export function createNCAAFTools(apiClient: APIClient): MCPTool[] {
         );
       },
     },
+
+    {
+      name: "ncaaf_get_betting_odds",
+      description: "Get NCAAF betting odds for games. Either (season and week) or game_ids is required.",
+      inputSchema: schemas.ncaafBettingOddsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest("/ncaaf/v1/odds", params, headers);
+      },
+    },
   ];
 }

@@ -342,3 +342,30 @@ export const nbaPlayerInjuriesSchema = {
   },
   additionalProperties: false,
 };
+
+export const nbaBettingOddsSchema = {
+  type: "object",
+  properties: {
+    dates: {
+      type: "array",
+      items: { type: "string", format: "date" },
+      description: "Filter by specific dates (YYYY-MM-DD format)",
+    },
+    game_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by game IDs",
+    },
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
+  },
+  additionalProperties: false,
+};

@@ -174,5 +174,14 @@ export function createNFLTools(apiClient: APIClient): MCPTool[] {
         );
       },
     },
+
+    {
+      name: "nfl_get_betting_odds",
+      description: "Get NFL betting odds for games. Either (season and week) or game_ids is required. Available starting from 2025 season, week 8 onwards.",
+      inputSchema: schemas.nflBettingOddsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest("/nfl/v1/odds", params, headers);
+      },
+    },
   ];
 }

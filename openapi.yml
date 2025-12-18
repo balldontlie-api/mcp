@@ -3,7 +3,7 @@ info:
   title: BALLDONTLIE
   version: "1.0.0"
   description: |
-    API for accessing NBA, NFL, MLB, NCAAF, NCAAB, EPL, NHL, WNBA, and MMA statistics and data.
+    API for accessing NBA, NFL, MLB, NCAAF, NCAAB, EPL, NHL, WNBA, MMA, and FIFA World Cup 2026 statistics and data.
     Includes comprehensive endpoints for teams, players, games, statistics, and more.
 
 servers:
@@ -3217,9 +3217,6 @@ components:
         birth_place:
           type: string
           nullable: true
-        headshot_url:
-          type: string
-          nullable: true
         teams:
           type: array
           items:
@@ -5045,6 +5042,220 @@ components:
         updated_at:
           type: string
           format: date-time
+
+    # FIFA World Cup 2026 Components
+    FIFATeam:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: Full country name
+        abbreviation:
+          type: string
+          nullable: true
+          description: Three-letter country code (e.g., USA, BRA, GER)
+        country_code:
+          type: string
+          nullable: true
+          description: ISO country code
+        confederation:
+          type: string
+          nullable: true
+          description: FIFA confederation (UEFA, CONMEBOL, CONCACAF, CAF, AFC, OFC)
+
+    FIFAStadium:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: Stadium name
+        city:
+          type: string
+          nullable: true
+          description: Host city
+        country:
+          type: string
+          nullable: true
+          description: Country code
+
+    FIFAGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: Group name (e.g., "A", "B")
+
+    FIFAStage:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: Stage name (e.g., "Group Stage", "Round of 16")
+        order:
+          type: integer
+          description: Stage sequence order
+
+    FIFAMatchTeamSource:
+      type: object
+      description: Source information for TBD teams in knockout matches
+      properties:
+        type:
+          type: string
+          description: Source type (group_1st, group_2nd, winner, loser, etc.)
+        source_match_id:
+          type: integer
+          nullable: true
+        source_match_number:
+          type: integer
+          nullable: true
+        source_group_id:
+          type: integer
+          nullable: true
+        source_group_name:
+          type: string
+          nullable: true
+        placeholder:
+          type: string
+          nullable: true
+        description:
+          type: string
+          description: Human-readable description (e.g., "Winner of Match 49")
+
+    FIFAMatch:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_number:
+          type: integer
+          nullable: true
+        datetime:
+          type: string
+          format: date-time
+          description: Match date and time in UTC
+        status:
+          type: string
+          description: Match status (scheduled, in_progress, completed, postponed, cancelled)
+        stage:
+          $ref: '#/components/schemas/FIFAStage'
+        group:
+          $ref: '#/components/schemas/FIFAGroup'
+          nullable: true
+        stadium:
+          $ref: '#/components/schemas/FIFAStadium'
+          nullable: true
+        home_team:
+          $ref: '#/components/schemas/FIFATeam'
+          nullable: true
+          description: Home team (null if TBD in knockout stage)
+        away_team:
+          $ref: '#/components/schemas/FIFATeam'
+          nullable: true
+          description: Away team (null if TBD in knockout stage)
+        home_team_source:
+          $ref: '#/components/schemas/FIFAMatchTeamSource'
+          nullable: true
+          description: Source info when home team is TBD
+        away_team_source:
+          $ref: '#/components/schemas/FIFAMatchTeamSource'
+          nullable: true
+          description: Source info when away team is TBD
+        home_score:
+          type: integer
+          nullable: true
+        away_score:
+          type: integer
+          nullable: true
+        home_score_penalties:
+          type: integer
+          nullable: true
+        away_score_penalties:
+          type: integer
+          nullable: true
+
+    FIFAStanding:
+      type: object
+      properties:
+        team:
+          $ref: '#/components/schemas/FIFATeam'
+        group:
+          $ref: '#/components/schemas/FIFAGroup'
+        position:
+          type: integer
+          description: Position within the group
+        played:
+          type: integer
+        won:
+          type: integer
+        drawn:
+          type: integer
+        lost:
+          type: integer
+        goals_for:
+          type: integer
+        goals_against:
+          type: integer
+        goal_difference:
+          type: integer
+        points:
+          type: integer
+
+    FIFABettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        vendor:
+          type: string
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+        moneyline_draw_odds:
+          type: number
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+
+    FIFAFuturesOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+        market_type:
+          type: string
+          description: Type of futures market
+        market_name:
+          type: string
+          description: Name of the futures market
+        subject:
+          $ref: '#/components/schemas/FIFATeam'
+          description: Team the odds are for
+        vendor:
+          type: string
+        american_odds:
+          type: integer
+          nullable: true
+        decimal_odds:
+          type: number
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
 
   parameters:
     CursorParam:
@@ -11769,6 +11980,151 @@ paths:
                       $ref: "#/components/schemas/MMABettingOdd"
         "400":
           $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  # FIFA World Cup 2026 Endpoints
+  /fifa/worldcup/v1/teams:
+    get:
+      summary: Get World Cup 2026 teams
+      description: Retrieve all FIFA World Cup 2026 participating nations
+      tags: [FIFA]
+      responses:
+        "200":
+          description: List of World Cup 2026 teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFATeam"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /fifa/worldcup/v1/stadiums:
+    get:
+      summary: Get World Cup 2026 stadiums
+      description: Retrieve all FIFA World Cup 2026 host stadiums
+      tags: [FIFA]
+      responses:
+        "200":
+          description: List of World Cup 2026 stadiums
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAStadium"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /fifa/worldcup/v1/group_standings:
+    get:
+      summary: Get World Cup 2026 group standings
+      description: Retrieve group stage standings for FIFA World Cup 2026. Requires ALL-STAR tier or higher.
+      tags: [FIFA]
+      responses:
+        "200":
+          description: World Cup 2026 group standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAStanding"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /fifa/worldcup/v1/matches:
+    get:
+      summary: Get World Cup 2026 matches
+      description: Retrieve all FIFA World Cup 2026 matches including group stage and knockout rounds. Requires GOAT tier.
+      tags: [FIFA]
+      responses:
+        "200":
+          description: List of World Cup 2026 matches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAMatch"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /fifa/worldcup/v1/odds:
+    get:
+      summary: Get World Cup 2026 betting odds
+      description: Retrieve betting odds for FIFA World Cup 2026 matches. Requires GOAT tier.
+      tags: [FIFA]
+      responses:
+        "200":
+          description: World Cup 2026 match betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFABettingOdd"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /fifa/worldcup/v1/odds/futures:
+    get:
+      summary: Get World Cup 2026 futures odds
+      description: Retrieve futures betting odds for FIFA World Cup 2026 (e.g., tournament winner). Requires GOAT tier.
+      tags: [FIFA]
+      responses:
+        "200":
+          description: World Cup 2026 futures betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAFuturesOdd"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "429":

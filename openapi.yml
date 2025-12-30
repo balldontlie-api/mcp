@@ -836,56 +836,6 @@ components:
           allOf:
             - $ref: "#/components/schemas/NBATeam"
 
-    NBALineup:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Lineup entry ID
-        game_id:
-          type: integer
-          description: Game ID
-        starter:
-          type: boolean
-          description: Whether the player started the game
-        position:
-          type: string
-          nullable: true
-          description: Player's position in the lineup
-        player:
-          type: object
-          description: Player information (slim version with team_id instead of nested team)
-          properties:
-            id:
-              type: integer
-            first_name:
-              type: string
-            last_name:
-              type: string
-            position:
-              type: string
-            height:
-              type: string
-            weight:
-              type: string
-            jersey_number:
-              type: string
-            college:
-              type: string
-            country:
-              type: string
-            draft_year:
-              type: integer
-            draft_round:
-              type: integer
-            draft_number:
-              type: integer
-            team_id:
-              type: integer
-              description: ID of the player's current team
-        team:
-          $ref: "#/components/schemas/NBATeam"
-
     NBAPlay:
       type: object
       properties:
@@ -3794,6 +3744,39 @@ components:
         postseason:
           type: boolean
 
+    NHLPlay:
+      type: object
+      properties:
+        game_id:
+          type: integer
+        order:
+          type: integer
+          description: Sequential play number (1, 2, 3, ...)
+        period:
+          type: integer
+        period_type:
+          type: string
+          nullable: true
+        time_in_period:
+          type: string
+          nullable: true
+        time_remaining:
+          type: string
+          nullable: true
+        type:
+          type: string
+          description: Play type (e.g., faceoff, shot-on-goal, goal, hit, penalty)
+        away_score:
+          type: integer
+          nullable: true
+        home_score:
+          type: integer
+          nullable: true
+        details:
+          type: object
+          additionalProperties: true
+          description: Play-specific details (coordinates, player IDs, etc.)
+
     NHLStanding:
       type: object
       properties:
@@ -3909,6 +3892,32 @@ components:
         decision:
           type: string
           nullable: true
+
+    NHLPlayerInjury:
+      type: object
+      properties:
+        player:
+          $ref: '#/components/schemas/NHLPlayer'
+        status:
+          type: string
+          nullable: true
+          description: Injury status (e.g., Day-To-Day, Out)
+        status_abbreviation:
+          type: string
+          nullable: true
+          description: Abbreviated injury status (e.g., DTD, OUT)
+        injury_type:
+          type: string
+          nullable: true
+          description: Type of injury (e.g., Undisclosed, Lower Body)
+        return_date:
+          type: string
+          nullable: true
+          description: Expected return date if known
+        comment:
+          type: string
+          nullable: true
+          description: Additional comments about the injury
 
     NHLPlayerSeasonStat:
       type: object
@@ -6572,9 +6581,17 @@ paths:
           required: true
           schema:
             type: string
-            enum: [reb, dreb, tov, ast, oreb, min, pts, stl, blk]
+            enum: [ast, blk, dreb, eff, fg3a, fg3m, fg3_pct, fga, fgm, fg_pct, fta, ftm, ft_pct, min, oreb, pts, reb, stl, tov]
           description: Type of stat to get leaders for
         - $ref: "#/components/parameters/SeasonParam"
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [regular, playoffs]
+            default: regular
+          description: Season type (regular or playoffs). Defaults to regular.
       responses:
         "200":
           description: NBA stat leaders
@@ -6924,47 +6941,6 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/NBAContractAggregate"
-        "400":
-          $ref: "#/components/responses/BadRequestError"
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "429":
-          $ref: "#/components/responses/RateLimitError"
-        "500":
-          $ref: "#/components/responses/ServerError"
-
-  /nba/v1/lineups:
-    get:
-      summary: Get NBA game lineups
-      description: Returns lineup information for NBA games, including which players started and their positions. Requires game_ids parameter. This is a paid+ tier endpoint.
-      tags: [NBA]
-      parameters:
-        - name: game_ids[]
-          in: query
-          required: true
-          schema:
-            type: array
-            items:
-              type: integer
-          style: form
-          explode: true
-          description: Filter by game IDs (required)
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/PerPageParam"
-      responses:
-        "200":
-          description: List of game lineups
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/NBALineup"
-                  meta:
-                    $ref: "#/components/schemas/Pagination"
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":
@@ -9143,6 +9119,63 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         "400":
           $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /nhl/v1/plays:
+    get:
+      summary: Get NHL play-by-play data
+      description: Returns play-by-play data for a specific game. Plays are returned in chronological order with a sequential order field starting from 1.
+      tags: [NHL]
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID (required)
+      responses:
+        "200":
+          description: NHL play-by-play data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLPlay"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /nhl/v1/player_injuries:
+    get:
+      summary: Get all currently injured NHL players
+      description: Returns all players currently on the injury report. The data is updated regularly to reflect the latest injury reports.
+      tags: [NHL]
+      responses:
+        "200":
+          description: List of all currently injured NHL players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLPlayerInjury"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
         "429":
           $ref: "#/components/responses/RateLimitError"
         "500":

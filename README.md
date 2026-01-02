@@ -1,11 +1,11 @@
 # BALLDONTLIE Sports MCP Server
 
-A Model Context Protocol (MCP) server that provides access to comprehensive sports data from the BALLDONTLIE API, including NBA, WNBA, NFL, MLB, EPL, NHL, NCAAF, NCAAB, MMA, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, and Ligue 1 statistics, player information, game data, and more.
+A Model Context Protocol (MCP) server that provides access to comprehensive sports data from the BALLDONTLIE API, including NBA, WNBA, NFL, MLB, EPL, NHL, NCAAF, NCAAB, MMA, CS2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, and Ligue 1 statistics, player information, game data, and more.
 
 ## Features
 
-- **200+ Sports Endpoints**: Complete access to all BALLDONTLIE API endpoints
-- **15 Major Sports/Leagues**: NBA, WNBA, NFL, MLB, EPL, NHL, NCAAF, NCAAB, MMA, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, Ligue 1
+- **215+ Sports Endpoints**: Complete access to all BALLDONTLIE API endpoints
+- **16 Major Sports/Leagues**: NBA, WNBA, NFL, MLB, EPL, NHL, NCAAF, NCAAB, MMA, CS2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, Ligue 1
 - **Comprehensive Data**: Teams, players, games, statistics, standings, injuries, betting odds, and advanced analytics
 - **Authentication**: Seamless API key forwarding to backend
 - **Pagination**: Full support for cursor-based pagination
@@ -292,6 +292,27 @@ The server will automatically provide all available tools. You can ask your AI a
 | `mma_get_fight_stats`       | Get detailed fight statistics         | `fight_ids`, `fighter_ids`, `event_ids`, pagination              |
 | `mma_get_fight_stat_by_id`  | Get specific fight statistics         | `id` (required)                                                  |
 | `mma_get_betting_odds`      | Get MMA betting odds                  | `event_id`, `fight_id`                                           |
+
+### CS2 (16 tools)
+
+| Tool                             | Description                                               | Parameters                                                       |
+| -------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
+| `cs2_get_teams`                  | Get all CS2 teams                                         | `search`, pagination                                             |
+| `cs2_get_team_by_id`             | Get specific CS2 team                                     | `id` (required)                                                  |
+| `cs2_get_players`                | Get CS2 players                                           | `search`, `team_id`, `active`, pagination                        |
+| `cs2_get_player_by_id`           | Get specific CS2 player                                   | `id` (required)                                                  |
+| `cs2_get_tournaments`            | Get all CS2 tournaments                                   | `search`, pagination                                             |
+| `cs2_get_tournament_by_id`       | Get specific CS2 tournament                               | `id` (required)                                                  |
+| `cs2_get_tournament_teams`       | Get teams in a tournament                                 | `tournament_id` (required)                                       |
+| `cs2_get_team_map_pool`          | Get team map pool stats (ALL-STAR tier)                   | `team_id` (required)                                             |
+| `cs2_get_rankings`               | Get CS2 team rankings (ALL-STAR tier)                     | -                                                                |
+| `cs2_get_matches`                | Get CS2 matches (GOAT tier)                               | `team_ids`, `tournament_ids`, `dates`, pagination                |
+| `cs2_get_match_by_id`            | Get specific CS2 match (GOAT tier)                        | `id` (required)                                                  |
+| `cs2_get_match_maps`             | Get maps for matches (GOAT tier)                          | `match_ids` (required)                                           |
+| `cs2_get_match_map_stats`        | Get round-by-round map stats (GOAT tier)                  | `match_map_id` (required)                                        |
+| `cs2_get_player_match_stats`     | Get player stats for match (GOAT tier)                    | `match_id` (required)                                            |
+| `cs2_get_player_match_map_stats` | Get player stats for specific map (GOAT tier)             | `match_map_id` (required)                                        |
+| `cs2_get_player_accuracy_stats`  | Get player accuracy by body part (GOAT tier)              | `player_id` (required)                                           |
 
 ### FIFA World Cup 2026 (6 tools)
 

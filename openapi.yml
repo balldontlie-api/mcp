@@ -3,7 +3,7 @@ info:
   title: BALLDONTLIE
   version: "1.0.0"
   description: |
-    API for accessing NBA, NFL, MLB, NCAAF, NCAAB, EPL, NHL, WNBA, MMA, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, and Ligue 1 statistics and data.
+    API for accessing NBA, NFL, MLB, NCAAF, NCAAB, EPL, NHL, WNBA, MMA, CS2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, and Ligue 1 statistics and data.
     Includes comprehensive endpoints for teams, players, games, statistics, and more.
 
 servers:
@@ -5603,6 +5603,420 @@ components:
         updated_at:
           type: string
           format: date-time
+
+    # CS2 (Counter-Strike 2) Components
+    CS2Team:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+          nullable: true
+        short_name:
+          type: string
+          nullable: true
+
+    CS2TeamSlim:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+
+    CS2Player:
+      type: object
+      properties:
+        id:
+          type: integer
+        nickname:
+          type: string
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        full_name:
+          type: string
+          nullable: true
+        team:
+          $ref: '#/components/schemas/CS2TeamSlim'
+          nullable: true
+        age:
+          type: integer
+          nullable: true
+        birthday:
+          type: string
+          format: date
+          nullable: true
+        steam_id:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+
+    CS2PlayerSlim:
+      type: object
+      properties:
+        id:
+          type: integer
+        nickname:
+          type: string
+
+    CS2TournamentStage:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        stage_type:
+          type: string
+          nullable: true
+        stage_order:
+          type: integer
+          nullable: true
+        best_of:
+          type: integer
+          nullable: true
+        rounds_count:
+          type: integer
+          nullable: true
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        status:
+          type: string
+          nullable: true
+
+    CS2Tournament:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+          nullable: true
+        tier:
+          type: string
+          nullable: true
+          description: Tournament tier (S, A, B, C, D)
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        prize_pool:
+          type: integer
+          nullable: true
+        prize_pool_currency:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        is_online:
+          type: boolean
+        status:
+          type: string
+          nullable: true
+
+    CS2TeamMapPoolStat:
+      type: object
+      properties:
+        team_id:
+          type: integer
+        map_name:
+          type: string
+        matches_played:
+          type: integer
+        wins:
+          type: integer
+        losses:
+          type: integer
+        win_rate:
+          type: number
+        is_permaban:
+          type: boolean
+
+    CS2TeamRanking:
+      type: object
+      properties:
+        rank:
+          type: integer
+        points:
+          type: number
+        ranking_type:
+          type: string
+          description: Ranking type (bo3, bo1)
+        ranking_date:
+          type: string
+          format: date
+        team:
+          $ref: '#/components/schemas/CS2TeamSlim'
+
+    CS2Match:
+      type: object
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+          nullable: true
+        tournament:
+          $ref: '#/components/schemas/CS2Tournament'
+        stage:
+          $ref: '#/components/schemas/CS2TournamentStage'
+          nullable: true
+        team1:
+          $ref: '#/components/schemas/CS2TeamSlim'
+          nullable: true
+        team2:
+          $ref: '#/components/schemas/CS2TeamSlim'
+          nullable: true
+        team1_score:
+          type: integer
+          nullable: true
+        team2_score:
+          type: integer
+          nullable: true
+        winner:
+          $ref: '#/components/schemas/CS2TeamSlim'
+          nullable: true
+        best_of:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        start_time:
+          type: string
+          format: date-time
+          nullable: true
+        end_time:
+          type: string
+          format: date-time
+          nullable: true
+
+    CS2MatchMap:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        map_name:
+          type: string
+        map_number:
+          type: integer
+        team1_score:
+          type: integer
+          nullable: true
+        team2_score:
+          type: integer
+          nullable: true
+        winner:
+          $ref: '#/components/schemas/CS2TeamSlim'
+          nullable: true
+        duration_seconds:
+          type: integer
+          nullable: true
+        overtime_rounds:
+          type: integer
+          nullable: true
+
+    CS2RoundTeamStat:
+      type: object
+      properties:
+        id:
+          type: integer
+        team:
+          $ref: '#/components/schemas/CS2TeamSlim'
+        team_side:
+          type: string
+          description: CT or T
+        won:
+          type: boolean
+        is_pistol_round:
+          type: boolean
+        kills:
+          type: integer
+        deaths:
+          type: integer
+        assists:
+          type: integer
+        headshots:
+          type: integer
+        first_kills:
+          type: integer
+        first_deaths:
+          type: integer
+        trade_kills:
+          type: integer
+        trade_deaths:
+          type: integer
+        damage:
+          type: integer
+        utility_value:
+          type: integer
+          nullable: true
+        equipment_value:
+          type: integer
+          nullable: true
+        money_spent:
+          type: integer
+          nullable: true
+        money_saved:
+          type: integer
+          nullable: true
+        loss_bonus_streak:
+          type: integer
+          nullable: true
+        win_streak:
+          type: integer
+          nullable: true
+        clutches:
+          type: integer
+          nullable: true
+        clutch_attempts:
+          type: integer
+          nullable: true
+
+    CS2Round:
+      type: object
+      properties:
+        id:
+          type: integer
+        round_number:
+          type: integer
+        winner_side:
+          type: string
+          description: CT or T
+        loser_side:
+          type: string
+          description: CT or T
+        end_reason:
+          type: string
+          nullable: true
+        duration_seconds:
+          type: integer
+          nullable: true
+        team_stats:
+          type: array
+          items:
+            $ref: '#/components/schemas/CS2RoundTeamStat'
+
+    CS2MatchMapStats:
+      type: object
+      properties:
+        match_map_id:
+          type: integer
+        map_name:
+          type: string
+        rounds:
+          type: array
+          items:
+            $ref: '#/components/schemas/CS2Round'
+
+    CS2PlayerMatchStat:
+      type: object
+      properties:
+        player:
+          $ref: '#/components/schemas/CS2PlayerSlim'
+        match_id:
+          type: integer
+        team_id:
+          type: integer
+          nullable: true
+        kills:
+          type: integer
+        deaths:
+          type: integer
+        assists:
+          type: integer
+        adr:
+          type: number
+          description: Average Damage per Round
+        kast:
+          type: number
+          description: Kill, Assist, Survived, Traded percentage
+        rating:
+          type: number
+        headshot_percentage:
+          type: number
+        first_kills:
+          type: integer
+        first_deaths:
+          type: integer
+        clutches_won:
+          type: integer
+          nullable: true
+
+    CS2PlayerMatchMapStat:
+      type: object
+      properties:
+        player:
+          $ref: '#/components/schemas/CS2PlayerSlim'
+        match_map_id:
+          type: integer
+        kills:
+          type: integer
+        deaths:
+          type: integer
+        assists:
+          type: integer
+        adr:
+          type: number
+          description: Average Damage per Round
+        kast:
+          type: number
+          description: Kill, Assist, Survived, Traded percentage
+        rating:
+          type: number
+        headshot_percentage:
+          type: number
+        first_kills:
+          type: integer
+        first_deaths:
+          type: integer
+        clutches_won:
+          type: integer
+          nullable: true
+
+    CS2PlayerAccuracyStat:
+      type: object
+      properties:
+        player_id:
+          type: integer
+        hit_group:
+          type: string
+          description: Body part hit (Head, Chest, Stomach, LeftArm, RightArm, LeftLeg, RightLeg)
+        hits_sum:
+          type: integer
+        damage_sum:
+          type: integer
+        kills_sum:
+          type: integer
 
     # FIFA World Cup 2026 Components
     FIFATeam:
@@ -12606,6 +13020,557 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/MMABettingOdd"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  # CS2 (Counter-Strike 2) Endpoints
+  /cs/v1/teams:
+    get:
+      summary: Get all CS2 teams
+      description: Retrieve a list of all professional Counter-Strike 2 teams
+      tags: [CS2]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search teams by name
+      responses:
+        "200":
+          description: List of CS2 teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CS2Team"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/teams/{id}:
+    get:
+      summary: Get specific CS2 team
+      description: Retrieve details for a specific CS2 team
+      tags: [CS2]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      responses:
+        "200":
+          description: Team details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CS2Team"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/players:
+    get:
+      summary: Get all CS2 players
+      description: Retrieve a list of all professional Counter-Strike 2 players
+      tags: [CS2]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search players by nickname or name
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by team ID
+        - name: active
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter by active status
+      responses:
+        "200":
+          description: List of CS2 players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CS2Player"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/players/{id}:
+    get:
+      summary: Get specific CS2 player
+      description: Retrieve details for a specific CS2 player
+      tags: [CS2]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Player ID
+      responses:
+        "200":
+          description: Player details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CS2Player"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/tournaments:
+    get:
+      summary: Get all CS2 tournaments
+      description: Retrieve a list of all Counter-Strike 2 tournaments
+      tags: [CS2]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search tournaments by name
+      responses:
+        "200":
+          description: List of CS2 tournaments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CS2Tournament"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/tournaments/{id}:
+    get:
+      summary: Get specific CS2 tournament
+      description: Retrieve details for a specific CS2 tournament
+      tags: [CS2]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tournament ID
+      responses:
+        "200":
+          description: Tournament details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CS2Tournament"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/tournament_teams:
+    get:
+      summary: Get tournament teams
+      description: Retrieve all teams participating in a specific CS2 tournament
+      tags: [CS2]
+      parameters:
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Tournament ID (required)
+      responses:
+        "200":
+          description: List of teams in the tournament
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CS2TeamSlim"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/team_map_pool:
+    get:
+      summary: Get team map pool stats
+      description: Retrieve map pool statistics for a specific CS2 team. Requires ALL-STAR tier or higher.
+      tags: [CS2]
+      parameters:
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Team ID (required)
+      responses:
+        "200":
+          description: Team map pool statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CS2TeamMapPoolStat"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/rankings:
+    get:
+      summary: Get CS2 team rankings
+      description: Retrieve current official CS2 team rankings based on the Valve World Rankings system. Requires ALL-STAR tier or higher.
+      tags: [CS2]
+      responses:
+        "200":
+          description: Current CS2 team rankings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CS2TeamRanking"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/matches:
+    get:
+      summary: Get all CS2 matches
+      description: Retrieve a list of all CS2 matches with optional filtering. Requires GOAT tier.
+      tags: [CS2]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: team_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by team IDs (array)
+        - name: tournament_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs (array)
+        - name: dates[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          description: Filter by dates (YYYY-MM-DD format, array)
+      responses:
+        "200":
+          description: List of CS2 matches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CS2Match"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/matches/{id}:
+    get:
+      summary: Get specific CS2 match
+      description: Retrieve details for a specific CS2 match. Requires GOAT tier.
+      tags: [CS2]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Match ID
+      responses:
+        "200":
+          description: Match details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CS2Match"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/match_maps:
+    get:
+      summary: Get match maps
+      description: Retrieve all maps (games) for specified CS2 matches. Requires GOAT tier.
+      tags: [CS2]
+      parameters:
+        - name: match_ids[]
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Match IDs (array, required)
+      responses:
+        "200":
+          description: Match maps
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CS2MatchMap"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/match_map_stats:
+    get:
+      summary: Get match map statistics
+      description: Retrieve detailed round-by-round statistics for a specific map in a CS2 match. Requires GOAT tier.
+      tags: [CS2]
+      parameters:
+        - name: match_map_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Match map ID (required)
+      responses:
+        "200":
+          description: Match map statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CS2MatchMapStats"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/player_match_stats:
+    get:
+      summary: Get player match statistics
+      description: Retrieve player statistics aggregated across all maps in a CS2 match. Requires GOAT tier.
+      tags: [CS2]
+      parameters:
+        - name: match_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Match ID (required)
+      responses:
+        "200":
+          description: Player match statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CS2PlayerMatchStat"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/player_match_map_stats:
+    get:
+      summary: Get player match map statistics
+      description: Retrieve player statistics for a specific map within a CS2 match. Requires GOAT tier.
+      tags: [CS2]
+      parameters:
+        - name: match_map_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Match map ID (required)
+      responses:
+        "200":
+          description: Player match map statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CS2PlayerMatchMapStat"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cs/v1/player_accuracy_stats:
+    get:
+      summary: Get player accuracy statistics
+      description: Retrieve accuracy statistics for a specific CS2 player, broken down by hit groups (body parts). Requires GOAT tier.
+      tags: [CS2]
+      parameters:
+        - name: player_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Player ID (required)
+      responses:
+        "200":
+          description: Player accuracy statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CS2PlayerAccuracyStat"
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":

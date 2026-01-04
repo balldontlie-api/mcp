@@ -15,6 +15,8 @@ import { createNCAAFTools } from "./tools/ncaaf.js";
 import { createNCAABTools } from "./tools/ncaab.js";
 import { createMMATools } from "./tools/mma.js";
 import { createCS2Tools } from "./tools/cs2.js";
+import { createLOLTools } from "./tools/lol.js";
+import { createDotaTools } from "./tools/dota.js";
 import { createFIFATools } from "./tools/fifa.js";
 import { createLaLigaTools } from "./tools/laliga.js";
 import { createSerieATools } from "./tools/seriea.js";
@@ -50,6 +52,8 @@ async function initializeTools() {
       ...createNCAABTools(apiClient),
       ...createMMATools(apiClient),
       ...createCS2Tools(apiClient),
+      ...createLOLTools(apiClient),
+      ...createDotaTools(apiClient),
       ...createFIFATools(apiClient),
       ...createLaLigaTools(apiClient),
       ...createSerieATools(apiClient),

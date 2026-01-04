@@ -151,5 +151,29 @@ export function createNHLTools(apiClient: APIClient): MCPTool[] {
         );
       },
     },
+
+    {
+      name: "nhl_get_plays",
+      description:
+        "Get NHL play-by-play data for a specific game. Returns plays in chronological order with a sequential order field starting from 1.",
+      inputSchema: schemas.nhlPlaysSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest("/nhl/v1/plays", params, headers);
+      },
+    },
+
+    {
+      name: "nhl_get_player_injuries",
+      description:
+        "Get all currently injured NHL players. Returns all players currently on the injury report.",
+      inputSchema: schemas.nhlPlayerInjuriesSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/nhl/v1/player_injuries",
+          params,
+          headers
+        );
+      },
+    },
   ];
 }

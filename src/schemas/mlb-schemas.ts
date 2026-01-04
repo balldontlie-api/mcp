@@ -279,3 +279,35 @@ export const mlbPlayerInjuriesSchema = {
   },
   additionalProperties: false,
 };
+
+export const mlbPlayerSplitsSchema = {
+  type: "object",
+  properties: {
+    player_id: {
+      type: "number",
+      description: "Player ID (required)",
+    },
+    season: {
+      type: "number",
+      description: "Season year (required)",
+    },
+  },
+  required: ["player_id", "season"],
+  additionalProperties: false,
+};
+
+export const mlbPlayerVersusSchema = {
+  type: "object",
+  properties: {
+    player_id: {
+      type: "number",
+      description: "Player ID - batter or pitcher (required)",
+    },
+    opponent_team_id: {
+      type: "number",
+      description: "Opponent team ID (required)",
+    },
+  },
+  required: ["player_id", "opponent_team_id"],
+  additionalProperties: false,
+};

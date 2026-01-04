@@ -148,5 +148,33 @@ export function createMLBTools(apiClient: APIClient): MCPTool[] {
         );
       },
     },
+
+    {
+      name: "mlb_get_player_splits",
+      description:
+        "Get MLB player splits grouped by split_category (e.g., vs RHP/LHP, by month, by opponent, etc.)",
+      inputSchema: schemas.mlbPlayerSplitsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/mlb/v1/players/splits",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
+      name: "mlb_get_player_versus",
+      description:
+        "Get MLB player vs player matchups. Head-to-head batting statistics for batter against pitchers for a specific team, or pitcher against batters from a specific team.",
+      inputSchema: schemas.mlbPlayerVersusSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/mlb/v1/players/versus",
+          params,
+          headers
+        );
+      },
+    },
   ];
 }

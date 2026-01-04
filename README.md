@@ -1,11 +1,11 @@
 # BALLDONTLIE Sports MCP Server
 
-A Model Context Protocol (MCP) server that provides access to comprehensive sports data from the BALLDONTLIE API, including NBA, WNBA, NFL, MLB, EPL, NHL, NCAAF, NCAAB, MMA, CS2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, and Ligue 1 statistics, player information, game data, and more.
+A Model Context Protocol (MCP) server that provides access to comprehensive sports data from the BALLDONTLIE API, including NBA, WNBA, NFL, MLB, EPL, NHL, NCAAF, NCAAB, MMA, CS2, League of Legends, Dota 2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, and Ligue 1 statistics, player information, game data, and more.
 
 ## Features
 
-- **215+ Sports Endpoints**: Complete access to all BALLDONTLIE API endpoints
-- **16 Major Sports/Leagues**: NBA, WNBA, NFL, MLB, EPL, NHL, NCAAF, NCAAB, MMA, CS2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, Ligue 1
+- **250+ Sports Endpoints**: Complete access to all BALLDONTLIE API endpoints
+- **18 Major Sports/Leagues**: NBA, WNBA, NFL, MLB, EPL, NHL, NCAAF, NCAAB, MMA, CS2, League of Legends, Dota 2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, Ligue 1
 - **Comprehensive Data**: Teams, players, games, statistics, standings, injuries, betting odds, and advanced analytics
 - **Authentication**: Seamless API key forwarding to backend
 - **Pagination**: Full support for cursor-based pagination
@@ -153,22 +153,24 @@ The server will automatically provide all available tools. You can ask your AI a
 | `nfl_get_team_roster`              | Get team roster/depth chart  | `id` (required), `season`                                                                   |
 | `nfl_get_player_props`             | Get player prop betting odds | `game_id` (required), `player_id`, `prop_type`, `vendors`                                   |
 
-### MLB (12 tools)
+### MLB (14 tools)
 
-| Tool                        | Description             | Parameters                                                                                      |
-| --------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------- |
-| `mlb_get_teams`             | Get all MLB teams       | `division`, `league`                                                                            |
-| `mlb_get_team_by_id`        | Get specific MLB team   | `id` (required)                                                                                 |
-| `mlb_get_players`           | Get MLB players         | `search`, `first_name`, `last_name`, `team_ids`, `player_ids`, `position`, `active`, pagination |
-| `mlb_get_player_by_id`      | Get specific MLB player | `id` (required)                                                                                 |
-| `mlb_get_active_players`    | Get active MLB players  | Same as `mlb_get_players`                                                                       |
-| `mlb_get_games`             | Get MLB games           | `dates`, `seasons`, `team_ids`, `postseason`, `start_date`, `end_date`, pagination              |
-| `mlb_get_game_by_id`        | Get specific MLB game   | `id` (required)                                                                                 |
-| `mlb_get_stats`             | Get MLB statistics      | `dates`, `seasons`, `team_ids`, `player_ids`, `game_ids`, `postseason`, pagination              |
-| `mlb_get_season_stats`      | Get season statistics   | `season`, `player_ids`, `team_ids`, `postseason`, pagination                                    |
-| `mlb_get_team_season_stats` | Get team season stats   | `season`, `team_ids`, `postseason`, pagination                                                  |
-| `mlb_get_standings`         | Get team standings      | `season`, `league`, `division`                                                                  |
-| `mlb_get_player_injuries`   | Get player injuries     | `player_ids`, `team_ids`, pagination                                                            |
+| Tool                        | Description                     | Parameters                                                                                      |
+| --------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `mlb_get_teams`             | Get all MLB teams               | `division`, `league`                                                                            |
+| `mlb_get_team_by_id`        | Get specific MLB team           | `id` (required)                                                                                 |
+| `mlb_get_players`           | Get MLB players                 | `search`, `first_name`, `last_name`, `team_ids`, `player_ids`, `position`, `active`, pagination |
+| `mlb_get_player_by_id`      | Get specific MLB player         | `id` (required)                                                                                 |
+| `mlb_get_active_players`    | Get active MLB players          | Same as `mlb_get_players`                                                                       |
+| `mlb_get_games`             | Get MLB games                   | `dates`, `seasons`, `team_ids`, `postseason`, `start_date`, `end_date`, pagination              |
+| `mlb_get_game_by_id`        | Get specific MLB game           | `id` (required)                                                                                 |
+| `mlb_get_stats`             | Get MLB statistics              | `dates`, `seasons`, `team_ids`, `player_ids`, `game_ids`, `postseason`, pagination              |
+| `mlb_get_season_stats`      | Get season statistics           | `season`, `player_ids`, `team_ids`, `postseason`, pagination                                    |
+| `mlb_get_team_season_stats` | Get team season stats           | `season`, `team_ids`, `postseason`, pagination                                                  |
+| `mlb_get_standings`         | Get team standings              | `season`, `league`, `division`                                                                  |
+| `mlb_get_player_injuries`   | Get player injuries             | `player_ids`, `team_ids`, pagination                                                            |
+| `mlb_get_player_splits`     | Get player splits by category   | `player_id` (required), `season` (required)                                                     |
+| `mlb_get_player_versus`     | Get player vs player matchups   | `player_id` (required), `opponent_team_id` (required)                                           |
 
 ### EPL (17 tools)
 
@@ -193,24 +195,26 @@ The server will automatically provide all available tools. You can ask your AI a
 | `epl_get_betting_odds`         | Get betting odds for games   | `season`, `week`, `game_ids`, pagination                                      |
 | `epl_get_player_props`         | Get player prop betting odds | `game_id` (required), `player_id`, `prop_type`                                |
 
-### NHL (14 tools)
+### NHL (16 tools)
 
-| Tool                           | Description                  | Parameters                                                                          |
-| ------------------------------ | ---------------------------- | ----------------------------------------------------------------------------------- |
-| `nhl_get_teams`                | Get all NHL teams            | `conference`, `division`, pagination                                                |
-| `nhl_get_team_by_id`           | Get specific NHL team        | `id` (required)                                                                     |
-| `nhl_get_team_season_stats`    | Get team season stats        | `id` (required), `season`                                                           |
-| `nhl_get_team_stats_leaders`   | Get team stat leaders        | `season`, `stat_type`, `per_page`                                                   |
-| `nhl_get_players`              | Get NHL players              | `search`, `team_ids`, `player_ids`, `position`, pagination                          |
-| `nhl_get_player_by_id`         | Get specific NHL player      | `id` (required)                                                                     |
-| `nhl_get_player_season_stats`  | Get player season stats      | `id` (required), `season`                                                           |
-| `nhl_get_player_stats_leaders` | Get player stat leaders      | `season`, `stat_type`, `per_page`                                                   |
-| `nhl_get_games`                | Get NHL games                | `dates`, `seasons`, `team_ids`, `season_type`, `start_date`, `end_date`, pagination |
-| `nhl_get_game_by_id`           | Get specific NHL game        | `id` (required)                                                                     |
-| `nhl_get_standings`            | Get NHL standings            | `season`, `conference`, `division`                                                  |
-| `nhl_get_box_scores`           | Get NHL box scores           | `dates`, `seasons`, `team_ids`, `game_ids`, `season_type`, pagination               |
-| `nhl_get_betting_odds`         | Get betting odds for games   | `dates`, `game_ids`, pagination                                                     |
-| `nhl_get_player_props`         | Get player prop betting odds | `game_id` (required), `player_id`, `prop_type`                                      |
+| Tool                           | Description                          | Parameters                                                                          |
+| ------------------------------ | ------------------------------------ | ----------------------------------------------------------------------------------- |
+| `nhl_get_teams`                | Get all NHL teams                    | `conference`, `division`, pagination                                                |
+| `nhl_get_team_by_id`           | Get specific NHL team                | `id` (required)                                                                     |
+| `nhl_get_team_season_stats`    | Get team season stats                | `id` (required), `season`                                                           |
+| `nhl_get_team_stats_leaders`   | Get team stat leaders                | `season`, `stat_type`, `per_page`                                                   |
+| `nhl_get_players`              | Get NHL players                      | `search`, `team_ids`, `player_ids`, `position`, pagination                          |
+| `nhl_get_player_by_id`         | Get specific NHL player              | `id` (required)                                                                     |
+| `nhl_get_player_season_stats`  | Get player season stats              | `id` (required), `season`                                                           |
+| `nhl_get_player_stats_leaders` | Get player stat leaders              | `season`, `stat_type`, `per_page`                                                   |
+| `nhl_get_games`                | Get NHL games                        | `dates`, `seasons`, `team_ids`, `season_type`, `start_date`, `end_date`, pagination |
+| `nhl_get_game_by_id`           | Get specific NHL game                | `id` (required)                                                                     |
+| `nhl_get_standings`            | Get NHL standings                    | `season`, `conference`, `division`                                                  |
+| `nhl_get_box_scores`           | Get NHL box scores                   | `dates`, `seasons`, `team_ids`, `game_ids`, `season_type`, pagination               |
+| `nhl_get_betting_odds`         | Get betting odds for games           | `dates`, `game_ids`, pagination                                                     |
+| `nhl_get_player_props`         | Get player prop betting odds         | `game_id` (required), `player_id`, `prop_type`                                      |
+| `nhl_get_plays`                | Get play-by-play data                | `game_id` (required)                                                                |
+| `nhl_get_player_injuries`      | Get currently injured NHL players    | -                                                                                   |
 
 ### WNBA (14 tools)
 
@@ -313,6 +317,46 @@ The server will automatically provide all available tools. You can ask your AI a
 | `cs2_get_player_match_stats`     | Get player stats for match (GOAT tier)                    | `match_id` (required)                                            |
 | `cs2_get_player_match_map_stats` | Get player stats for specific map (GOAT tier)             | `match_map_id` (required)                                        |
 | `cs2_get_player_accuracy_stats`  | Get player accuracy by body part (GOAT tier)              | `player_id` (required)                                           |
+
+### League of Legends (16 tools)
+
+| Tool                               | Description                                               | Parameters                                                       |
+| ---------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
+| `lol_get_teams`                    | Get all professional LOL teams                            | `search`, pagination                                             |
+| `lol_get_players`                  | Get LOL players                                           | `search`, `team_id`, pagination                                  |
+| `lol_get_champions`                | Get all LOL champions                                     | -                                                                |
+| `lol_get_items`                    | Get all LOL in-game items                                 | -                                                                |
+| `lol_get_spells`                   | Get all LOL summoner spells                               | -                                                                |
+| `lol_get_rune_paths`               | Get LOL rune paths                                        | -                                                                |
+| `lol_get_runes`                    | Get all LOL runes                                         | -                                                                |
+| `lol_get_tournaments`              | Get LOL tournaments (ALL-STAR tier)                       | pagination                                                       |
+| `lol_get_tournament_teams`         | Get teams in a tournament (ALL-STAR tier)                 | `tournament_id` (required)                                       |
+| `lol_get_tournament_roster`        | Get tournament roster (ALL-STAR tier)                     | `tournament_id` (required), `team_id` (required)                 |
+| `lol_get_champion_stats`           | Get champion aggregate stats (ALL-STAR tier)              | -                                                                |
+| `lol_get_matches`                  | Get LOL matches (GOAT tier)                               | `tournament_id`, `team_id`, pagination                           |
+| `lol_get_match_maps`               | Get games within a match (GOAT tier)                      | `match_id` (required)                                            |
+| `lol_get_player_match_map_stats`   | Get player stats for games (GOAT tier)                    | `match_map_id`, `player_id`, pagination                          |
+| `lol_get_team_match_map_stats`     | Get team stats for games (GOAT tier)                      | `match_map_id`, `team_id`, pagination                            |
+| `lol_get_player_overall_stats`     | Get player career stats (GOAT tier)                       | `player_id`, pagination                                          |
+
+### Dota 2 (14 tools)
+
+| Tool                               | Description                                               | Parameters                                                       |
+| ---------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
+| `dota_get_teams`                   | Get all professional Dota 2 teams                         | `search`, pagination                                             |
+| `dota_get_players`                 | Get Dota 2 players                                        | `search`, `team_id`, pagination                                  |
+| `dota_get_heroes`                  | Get all Dota 2 heroes                                     | -                                                                |
+| `dota_get_items`                   | Get all Dota 2 in-game items                              | -                                                                |
+| `dota_get_abilities`               | Get all Dota 2 hero abilities                             | -                                                                |
+| `dota_get_tournaments`             | Get Dota 2 tournaments (ALL-STAR tier)                    | pagination                                                       |
+| `dota_get_tournament_teams`        | Get teams in a tournament (ALL-STAR tier)                 | `tournament_id` (required)                                       |
+| `dota_get_tournament_roster`       | Get tournament roster (ALL-STAR tier)                     | `tournament_id` (required), `team_id` (required)                 |
+| `dota_get_hero_stats`              | Get hero aggregate stats (ALL-STAR tier)                  | -                                                                |
+| `dota_get_matches`                 | Get Dota 2 matches (GOAT tier)                            | `tournament_id`, `team_id`, pagination                           |
+| `dota_get_match_maps`              | Get games within a match (GOAT tier)                      | `match_id` (required)                                            |
+| `dota_get_player_match_map_stats`  | Get player stats for games (GOAT tier)                    | `match_map_id`, `player_id`, pagination                          |
+| `dota_get_team_match_map_stats`    | Get team stats for games (GOAT tier)                      | `match_map_id`, `team_id`, pagination                            |
+| `dota_get_player_overall_stats`    | Get player career stats (GOAT tier)                       | `player_id`, pagination                                          |
 
 ### FIFA World Cup 2026 (6 tools)
 

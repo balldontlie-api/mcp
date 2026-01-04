@@ -349,3 +349,21 @@ export const nhlPlayerPropsSchema = {
   required: ["game_id"],
   additionalProperties: false,
 };
+
+export const nhlPlaysSchema = {
+  type: "object",
+  properties: {
+    game_id: {
+      type: "number",
+      description: "The game ID (required)",
+    },
+  },
+  required: ["game_id"],
+  additionalProperties: false,
+};
+
+export const nhlPlayerInjuriesSchema = {
+  type: "object",
+  properties: {},
+  additionalProperties: false,
+};

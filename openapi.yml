@@ -3,7 +3,7 @@ info:
   title: BALLDONTLIE
   version: "1.0.0"
   description: |
-    API for accessing NBA, NFL, MLB, NCAAF, NCAAB, EPL, NHL, WNBA, MMA, CS2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, and Ligue 1 statistics and data.
+    API for accessing NBA, NFL, MLB, NCAAF, NCAAB, EPL, NHL, WNBA, MMA, CS2, LOL, Dota 2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, and Ligue 1 statistics and data.
     Includes comprehensive endpoints for teams, players, games, statistics, and more.
 
 servers:
@@ -6017,6 +6017,865 @@ components:
           type: integer
         kills_sum:
           type: integer
+
+    # League of Legends (LOL) Components
+    LOLRegion:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: Region name (e.g., North America, Europe)
+
+    LOLTeam:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        region:
+          $ref: '#/components/schemas/LOLRegion'
+          nullable: true
+
+    LOLTeamSlim:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    LOLPlayerSlim:
+      type: object
+      properties:
+        id:
+          type: integer
+        nickname:
+          type: string
+          nullable: true
+
+    LOLTournamentTeam:
+      type: object
+      properties:
+        tournament_id:
+          type: integer
+        team:
+          $ref: '#/components/schemas/LOLTeamSlim'
+
+    LOLTournamentRoster:
+      type: object
+      properties:
+        tournament_id:
+          type: integer
+        team_id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/LOLPlayerSlim'
+
+    LOLMatchMap:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        game_number:
+          type: integer
+          nullable: true
+        winner:
+          $ref: '#/components/schemas/LOLTeamSlim'
+          nullable: true
+        loser:
+          $ref: '#/components/schemas/LOLTeamSlim'
+          nullable: true
+        duration:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        begin_at:
+          type: string
+          format: date-time
+          nullable: true
+        end_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    LOLPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+        nickname:
+          type: string
+        slug:
+          type: string
+          nullable: true
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        birthday:
+          type: string
+          format: date
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        country_code:
+          type: string
+          nullable: true
+        team:
+          $ref: '#/components/schemas/LOLTeamSlim'
+          nullable: true
+
+    LOLChampion:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    LOLItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        is_trinket:
+          type: boolean
+
+    LOLSpell:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    LOLRunePath:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    LOLRune:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        rune_path:
+          $ref: '#/components/schemas/LOLRunePath'
+          nullable: true
+        rune_type:
+          type: string
+          description: Rune type (keystone, slot1, slot2, slot3, shard)
+
+    LOLTournament:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date-time
+          nullable: true
+        end_date:
+          type: string
+          format: date-time
+          nullable: true
+        prize:
+          type: integer
+          nullable: true
+        tier:
+          type: string
+          nullable: true
+          description: Tournament tier (s, a, b, c)
+        status:
+          type: string
+          nullable: true
+
+    LOLMatch:
+      type: object
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+          nullable: true
+        tournament:
+          $ref: '#/components/schemas/LOLTournament'
+        team1:
+          $ref: '#/components/schemas/LOLTeamSlim'
+          nullable: true
+        team2:
+          $ref: '#/components/schemas/LOLTeamSlim'
+          nullable: true
+        winner:
+          $ref: '#/components/schemas/LOLTeamSlim'
+          nullable: true
+        team1_score:
+          type: integer
+          nullable: true
+        team2_score:
+          type: integer
+          nullable: true
+        bo_type:
+          type: integer
+          nullable: true
+          description: Best of type (1, 3, 5)
+        status:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date-time
+          nullable: true
+        end_date:
+          type: string
+          format: date-time
+          nullable: true
+
+    LOLChampionStats:
+      type: object
+      properties:
+        id:
+          type: integer
+        champion:
+          $ref: '#/components/schemas/LOLChampion'
+        games_count:
+          type: integer
+        picks_count:
+          type: integer
+        picks_rate:
+          type: number
+        wins_count:
+          type: integer
+        loses_count:
+          type: integer
+        win_rate:
+          type: number
+        ban_rate:
+          type: number
+        avg_kills:
+          type: number
+        avg_deaths:
+          type: number
+        avg_assists:
+          type: number
+        kda:
+          type: number
+        kp:
+          type: number
+          description: Kill participation rate
+        avg_damage_dealt_to_champions:
+          type: number
+        avg_gold_earned:
+          type: number
+        avg_gold_per_min:
+          type: number
+        avg_creep_score:
+          type: number
+
+    LOLPlayerMatchMapStat:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_map_id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/LOLPlayerSlim'
+        team:
+          $ref: '#/components/schemas/LOLTeamSlim'
+        champion:
+          $ref: '#/components/schemas/LOLChampion'
+        role:
+          type: string
+          nullable: true
+        level:
+          type: integer
+        kills:
+          type: integer
+        deaths:
+          type: integer
+        assists:
+          type: integer
+        kill_participation:
+          type: number
+        creep_score:
+          type: integer
+        gold_earned:
+          type: integer
+        gold_per_min:
+          type: number
+        total_damage_dealt_to_champions:
+          type: integer
+        wards_placed:
+          type: integer
+        kills_wards:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LOLItem'
+        spells:
+          type: array
+          items:
+            $ref: '#/components/schemas/LOLSpell'
+        runes:
+          type: array
+          items:
+            type: object
+            properties:
+              rune_path:
+                $ref: '#/components/schemas/LOLRunePath'
+                nullable: true
+              keystone:
+                $ref: '#/components/schemas/LOLRune'
+                nullable: true
+              path_type:
+                type: integer
+
+    LOLTeamMatchMapStat:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_map_id:
+          type: integer
+        team:
+          $ref: '#/components/schemas/LOLTeamSlim'
+        enemy_team:
+          $ref: '#/components/schemas/LOLTeamSlim'
+        side:
+          type: integer
+        color:
+          type: string
+          nullable: true
+        kills:
+          type: integer
+        deaths:
+          type: integer
+        assists:
+          type: integer
+        creep_score:
+          type: integer
+        gold_earned:
+          type: integer
+        total_damage_dealt_to_champions:
+          type: integer
+        baron_kills:
+          type: integer
+        dragon_kills:
+          type: integer
+        herald_kills:
+          type: integer
+        first_blood:
+          type: integer
+        first_tower:
+          type: integer
+        first_baron:
+          type: integer
+        first_dragon:
+          type: integer
+
+    LOLPlayerOverallStat:
+      type: object
+      properties:
+        id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/LOLPlayerSlim'
+        maps_played:
+          type: integer
+        total_kills:
+          type: integer
+        avg_kills:
+          type: number
+        total_deaths:
+          type: integer
+        avg_deaths:
+          type: number
+        total_assists:
+          type: integer
+        avg_assists:
+          type: number
+        kp:
+          type: number
+          description: Kill participation rate
+        total_damage:
+          type: integer
+        avg_damage:
+          type: number
+        avg_gold_per_min:
+          type: number
+        avg_creep_score:
+          type: number
+
+    # Dota 2 Components
+    DotaRegion:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: Region name (e.g., Europe, North America)
+
+    DotaTeam:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+          nullable: true
+        country_name:
+          type: string
+          nullable: true
+        region:
+          $ref: '#/components/schemas/DotaRegion'
+          nullable: true
+        rank:
+          type: integer
+          nullable: true
+        total_money:
+          type: number
+          nullable: true
+        tour_wins:
+          type: integer
+          nullable: true
+
+    DotaTeamSlim:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    DotaPlayerSlim:
+      type: object
+      properties:
+        id:
+          type: integer
+        nickname:
+          type: string
+          nullable: true
+
+    DotaPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+        nickname:
+          type: string
+        slug:
+          type: string
+          nullable: true
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        birthday:
+          type: string
+          format: date
+          nullable: true
+        country_name:
+          type: string
+          nullable: true
+        country_code:
+          type: string
+          nullable: true
+        is_coach:
+          type: boolean
+        total_prize:
+          type: number
+          nullable: true
+        team:
+          $ref: '#/components/schemas/DotaTeamSlim'
+          nullable: true
+
+    DotaHero:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        localized_name:
+          type: string
+
+    DotaItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    DotaAbility:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    DotaTournament:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date-time
+          nullable: true
+        end_date:
+          type: string
+          format: date-time
+          nullable: true
+        prize:
+          type: number
+          nullable: true
+        players_prize:
+          type: number
+          nullable: true
+        teams_prize:
+          type: number
+          nullable: true
+        event_type:
+          type: string
+          nullable: true
+          description: Event type (lan, online)
+        tier:
+          type: string
+          nullable: true
+          description: Tournament tier (s, a, b, c)
+        status:
+          type: string
+          nullable: true
+
+    DotaTournamentTeam:
+      type: object
+      properties:
+        tournament_id:
+          type: integer
+        team:
+          $ref: '#/components/schemas/DotaTeamSlim'
+
+    DotaTournamentRoster:
+      type: object
+      properties:
+        tournament_id:
+          type: integer
+        team_id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/DotaPlayerSlim'
+
+    DotaHeroStats:
+      type: object
+      properties:
+        id:
+          type: integer
+        hero:
+          $ref: '#/components/schemas/DotaHero'
+        games_count:
+          type: integer
+        picks_count:
+          type: integer
+        picks_rate:
+          type: number
+        wins_count:
+          type: integer
+        loses_count:
+          type: integer
+        win_rate:
+          type: number
+        ban_rate:
+          type: number
+        early_win_rate:
+          type: number
+        mid_win_rate:
+          type: number
+        late_win_rate:
+          type: number
+        avg_kills:
+          type: number
+          nullable: true
+        avg_deaths:
+          type: number
+          nullable: true
+        avg_assists:
+          type: number
+          nullable: true
+        kda:
+          type: number
+        kp:
+          type: number
+          description: Kill participation rate
+        game_impact:
+          type: number
+        avg_net_worth:
+          type: number
+        avg_gpm:
+          type: number
+        avg_xpm:
+          type: number
+        avg_damage:
+          type: number
+        avg_last_hits:
+          type: number
+        avg_denies:
+          type: number
+        avg_heal:
+          type: number
+
+    DotaMatch:
+      type: object
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+          nullable: true
+        tournament:
+          $ref: '#/components/schemas/DotaTournament'
+        stage:
+          type: string
+          nullable: true
+        team1:
+          $ref: '#/components/schemas/DotaTeamSlim'
+          nullable: true
+        team2:
+          $ref: '#/components/schemas/DotaTeamSlim'
+          nullable: true
+        winner:
+          $ref: '#/components/schemas/DotaTeamSlim'
+          nullable: true
+        team1_score:
+          type: integer
+          nullable: true
+        team2_score:
+          type: integer
+          nullable: true
+        bo_type:
+          type: integer
+          nullable: true
+          description: Best of type (1, 3, 5)
+        status:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date-time
+          nullable: true
+        end_date:
+          type: string
+          format: date-time
+          nullable: true
+
+    DotaMatchMap:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        game_number:
+          type: integer
+          nullable: true
+        winner:
+          $ref: '#/components/schemas/DotaTeamSlim'
+          nullable: true
+        loser:
+          $ref: '#/components/schemas/DotaTeamSlim'
+          nullable: true
+        duration:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        begin_at:
+          type: string
+          format: date-time
+          nullable: true
+        end_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    DotaPlayerMatchMapStat:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_map_id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/DotaPlayerSlim'
+        team:
+          $ref: '#/components/schemas/DotaTeamSlim'
+        hero:
+          $ref: '#/components/schemas/DotaHero'
+        role:
+          type: integer
+          nullable: true
+        side:
+          type: integer
+        kills:
+          type: integer
+        deaths:
+          type: integer
+        assists:
+          type: integer
+        hero_level:
+          type: integer
+        net_worth:
+          type: integer
+        gold_per_min:
+          type: integer
+        xp_per_min:
+          type: integer
+        hero_damage:
+          type: integer
+        tower_damage:
+          type: integer
+        last_hits:
+          type: integer
+        denies:
+          type: integer
+        heal:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DotaItem'
+        abilities:
+          type: array
+          items:
+            type: object
+            properties:
+              ability:
+                $ref: '#/components/schemas/DotaAbility'
+              level:
+                type: integer
+
+    DotaTeamMatchMapStat:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_map_id:
+          type: integer
+        team:
+          $ref: '#/components/schemas/DotaTeamSlim'
+        enemy_team:
+          $ref: '#/components/schemas/DotaTeamSlim'
+        side:
+          type: integer
+        score:
+          type: integer
+        first_blood:
+          type: boolean
+        first_tower:
+          type: boolean
+        first_roshan:
+          type: boolean
+        roshan_kills:
+          type: integer
+        drafts:
+          type: array
+          items:
+            type: object
+            properties:
+              hero:
+                $ref: '#/components/schemas/DotaHero'
+              choice_type:
+                type: integer
+                description: 0 for ban, 1 for pick
+              order_number:
+                type: integer
+
+    DotaPlayerOverallStat:
+      type: object
+      properties:
+        id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/DotaPlayerSlim'
+        maps_played:
+          type: integer
+        total_kills:
+          type: integer
+        avg_kills:
+          type: number
+        total_deaths:
+          type: integer
+        avg_deaths:
+          type: number
+        total_assists:
+          type: integer
+        avg_assists:
+          type: number
+        kda:
+          type: number
+        kp:
+          type: number
+          description: Kill participation rate
+        game_impact:
+          type: number
+        avg_net_worth:
+          type: number
+        avg_gpm:
+          type: number
+          description: Average gold per minute
+        avg_xpm:
+          type: number
+          description: Average XP per minute
+        avg_damage:
+          type: number
+        avg_last_hits:
+          type: number
+        avg_denies:
+          type: number
+        avg_heal:
+          type: number
 
     # FIFA World Cup 2026 Components
     FIFATeam:
@@ -13573,6 +14432,984 @@ paths:
                       $ref: "#/components/schemas/CS2PlayerAccuracyStat"
         "400":
           $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  # League of Legends (LOL) Endpoints
+  /lol/v1/teams:
+    get:
+      summary: Get all LOL teams
+      description: Retrieve a list of all professional League of Legends teams
+      tags: [LOL]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search teams by name
+      responses:
+        "200":
+          description: List of LOL teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLTeam"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/players:
+    get:
+      summary: Get all LOL players
+      description: Retrieve a list of all professional League of Legends players
+      tags: [LOL]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search players by nickname or name
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by team ID
+      responses:
+        "200":
+          description: List of LOL players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/champions:
+    get:
+      summary: Get all LOL champions
+      description: Retrieve a list of all League of Legends champions
+      tags: [LOL]
+      responses:
+        "200":
+          description: List of LOL champions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLChampion"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/items:
+    get:
+      summary: Get all LOL items
+      description: Retrieve a list of all League of Legends in-game items
+      tags: [LOL]
+      responses:
+        "200":
+          description: List of LOL items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLItem"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/spells:
+    get:
+      summary: Get all LOL summoner spells
+      description: Retrieve a list of all League of Legends summoner spells
+      tags: [LOL]
+      responses:
+        "200":
+          description: List of LOL summoner spells
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLSpell"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/rune_paths:
+    get:
+      summary: Get all LOL rune paths
+      description: Retrieve a list of all League of Legends rune paths (Domination, Inspiration, Precision, Resolve, Sorcery)
+      tags: [LOL]
+      responses:
+        "200":
+          description: List of LOL rune paths
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLRunePath"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/runes:
+    get:
+      summary: Get all LOL runes
+      description: Retrieve a list of all League of Legends runes with their paths and types
+      tags: [LOL]
+      responses:
+        "200":
+          description: List of LOL runes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLRune"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/tournaments:
+    get:
+      summary: Get LOL tournaments
+      description: Retrieve a list of professional League of Legends tournaments. Requires ALL-STAR tier or higher.
+      tags: [LOL]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: List of LOL tournaments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLTournament"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/tournament_teams:
+    get:
+      summary: Get teams in a tournament
+      description: Retrieve teams participating in a specific tournament. Requires ALL-STAR tier or higher.
+      tags: [LOL]
+      parameters:
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Tournament ID
+      responses:
+        "200":
+          description: List of teams in tournament
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLTournamentTeam"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/tournament_roster:
+    get:
+      summary: Get tournament roster
+      description: Retrieve player rosters for a tournament and team. Requires ALL-STAR tier or higher.
+      tags: [LOL]
+      parameters:
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Tournament ID
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      responses:
+        "200":
+          description: Tournament roster
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLTournamentRoster"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/champion_stats:
+    get:
+      summary: Get champion statistics
+      description: Retrieve aggregate statistics for LOL champions across professional matches. Requires ALL-STAR tier or higher.
+      tags: [LOL]
+      responses:
+        "200":
+          description: Champion statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLChampionStats"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/matches:
+    get:
+      summary: Get LOL matches
+      description: Retrieve professional League of Legends matches. Requires GOAT tier.
+      tags: [LOL]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by tournament ID
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by team ID
+      responses:
+        "200":
+          description: List of LOL matches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLMatch"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/match_maps:
+    get:
+      summary: Get match maps (games)
+      description: Retrieve individual games within a match. Requires GOAT tier.
+      tags: [LOL]
+      parameters:
+        - name: match_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Match ID to get games for
+      responses:
+        "200":
+          description: List of match maps
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLMatchMap"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/player_match_map_stats:
+    get:
+      summary: Get player match map statistics
+      description: Retrieve detailed player statistics for individual games. Requires GOAT tier.
+      tags: [LOL]
+      parameters:
+        - name: match_map_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by match map ID
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by player ID
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: Player match map statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLPlayerMatchMapStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/team_match_map_stats:
+    get:
+      summary: Get team match map statistics
+      description: Retrieve detailed team statistics for individual games. Requires GOAT tier.
+      tags: [LOL]
+      parameters:
+        - name: match_map_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by match map ID
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by team ID
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: Team match map statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLTeamMatchMapStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /lol/v1/player_overall_stats:
+    get:
+      summary: Get player overall statistics
+      description: Retrieve career statistics for LOL players. Requires GOAT tier.
+      tags: [LOL]
+      parameters:
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by player ID
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: Player overall statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LOLPlayerOverallStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  # Dota 2 Endpoints
+  /dota/v1/teams:
+    get:
+      summary: Get all Dota 2 teams
+      description: Retrieve a list of all professional Dota 2 teams
+      tags: [Dota]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search teams by name
+      responses:
+        "200":
+          description: List of Dota 2 teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaTeam"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/players:
+    get:
+      summary: Get all Dota 2 players
+      description: Retrieve a list of all professional Dota 2 players
+      tags: [Dota]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search players by nickname or name
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by team ID
+      responses:
+        "200":
+          description: List of Dota 2 players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/heroes:
+    get:
+      summary: Get all Dota 2 heroes
+      description: Retrieve a list of all Dota 2 heroes
+      tags: [Dota]
+      responses:
+        "200":
+          description: List of Dota 2 heroes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaHero"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/items:
+    get:
+      summary: Get all Dota 2 items
+      description: Retrieve a list of all Dota 2 in-game items
+      tags: [Dota]
+      responses:
+        "200":
+          description: List of Dota 2 items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaItem"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/abilities:
+    get:
+      summary: Get all Dota 2 abilities
+      description: Retrieve a list of all Dota 2 hero abilities
+      tags: [Dota]
+      responses:
+        "200":
+          description: List of Dota 2 abilities
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaAbility"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/tournaments:
+    get:
+      summary: Get Dota 2 tournaments
+      description: Retrieve a list of professional Dota 2 tournaments. Requires ALL-STAR tier or higher.
+      tags: [Dota]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: List of Dota 2 tournaments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaTournament"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/tournament_teams:
+    get:
+      summary: Get teams in a tournament
+      description: Retrieve teams participating in a specific Dota 2 tournament. Requires ALL-STAR tier or higher.
+      tags: [Dota]
+      parameters:
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Tournament ID
+      responses:
+        "200":
+          description: List of teams in tournament
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaTournamentTeam"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/tournament_roster:
+    get:
+      summary: Get tournament roster
+      description: Retrieve player rosters for a Dota 2 tournament and team. Requires ALL-STAR tier or higher.
+      tags: [Dota]
+      parameters:
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Tournament ID
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      responses:
+        "200":
+          description: Tournament roster
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaTournamentRoster"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/hero_stats:
+    get:
+      summary: Get hero statistics
+      description: Retrieve aggregate statistics for Dota 2 heroes across professional matches. Requires ALL-STAR tier or higher.
+      tags: [Dota]
+      responses:
+        "200":
+          description: Hero statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaHeroStats"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/matches:
+    get:
+      summary: Get Dota 2 matches
+      description: Retrieve professional Dota 2 matches. Requires GOAT tier.
+      tags: [Dota]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by tournament ID
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by team ID
+      responses:
+        "200":
+          description: List of Dota 2 matches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaMatch"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/match_maps:
+    get:
+      summary: Get match maps (games)
+      description: Retrieve individual games within a Dota 2 match. Requires GOAT tier.
+      tags: [Dota]
+      parameters:
+        - name: match_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Match ID to get games for
+      responses:
+        "200":
+          description: List of match maps
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaMatchMap"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/player_match_map_stats:
+    get:
+      summary: Get player match map statistics
+      description: Retrieve detailed player statistics for individual Dota 2 games. Requires GOAT tier.
+      tags: [Dota]
+      parameters:
+        - name: match_map_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by match map ID
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by player ID
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: Player match map statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaPlayerMatchMapStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/team_match_map_stats:
+    get:
+      summary: Get team match map statistics
+      description: Retrieve detailed team statistics for individual Dota 2 games. Requires GOAT tier.
+      tags: [Dota]
+      parameters:
+        - name: match_map_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by match map ID
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by team ID
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: Team match map statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaTeamMatchMapStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /dota/v1/player_overall_stats:
+    get:
+      summary: Get player overall statistics
+      description: Retrieve career statistics for Dota 2 players. Requires GOAT tier.
+      tags: [Dota]
+      parameters:
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by player ID
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: Player overall statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DotaPlayerOverallStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "429":

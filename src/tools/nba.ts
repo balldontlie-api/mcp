@@ -271,5 +271,24 @@ export function createNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest("/nba/v1/plays", params, headers);
       },
     },
+
+    {
+      name: "nba_get_team_season_averages",
+      description: "Get NBA team season averages by category. Categories: general, clutch, shooting, playtype, tracking, hustle, shotdashboard. Each category requires a specific type parameter (except hustle). See documentation for available category/type combinations.",
+      inputSchema: schemas.nbaTeamSeasonAveragesSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        const { category, ...queryParams } = params;
+
+        if (!category) {
+          throw new Error("Category is required for team season averages");
+        }
+
+        return await apiClient.makeRequest(
+          `/v1/team_season_averages/${category}`,
+          queryParams,
+          headers
+        );
+      },
+    },
   ];
 }

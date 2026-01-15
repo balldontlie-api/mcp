@@ -481,3 +481,44 @@ export const nbaPlaysSchema = {
   required: ["game_id"],
   additionalProperties: false,
 };
+
+export const nbaTeamSeasonAveragesSchema = {
+  type: "object",
+  properties: {
+    category: {
+      type: "string",
+      enum: ["general", "clutch", "shooting", "playtype", "tracking", "hustle", "shotdashboard"],
+      description: "Statistical category (general, clutch, shooting, playtype, tracking, hustle, shotdashboard)",
+    },
+    season: {
+      type: "number",
+      description: "Season year (required)",
+    },
+    season_type: {
+      type: "string",
+      enum: ["regular", "playoffs", "ist"],
+      description: "Season type (regular, playoffs, ist)",
+    },
+    type: {
+      type: "string",
+      description: "Statistics type - required for all categories except hustle. Options vary by category: general (base, advanced, scoring, misc, opponent, defense, violations), clutch (base, advanced, misc, scoring), shooting (by_zone_base, by_zone_opponent, 5ft_range_base, 5ft_range_opponent), playtype (cut, handoff, isolation, offrebound, offscreen, postup, prballhandler, prrollman, spotup, transition, misc), tracking (painttouch, efficiency, speeddistance, defense, elbowtouch, posttouch, passing, drives, rebounding, catchshoot, pullupshot, possessions), shotdashboard (overall, pullups, catch_and_shoot, less_than_10_ft)",
+    },
+    team_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by team IDs",
+    },
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
+  },
+  required: ["category", "season", "season_type"],
+  additionalProperties: false,
+};

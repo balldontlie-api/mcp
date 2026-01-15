@@ -3,7 +3,7 @@ info:
   title: BALLDONTLIE
   version: "1.0.0"
   description: |
-    API for accessing NBA, NFL, MLB, NCAAF, NCAAB, EPL, NHL, WNBA, MMA, CS2, LOL, Dota 2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, and Ligue 1 statistics and data.
+    API for accessing NBA, NFL, MLB, NCAAF, NCAAB, EPL, NHL, WNBA, MMA, CS2, LOL, Dota 2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, Ligue 1, MLS, and PGA Tour statistics and data.
     Includes comprehensive endpoints for teams, players, games, statistics, and more.
 
 servers:
@@ -253,6 +253,23 @@ components:
         stats:
           type: object
           additionalProperties: true
+
+    NBATeamSeasonStat:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/NBATeam"
+        season:
+          type: integer
+          description: Season year
+        season_type:
+          type: string
+          enum: [regular, playoffs, ist]
+          description: Season type
+        stats:
+          type: object
+          additionalProperties: true
+          description: Dynamic stats object with stat names as keys and numeric values. Content varies by category/type combination.
 
     NBAStandings:
       type: object
@@ -7091,6 +7108,441 @@ components:
           format: date-time
           nullable: true
 
+    # PGA Tour Schemas
+    PGAPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Player ID
+        first_name:
+          type: string
+          nullable: true
+          description: Player first name
+        last_name:
+          type: string
+          nullable: true
+          description: Player last name
+        display_name:
+          type: string
+          description: Player display name
+        country:
+          type: string
+          nullable: true
+          description: Player country
+        country_code:
+          type: string
+          nullable: true
+          description: Country code (e.g., "USA")
+        height:
+          type: string
+          nullable: true
+          description: Player height
+        weight:
+          type: string
+          nullable: true
+          description: Player weight
+        birth_date:
+          type: string
+          nullable: true
+          description: Player birth date
+        birthplace_city:
+          type: string
+          nullable: true
+          description: Birthplace city
+        birthplace_state:
+          type: string
+          nullable: true
+          description: Birthplace state
+        birthplace_country:
+          type: string
+          nullable: true
+          description: Birthplace country
+        turned_pro:
+          type: string
+          nullable: true
+          description: Year turned professional
+        school:
+          type: string
+          nullable: true
+          description: College/university attended
+        residence_city:
+          type: string
+          nullable: true
+          description: Current residence city
+        residence_state:
+          type: string
+          nullable: true
+          description: Current residence state
+        residence_country:
+          type: string
+          nullable: true
+          description: Current residence country
+        owgr:
+          type: integer
+          nullable: true
+          description: Official World Golf Ranking
+        active:
+          type: boolean
+          description: Whether player is active
+
+    PGATournament:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Tournament ID
+        season:
+          type: integer
+          description: Season year
+        name:
+          type: string
+          description: Tournament name
+        start_date:
+          type: string
+          format: date-time
+          description: Tournament start date
+        end_date:
+          type: string
+          nullable: true
+          description: Tournament end date
+        city:
+          type: string
+          nullable: true
+          description: Tournament city
+        state:
+          type: string
+          nullable: true
+          description: Tournament state
+        country:
+          type: string
+          nullable: true
+          description: Tournament country
+        course_name:
+          type: string
+          nullable: true
+          description: Course name
+        purse:
+          type: string
+          nullable: true
+          description: Tournament purse
+        status:
+          type: string
+          nullable: true
+          description: Tournament status (COMPLETED, IN_PROGRESS, SCHEDULED)
+        champion:
+          $ref: "#/components/schemas/PGAPlayer"
+          nullable: true
+
+    PGACourse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Course ID
+        name:
+          type: string
+          description: Course name
+        city:
+          type: string
+          nullable: true
+          description: Course city
+        state:
+          type: string
+          nullable: true
+          description: Course state
+        country:
+          type: string
+          nullable: true
+          description: Course country
+        par:
+          type: integer
+          nullable: true
+          description: Course par
+        yardage:
+          type: string
+          nullable: true
+          description: Course yardage
+        established:
+          type: string
+          nullable: true
+          description: Year established
+        architect:
+          type: string
+          nullable: true
+          description: Course architect
+        fairway_grass:
+          type: string
+          nullable: true
+          description: Fairway grass type
+        rough_grass:
+          type: string
+          nullable: true
+          description: Rough grass type
+        green_grass:
+          type: string
+          nullable: true
+          description: Green grass type
+
+    PGATournamentResult:
+      type: object
+      properties:
+        tournament:
+          $ref: "#/components/schemas/PGATournament"
+        player:
+          $ref: "#/components/schemas/PGAPlayer"
+        position:
+          type: string
+          nullable: true
+          description: Final position (e.g., "1", "T5", "CUT", "WD")
+        position_numeric:
+          type: integer
+          nullable: true
+          description: Numeric position for sorting
+        total_score:
+          type: integer
+          nullable: true
+          description: Total strokes
+        par_relative_score:
+          type: integer
+          nullable: true
+          description: Score relative to par
+
+    PGATournamentCourseStats:
+      type: object
+      properties:
+        tournament:
+          $ref: "#/components/schemas/PGATournament"
+        course:
+          $ref: "#/components/schemas/PGACourse"
+        hole_number:
+          type: integer
+          description: Hole number (1-18)
+        round_number:
+          type: integer
+          nullable: true
+          description: Round number (null for tournament total)
+        scoring_average:
+          type: number
+          nullable: true
+          description: Scoring average for the hole
+        scoring_diff:
+          type: number
+          nullable: true
+          description: Scoring difference from par
+        difficulty_rank:
+          type: integer
+          nullable: true
+          description: Hole difficulty rank (1 = hardest)
+        eagles:
+          type: integer
+          nullable: true
+        birdies:
+          type: integer
+          nullable: true
+        pars:
+          type: integer
+          nullable: true
+        bogeys:
+          type: integer
+          nullable: true
+        double_bogeys:
+          type: integer
+          nullable: true
+
+    PGACourseHole:
+      type: object
+      properties:
+        course:
+          $ref: "#/components/schemas/PGACourse"
+        hole_number:
+          type: integer
+          description: Hole number (1-18)
+        par:
+          type: integer
+          description: Hole par
+        yardage:
+          type: integer
+          nullable: true
+          description: Hole yardage
+
+    PGAPlayerRoundResult:
+      type: object
+      properties:
+        tournament:
+          $ref: "#/components/schemas/PGATournament"
+        player:
+          $ref: "#/components/schemas/PGAPlayer"
+        round_number:
+          type: integer
+          description: Round number (1-4)
+        score:
+          type: integer
+          nullable: true
+          description: Round score (strokes)
+        par_relative_score:
+          type: integer
+          nullable: true
+          description: Score relative to par for the round
+
+    PGAPlayerRoundStats:
+      type: object
+      properties:
+        tournament:
+          $ref: "#/components/schemas/PGATournament"
+        player:
+          $ref: "#/components/schemas/PGAPlayer"
+        round_number:
+          type: integer
+          description: Round number (1-4, -1 for tournament total)
+        sg_off_tee:
+          type: number
+          nullable: true
+          description: Strokes Gained - Off the Tee
+        sg_off_tee_rank:
+          type: integer
+          nullable: true
+        sg_approach:
+          type: number
+          nullable: true
+          description: Strokes Gained - Approach
+        sg_approach_rank:
+          type: integer
+          nullable: true
+        sg_around_green:
+          type: number
+          nullable: true
+          description: Strokes Gained - Around the Green
+        sg_around_green_rank:
+          type: integer
+          nullable: true
+        sg_putting:
+          type: number
+          nullable: true
+          description: Strokes Gained - Putting
+        sg_putting_rank:
+          type: integer
+          nullable: true
+        sg_total:
+          type: number
+          nullable: true
+          description: Strokes Gained - Total
+        sg_total_rank:
+          type: integer
+          nullable: true
+        driving_accuracy:
+          type: number
+          nullable: true
+        driving_accuracy_rank:
+          type: integer
+          nullable: true
+        driving_distance:
+          type: number
+          nullable: true
+        driving_distance_rank:
+          type: integer
+          nullable: true
+        longest_drive:
+          type: number
+          nullable: true
+        longest_drive_rank:
+          type: integer
+          nullable: true
+        greens_in_regulation:
+          type: number
+          nullable: true
+        greens_in_regulation_rank:
+          type: integer
+          nullable: true
+        sand_saves:
+          type: number
+          nullable: true
+        sand_saves_rank:
+          type: integer
+          nullable: true
+        scrambling:
+          type: number
+          nullable: true
+        scrambling_rank:
+          type: integer
+          nullable: true
+        putts_per_gir:
+          type: number
+          nullable: true
+        putts_per_gir_rank:
+          type: integer
+          nullable: true
+        eagles:
+          type: integer
+          nullable: true
+        birdies:
+          type: integer
+          nullable: true
+        pars:
+          type: integer
+          nullable: true
+        bogeys:
+          type: integer
+          nullable: true
+        double_bogeys:
+          type: integer
+          nullable: true
+
+    PGAPlayerSeasonStat:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/PGAPlayer"
+        stat_id:
+          type: integer
+          description: Stat category ID
+        stat_name:
+          type: string
+          description: Stat category name
+        stat_category:
+          type: string
+          nullable: true
+          description: Stat category type
+        season:
+          type: integer
+          description: Season year
+        rank:
+          type: integer
+          nullable: true
+          description: Player rank for this stat
+        stat_value:
+          type: array
+          nullable: true
+          description: Stat value data
+          items:
+            type: object
+            properties:
+              statName:
+                type: string
+              statValue:
+                type: string
+
+    PGAPlayerScorecard:
+      type: object
+      properties:
+        tournament:
+          $ref: "#/components/schemas/PGATournament"
+        player:
+          $ref: "#/components/schemas/PGAPlayer"
+        round_number:
+          type: integer
+          description: Round number (1-4)
+        hole_number:
+          type: integer
+          description: Hole number (1-18)
+        par:
+          type: integer
+          description: Hole par
+        score:
+          type: integer
+          nullable: true
+          description: Player score on the hole
+
   parameters:
     CursorParam:
       name: cursor
@@ -7622,6 +8074,82 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/NBASeasonAverageV2"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /nba/v1/team_season_averages/{category}:
+    get:
+      summary: Get NBA team season averages by category
+      description: |
+        Retrieve team season averages for various statistical categories. Each category requires a specific type parameter
+        that determines the exact stats returned. The hustle category does not require a type parameter.
+
+        **Available category/type combinations:**
+        - general: base, advanced, scoring, misc, opponent, defense, violations
+        - clutch: base, advanced, misc, scoring
+        - shooting: by_zone_base, by_zone_opponent, 5ft_range_base, 5ft_range_opponent
+        - playtype: cut, handoff, isolation, offrebound, offscreen, postup, prballhandler, prrollman, spotup, transition, misc
+        - tracking: painttouch, efficiency, speeddistance, defense, elbowtouch, posttouch, passing, drives, rebounding, catchshoot, pullupshot, possessions
+        - hustle: (no type parameter required)
+        - shotdashboard: overall, pullups, catch_and_shoot, less_than_10_ft
+      tags: [NBA]
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [general, clutch, shooting, playtype, tracking, hustle, shotdashboard]
+          description: Statistical category
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by team IDs
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year
+        - name: season_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [regular, playoffs, ist]
+          description: Season type
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Statistics type (required for all categories except hustle)
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: Team season averages by category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NBATeamSeasonStat"
                   meta:
                     $ref: "#/components/schemas/Pagination"
         "401":
@@ -18051,6 +18579,1007 @@ paths:
           $ref: "#/components/responses/BadRequestError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+# MLS Endpoints
+  /mls/v1/teams:
+    get:
+      summary: Get MLS teams
+      description: Get all teams participating in MLS for a given season
+      tags: [MLS]
+      parameters:
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year. Defaults to the current season if omitted.
+      responses:
+        "200":
+          description: List of MLS teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerTeam'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /mls/v1/rosters:
+    get:
+      summary: Get MLS team rosters
+      description: Get player roster information for a specific team and season
+      tags: [MLS]
+      parameters:
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+      responses:
+        "200":
+          description: Team roster
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerRoster'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /mls/v1/players:
+    get:
+      summary: Get MLS players
+      description: Get players with optional filtering by team or search term. Supports pagination.
+      tags: [MLS]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search players by name
+      responses:
+        "200":
+          description: List of MLS players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerPlayer'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /mls/v1/standings:
+    get:
+      summary: Get MLS standings
+      description: Get league standings for a specific season. MLS uses conference-based standings (Eastern and Western Conference).
+      tags: [MLS]
+      parameters:
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+      responses:
+        "200":
+          description: League standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerStanding'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /mls/v1/matches:
+    get:
+      summary: Get MLS matches
+      description: Get matches with optional filtering by season, dates, or teams. Supports pagination.
+      tags: [MLS]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by specific dates (YYYY-MM-DD format)
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+      responses:
+        "200":
+          description: List of matches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerMatch'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /mls/v1/match_events:
+    get:
+      summary: Get MLS match events
+      description: Get match events (goals, cards, substitutions, etc.) with optional filtering by matches. Supports pagination.
+      tags: [MLS]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+      responses:
+        "200":
+          description: List of match events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerMatchEvent'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /mls/v1/match_lineups:
+    get:
+      summary: Get MLS match lineups
+      description: Get match lineups (starting and substitute players) with optional filtering by matches. Supports pagination.
+      tags: [MLS]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+      responses:
+        "200":
+          description: List of match lineups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerMatchLineup'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /mls/v1/player_match_stats:
+    get:
+      summary: Get MLS player match statistics
+      description: Get player match statistics with optional filtering by matches or players. Supports pagination.
+      tags: [MLS]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+        - name: player_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by player IDs
+      responses:
+        "200":
+          description: List of player match statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerPlayerMatchStats'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /mls/v1/team_match_stats:
+    get:
+      summary: Get MLS team match statistics
+      description: Get team match statistics with optional filtering by matches or teams. Supports pagination.
+      tags: [MLS]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+      responses:
+        "200":
+          description: List of team match statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerTeamMatchStats'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /mls/v1/odds:
+    get:
+      summary: Get MLS betting odds
+      description: Retrieve betting odds for MLS matches. Supports filtering by match IDs or dates. MLS odds include moneyline odds for home, away, and draw outcomes only (no spreads or totals). Supports pagination.
+      tags: [MLS]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by specific dates (YYYY-MM-DD format)
+      responses:
+        "200":
+          description: MLS betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /mls/v1/odds/player_props:
+    get:
+      summary: Get MLS player prop betting odds
+      description: |
+        Retrieve live player prop betting data for MLS matches. Player prop data is LIVE and updated in real-time.
+        We do not store historical data. As matches near completion, many (or all) player props may be removed from sportsbooks.
+
+        **Note:** This endpoint returns all player props for the specified match in a single response. Pagination is not supported.
+
+        The API supports two market types:
+        - **over_under**: Traditional over/under markets where users can bet on whether a player will go over or under a specific line value
+        - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
+
+        Available vendors: draftkings, fanduel, caesars (more coming soon!)
+      tags: [MLS]
+      parameters:
+        - name: match_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The match ID to retrieve player props for (required)
+      responses:
+        "200":
+          description: MLS player prop betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerPlayerProp"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  # PGA Tour Endpoints
+  /pga/v1/players:
+    get:
+      summary: Get PGA Tour players
+      description: Retrieve PGA Tour players with optional filters. Free tier.
+      tags: [PGA Tour]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+        - name: first_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by first name
+        - name: last_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by last name
+        - name: country
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by country
+        - name: active
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter by active status
+      responses:
+        "200":
+          description: List of PGA Tour players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGAPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /pga/v1/tournaments:
+    get:
+      summary: Get PGA Tour tournaments
+      description: Retrieve PGA Tour tournaments with optional filters. Free tier.
+      tags: [PGA Tour]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by status (COMPLETED, IN_PROGRESS, SCHEDULED)
+      responses:
+        "200":
+          description: List of PGA Tour tournaments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGATournament"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /pga/v1/courses:
+    get:
+      summary: Get PGA Tour courses
+      description: Retrieve golf courses with optional filters. Free tier.
+      tags: [PGA Tour]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: course_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by course IDs
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by course name
+      responses:
+        "200":
+          description: List of golf courses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGACourse"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /pga/v1/tournament_results:
+    get:
+      summary: Get PGA tournament results
+      description: Retrieve tournament leaderboard/results. Requires ALL-STAR tier.
+      tags: [PGA Tour]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+      responses:
+        "200":
+          description: Tournament results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGATournamentResult"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /pga/v1/tournament_course_stats:
+    get:
+      summary: Get tournament course statistics
+      description: Retrieve hole-by-hole tournament statistics. Requires ALL-STAR tier.
+      tags: [PGA Tour]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - name: course_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by course IDs
+        - name: hole_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by hole number (1-18)
+        - name: round_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by round number (1-4)
+      responses:
+        "200":
+          description: Tournament course statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGATournamentCourseStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /pga/v1/course_holes:
+    get:
+      summary: Get course holes
+      description: Retrieve hole-by-hole course information. Requires ALL-STAR tier.
+      tags: [PGA Tour]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: course_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by course IDs
+        - name: hole_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by hole number (1-18)
+      responses:
+        "200":
+          description: Course holes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGACourseHole"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /pga/v1/player_round_results:
+    get:
+      summary: Get player round results
+      description: Retrieve round-by-round player scores. Requires GOAT tier.
+      tags: [PGA Tour]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: round_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by round number (1-4)
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+      responses:
+        "200":
+          description: Player round results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGAPlayerRoundResult"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /pga/v1/player_round_stats:
+    get:
+      summary: Get player round statistics
+      description: Retrieve detailed player round statistics including strokes gained. Use round_number=-1 for tournament totals. Requires GOAT tier.
+      tags: [PGA Tour]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: round_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by round number (1-4, -1 for tournament total)
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+      responses:
+        "200":
+          description: Player round statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGAPlayerRoundStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /pga/v1/player_season_stats:
+    get:
+      summary: Get player season statistics
+      description: Retrieve player season-level statistics. Requires GOAT tier.
+      tags: [PGA Tour]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year (required)
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: stat_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by stat category IDs
+      responses:
+        "200":
+          description: Player season statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGAPlayerSeasonStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /pga/v1/player_scorecards:
+    get:
+      summary: Get player scorecards
+      description: Retrieve hole-by-hole player scores. Requires GOAT tier.
+      tags: [PGA Tour]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: round_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by round number (1-4)
+        - name: hole_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by hole number (1-18)
+      responses:
+        "200":
+          description: Player scorecards
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGAPlayerScorecard"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
         "429":
           $ref: "#/components/responses/RateLimitError"
         "500":

@@ -23,6 +23,8 @@ import { createSerieATools } from "./tools/seriea.js";
 import { createUCLTools } from "./tools/ucl.js";
 import { createBundesligaTools } from "./tools/bundesliga.js";
 import { createLigue1Tools } from "./tools/ligue1.js";
+import { createMLSTools } from "./tools/mls.js";
+import { createPGATools } from "./tools/pga.js";
 import { MCPTool } from "./types.js";
 
 const app = express();
@@ -60,6 +62,8 @@ async function initializeTools() {
       ...createUCLTools(apiClient),
       ...createBundesligaTools(apiClient),
       ...createLigue1Tools(apiClient),
+      ...createMLSTools(apiClient),
+      ...createPGATools(apiClient),
     ];
 
     allTools.forEach((tool) => {

@@ -289,3 +289,54 @@ export const soccerFuturesOddsSchema = {
   properties: {},
   additionalProperties: false,
 };
+
+// MLS-specific schema for teams (season is optional, defaults to current)
+export const mlsTeamsSchema = {
+  type: "object",
+  properties: {
+    season: {
+      type: "number",
+      description: "Season year (optional, defaults to current season)",
+    },
+  },
+  additionalProperties: false,
+};
+
+// MLS-specific schema for players (no season required)
+export const mlsPlayersSchema = {
+  type: "object",
+  properties: {
+    team_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by team IDs",
+    },
+    search: {
+      type: "string",
+      description: "Search players by name",
+    },
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
+  },
+  additionalProperties: false,
+};
+
+// MLS-specific schema for standings (season is optional)
+export const mlsStandingsSchema = {
+  type: "object",
+  properties: {
+    season: {
+      type: "number",
+      description: "Season year (optional)",
+    },
+  },
+  additionalProperties: false,
+};

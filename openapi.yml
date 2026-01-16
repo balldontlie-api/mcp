@@ -3,7 +3,7 @@ info:
   title: BALLDONTLIE
   version: "1.0.0"
   description: |
-    API for accessing NBA, NFL, MLB, NCAAF, NCAAB, EPL, NHL, WNBA, MMA, CS2, LOL, Dota 2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, Ligue 1, MLS, and PGA Tour statistics and data.
+    API for accessing NBA, NFL, MLB, NCAAF, NCAAB, EPL, NHL, WNBA, MMA, CS2, LOL, Dota 2, FIFA World Cup 2026, La Liga, Serie A, UEFA Champions League, Bundesliga, Ligue 1, MLS, PGA Tour, and ATP Tennis statistics and data.
     Includes comprehensive endpoints for teams, players, games, statistics, and more.
 
 servers:
@@ -7542,6 +7542,369 @@ components:
           type: integer
           nullable: true
           description: Player score on the hole
+
+    # ATP Tennis Schemas (Men's Singles Only)
+    ATPPlayer:
+      type: object
+      description: ATP tennis player (men's singles only)
+      properties:
+        id:
+          type: integer
+          description: Player ID
+        first_name:
+          type: string
+          nullable: true
+          description: Player first name
+        last_name:
+          type: string
+          nullable: true
+          description: Player last name
+        full_name:
+          type: string
+          nullable: true
+          description: Player full name
+        country:
+          type: string
+          nullable: true
+          description: Player country
+        country_code:
+          type: string
+          nullable: true
+          description: Player country code (e.g., ESP, ITA)
+        birth_place:
+          type: string
+          nullable: true
+          description: Player birth place
+        age:
+          type: integer
+          nullable: true
+          description: Player age
+        height_cm:
+          type: integer
+          nullable: true
+          description: Player height in centimeters
+        weight_kg:
+          type: integer
+          nullable: true
+          description: Player weight in kilograms
+        plays:
+          type: string
+          nullable: true
+          description: Playing hand (e.g., Right-Handed)
+        turned_pro:
+          type: integer
+          nullable: true
+          description: Year player turned professional
+
+    ATPTournament:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Tournament ID
+        name:
+          type: string
+          nullable: true
+          description: Tournament name
+        location:
+          type: string
+          nullable: true
+          description: Tournament location
+        surface:
+          type: string
+          nullable: true
+          description: Court surface (Hard, Clay, Grass, Carpet)
+        category:
+          type: string
+          nullable: true
+          description: Tournament category (Grand Slam, ATP 1000, ATP 500, ATP 250)
+        season:
+          type: integer
+          nullable: true
+          description: Tournament season year
+        start_date:
+          type: string
+          format: date
+          nullable: true
+          description: Tournament start date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+          description: Tournament end date
+        prize_money:
+          type: integer
+          nullable: true
+          description: Total prize money
+        prize_currency:
+          type: string
+          nullable: true
+          description: Prize money currency
+        draw_size:
+          type: integer
+          nullable: true
+          description: Number of players in draw
+
+    ATPRanking:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Ranking ID
+        player:
+          $ref: "#/components/schemas/ATPPlayer"
+        rank:
+          type: integer
+          description: Current ATP ranking
+        points:
+          type: integer
+          description: ATP ranking points
+        movement:
+          type: integer
+          nullable: true
+          description: Ranking change from previous week
+        ranking_date:
+          type: string
+          format: date
+          description: Date of ranking
+
+    ATPMatch:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Match ID
+        tournament:
+          $ref: "#/components/schemas/ATPTournament"
+        season:
+          type: integer
+          description: Match season year
+        round:
+          type: string
+          nullable: true
+          description: Match round (Finals, Semi-Finals, etc.)
+        player1:
+          $ref: "#/components/schemas/ATPPlayer"
+        player2:
+          $ref: "#/components/schemas/ATPPlayer"
+        winner:
+          $ref: "#/components/schemas/ATPPlayer"
+          nullable: true
+        score:
+          type: string
+          nullable: true
+          description: Match score (e.g., 6-3 6-4 7-5)
+        duration:
+          type: string
+          nullable: true
+          description: Match duration (e.g., 02:35:00)
+        number_of_sets:
+          type: integer
+          nullable: true
+          description: Number of sets played
+        match_status:
+          type: string
+          nullable: true
+          description: Match status (F for finished)
+        is_live:
+          type: boolean
+          description: Whether match is currently live
+
+    ATPRace:
+      type: object
+      description: ATP Race to Turin standings
+      properties:
+        id:
+          type: integer
+          description: Race entry ID
+        player:
+          $ref: "#/components/schemas/ATPPlayer"
+        ranking_date:
+          type: string
+          format: date
+          description: Date of standings
+        rank:
+          type: integer
+          description: Current race position
+        points:
+          type: integer
+          description: Year-to-date points
+        movement:
+          type: integer
+          description: Position change
+        is_qualified:
+          type: boolean
+          description: Whether player has qualified for ATP Finals
+
+    ATPMatchStats:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Stats ID
+        match:
+          type: object
+          properties:
+            id:
+              type: integer
+            tournament_id:
+              type: integer
+            season:
+              type: integer
+            round:
+              type: string
+              nullable: true
+            player1_id:
+              type: integer
+            player2_id:
+              type: integer
+            winner_id:
+              type: integer
+              nullable: true
+        player:
+          $ref: "#/components/schemas/ATPPlayer"
+        set_number:
+          type: integer
+          nullable: true
+          description: Set number (0 for full match stats)
+        serve_rating:
+          type: integer
+          nullable: true
+          description: Serve rating
+        aces:
+          type: integer
+          nullable: true
+          description: Number of aces
+        double_faults:
+          type: integer
+          nullable: true
+          description: Number of double faults
+        first_serve_pct:
+          type: number
+          nullable: true
+          description: First serve percentage
+        first_serve_points_won_pct:
+          type: number
+          nullable: true
+          description: First serve points won percentage
+        second_serve_points_won_pct:
+          type: number
+          nullable: true
+          description: Second serve points won percentage
+        break_points_saved_pct:
+          type: number
+          nullable: true
+          description: Break points saved percentage
+        return_rating:
+          type: integer
+          nullable: true
+          description: Return rating
+        first_return_won_pct:
+          type: number
+          nullable: true
+          description: First return points won percentage
+        second_return_won_pct:
+          type: number
+          nullable: true
+          description: Second return points won percentage
+        break_points_converted_pct:
+          type: number
+          nullable: true
+          description: Break points converted percentage
+        total_service_points_won_pct:
+          type: number
+          nullable: true
+          description: Total service points won percentage
+        total_return_points_won_pct:
+          type: number
+          nullable: true
+          description: Total return points won percentage
+        total_points_won_pct:
+          type: number
+          nullable: true
+          description: Total points won percentage
+
+    ATPPlayerCareerStats:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/ATPPlayer"
+        career_titles:
+          type: integer
+          nullable: true
+          description: Total career titles
+        career_prize_money:
+          type: number
+          nullable: true
+          description: Total career prize money
+        singles_wins:
+          type: integer
+          nullable: true
+          description: Career singles wins
+        singles_losses:
+          type: integer
+          nullable: true
+          description: Career singles losses
+        ytd_wins:
+          type: integer
+          nullable: true
+          description: Year-to-date wins
+        ytd_losses:
+          type: integer
+          nullable: true
+          description: Year-to-date losses
+        ytd_titles:
+          type: integer
+          nullable: true
+          description: Year-to-date titles
+
+    ATPHeadToHead:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Head-to-head record ID
+        player1:
+          $ref: "#/components/schemas/ATPPlayer"
+        player2:
+          $ref: "#/components/schemas/ATPPlayer"
+        player1_wins:
+          type: integer
+          description: Player 1 wins in head-to-head
+        player2_wins:
+          type: integer
+          description: Player 2 wins in head-to-head
+
+    ATPBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Odds ID
+        match_id:
+          type: integer
+          description: Match ID
+        vendor:
+          type: string
+          description: Sportsbook vendor (draftkings, fanduel, caesars)
+        player1:
+          $ref: "#/components/schemas/ATPPlayer"
+          nullable: true
+        player2:
+          $ref: "#/components/schemas/ATPPlayer"
+          nullable: true
+        player1_odds:
+          type: integer
+          nullable: true
+          description: Player 1 moneyline odds (American format)
+        player2_odds:
+          type: integer
+          nullable: true
+          description: Player 2 moneyline odds (American format)
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
 
   parameters:
     CursorParam:
@@ -19576,6 +19939,528 @@ paths:
                       $ref: "#/components/schemas/PGAPlayerScorecard"
                   meta:
                     $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  # ATP Tennis Endpoints (Men's Singles Only)
+  /atp/v1/players:
+    get:
+      summary: Get ATP players
+      description: Retrieve ATP tennis players with optional filters. Men's singles only. Free tier.
+      tags: [ATP Tennis]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+        - name: first_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by first name
+        - name: last_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by last name
+        - name: country
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by country
+        - name: country_code
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by country code (e.g., ESP, ITA)
+      responses:
+        "200":
+          description: List of ATP players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ATPPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /atp/v1/players/{id}:
+    get:
+      summary: Get specific ATP player
+      description: Retrieve a single ATP player by ID. Free tier.
+      tags: [ATP Tennis]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Player ID
+      responses:
+        "200":
+          description: ATP player details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ATPPlayer"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /atp/v1/tournaments:
+    get:
+      summary: Get ATP tournaments
+      description: Retrieve ATP tournaments with optional filters. Free tier.
+      tags: [ATP Tennis]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+        - name: surface
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by surface (Hard, Clay, Grass, Carpet)
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by category (Grand Slam, ATP 1000, etc.)
+      responses:
+        "200":
+          description: List of ATP tournaments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ATPTournament"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /atp/v1/tournaments/{id}:
+    get:
+      summary: Get specific ATP tournament
+      description: Retrieve a single ATP tournament by ID. Free tier.
+      tags: [ATP Tennis]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tournament ID
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Get tournament info for specific season year
+      responses:
+        "200":
+          description: ATP tournament details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ATPTournament"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /atp/v1/rankings:
+    get:
+      summary: Get ATP rankings
+      description: Retrieve current ATP rankings. Free tier.
+      tags: [ATP Tennis]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Get rankings for specific date (YYYY-MM-DD)
+      responses:
+        "200":
+          description: ATP rankings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ATPRanking"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /atp/v1/matches:
+    get:
+      summary: Get ATP matches
+      description: Retrieve ATP matches with optional filters. Requires ALL-STAR tier.
+      tags: [ATP Tennis]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+        - name: round
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by round (Finals, Semi-Finals, etc.)
+        - name: is_live
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter for live matches only
+      responses:
+        "200":
+          description: List of ATP matches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ATPMatch"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /atp/v1/matches/{id}:
+    get:
+      summary: Get specific ATP match
+      description: Retrieve a single ATP match by ID. Requires ALL-STAR tier.
+      tags: [ATP Tennis]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Match ID
+      responses:
+        "200":
+          description: ATP match details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ATPMatch"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /atp/v1/atp_race:
+    get:
+      summary: Get ATP Race to Turin
+      description: Retrieve ATP Race standings for season-ending ATP Finals qualification. Requires ALL-STAR tier.
+      tags: [ATP Tennis]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Get standings for specific date (YYYY-MM-DD)
+      responses:
+        "200":
+          description: ATP Race standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ATPRace"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /atp/v1/match_stats:
+    get:
+      summary: Get ATP match statistics
+      description: Retrieve detailed match statistics. Requires GOAT tier.
+      tags: [ATP Tennis]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by match IDs
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: set_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by set number (0 for full match stats)
+      responses:
+        "200":
+          description: Match statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ATPMatchStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /atp/v1/player_career_stats:
+    get:
+      summary: Get ATP player career statistics
+      description: Retrieve career statistics for players. Requires GOAT tier.
+      tags: [ATP Tennis]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+      responses:
+        "200":
+          description: Player career statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ATPPlayerCareerStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /atp/v1/head_to_head:
+    get:
+      summary: Get ATP head-to-head record
+      description: Retrieve head-to-head record between two players. Requires GOAT tier.
+      tags: [ATP Tennis]
+      parameters:
+        - name: player1_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: First player ID
+        - name: player2_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Second player ID
+      responses:
+        "200":
+          description: Head-to-head record
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ATPHeadToHead"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /atp/v1/odds:
+    get:
+      summary: Get ATP betting odds
+      description: Retrieve betting odds for ATP matches. Requires at least one filter. Requires GOAT tier.
+      tags: [ATP Tennis]
+      parameters:
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by match IDs
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+      responses:
+        "200":
+          description: Betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ATPBettingOdd"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "400":

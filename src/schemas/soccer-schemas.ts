@@ -290,6 +290,87 @@ export const soccerFuturesOddsSchema = {
   additionalProperties: false,
 };
 
+// EPL v2-specific schema for teams (season is optional, defaults to current)
+export const eplV2TeamsSchema = {
+  type: "object",
+  properties: {
+    season: {
+      type: "number",
+      description: "Season year (optional, defaults to current season)",
+    },
+  },
+  additionalProperties: false,
+};
+
+// EPL v2-specific schema for players (no season required)
+export const eplV2PlayersSchema = {
+  type: "object",
+  properties: {
+    team_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by team IDs",
+    },
+    search: {
+      type: "string",
+      description: "Search players by name",
+    },
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
+  },
+  additionalProperties: false,
+};
+
+// EPL v2-specific schema for standings (season is optional)
+export const eplV2StandingsSchema = {
+  type: "object",
+  properties: {
+    season: {
+      type: "number",
+      description: "Season year (optional)",
+    },
+  },
+  additionalProperties: false,
+};
+
+// EPL v2-specific schema for rosters (team_id required, season optional)
+export const eplV2RostersSchema = {
+  type: "object",
+  properties: {
+    team_id: {
+      type: "number",
+      description: "Team ID (required)",
+    },
+    season: {
+      type: "number",
+      description: "Season year (optional)",
+    },
+  },
+  required: ["team_id"],
+  additionalProperties: false,
+};
+
+// EPL v2-specific schema for player props (match_id required, no player_id or prop_type filters)
+export const eplV2PlayerPropsSchema = {
+  type: "object",
+  properties: {
+    match_id: {
+      type: "number",
+      description: "The match ID to retrieve player props for (required)",
+    },
+  },
+  required: ["match_id"],
+  additionalProperties: false,
+};
+
 // MLS-specific schema for teams (season is optional, defaults to current)
 export const mlsTeamsSchema = {
   type: "object",

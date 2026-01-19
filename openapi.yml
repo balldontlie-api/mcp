@@ -11582,8 +11582,13 @@ paths:
 
   /epl/v1/games:
     get:
-      summary: Get EPL games
-      tags: [EPL]
+      summary: "[DEPRECATED] Get EPL games"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated. Please use `/epl/v2/matches` instead.
+
+        Get EPL games with optional filtering.
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/PerPageParam'
@@ -11625,8 +11630,13 @@ paths:
 
   /epl/v1/games/{id}/lineups:
     get:
-      summary: Get lineups for an EPL game
-      tags: [EPL]
+      summary: "[DEPRECATED] Get lineups for an EPL game"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated. Please use `/epl/v2/match_lineups` instead.
+
+        Get lineups for a specific EPL game.
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - name: id
           in: path
@@ -11657,8 +11667,13 @@ paths:
 
   /epl/v1/games/{id}/goals:
     get:
-      summary: Get goals for an EPL game
-      tags: [EPL]
+      summary: "[DEPRECATED] Get goals for an EPL game"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated. Please use `/epl/v2/match_events` instead.
+
+        Get goals for a specific EPL game.
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - name: id
           in: path
@@ -11689,8 +11704,13 @@ paths:
 
   /epl/v1/games/{id}/team_stats:
     get:
-      summary: Get team statistics for an EPL game
-      tags: [EPL]
+      summary: "[DEPRECATED] Get team statistics for an EPL game"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated. Please use `/epl/v2/team_match_stats` instead.
+
+        Get team statistics for a specific EPL game.
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - name: id
           in: path
@@ -11719,8 +11739,13 @@ paths:
 
   /epl/v1/games/{id}/player_stats:
     get:
-      summary: Get player statistics for an EPL game
-      tags: [EPL]
+      summary: "[DEPRECATED] Get player statistics for an EPL game"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated. Please use `/epl/v2/player_match_stats` instead.
+
+        Get player statistics for a specific EPL game.
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - name: id
           in: path
@@ -11749,8 +11774,13 @@ paths:
 
   /epl/v1/players:
         get:
-          summary: Get EPL players
-          tags: [EPL]
+          summary: "[DEPRECATED] Get EPL players"
+          description: |
+            **DEPRECATED**: This endpoint is deprecated. Please use `/epl/v2/players` instead.
+
+            Get EPL players with optional filtering.
+          deprecated: true
+          tags: [EPL v1 (Deprecated)]
           parameters:
           - $ref: "#/components/parameters/CursorParam"
           - $ref: "#/components/parameters/PerPageParam"
@@ -11801,8 +11831,13 @@ paths:
 
   /epl/v1/players/{id}/season_stats:
     get:
-      summary: Get season statistics for an EPL player
-      tags: [EPL]
+      summary: "[DEPRECATED] Get season statistics for an EPL player"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated and has no v2 equivalent.
+
+        Get season statistics for a specific EPL player.
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - name: id
           in: path
@@ -11834,8 +11869,13 @@ paths:
 
   /epl/v1/player_stats/leaders:
     get:
-      summary: Get EPL player statistics leaders
-      tags: [EPL]
+      summary: "[DEPRECATED] Get EPL player statistics leaders"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated and has no v2 equivalent.
+
+        Get EPL player statistics leaders.
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/PerPageParam'
@@ -11871,8 +11911,13 @@ paths:
 
   /epl/v1/team_stats/leaders:
     get:
-      summary: Get EPL team statistics leaders
-      tags: [EPL]
+      summary: "[DEPRECATED] Get EPL team statistics leaders"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated and has no v2 equivalent.
+
+        Get EPL team statistics leaders.
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/PerPageParam'
@@ -11908,8 +11953,13 @@ paths:
 
   /epl/v1/standings:
         get:
-          summary: Get EPL standings
-          tags: [EPL]
+          summary: "[DEPRECATED] Get EPL standings"
+          description: |
+            **DEPRECATED**: This endpoint is deprecated. Please use `/epl/v2/standings` instead.
+
+            Get EPL standings.
+          deprecated: true
+          tags: [EPL v1 (Deprecated)]
           parameters:
             - $ref: '#/components/parameters/SeasonParam'
           responses:
@@ -11935,8 +11985,13 @@ paths:
 
   /epl/v1/teams:
     get:
-      summary: Get EPL teams
-      tags: [EPL]
+      summary: "[DEPRECATED] Get EPL teams"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated. Please use `/epl/v2/teams` instead.
+
+        Get EPL teams.
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - $ref: '#/components/parameters/SeasonParam'
       responses:
@@ -11962,8 +12017,13 @@ paths:
 
   /epl/v1/teams/{id}/players:
     get:
-      summary: Get players for an EPL team
-      tags: [EPL]
+      summary: "[DEPRECATED] Get players for an EPL team"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated. Please use `/epl/v2/rosters` instead.
+
+        Get players for a specific EPL team.
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - name: id
           in: path
@@ -11995,8 +12055,13 @@ paths:
 
   /epl/v1/teams/{id}/season_stats:
     get:
-      summary: Get season statistics for an EPL team
-      tags: [EPL]
+      summary: "[DEPRECATED] Get season statistics for an EPL team"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated and has no v2 equivalent.
+
+        Get season statistics for a specific EPL team.
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - name: id
           in: path
@@ -12028,9 +12093,13 @@ paths:
 
   /epl/v1/odds:
     get:
-      summary: Get EPL betting odds
-      description: Retrieve betting odds for EPL games. Either (season and week) or game_ids is required. EPL odds include moneyline odds for home, away, and draw outcomes only (no spreads or totals).
-      tags: [EPL]
+      summary: "[DEPRECATED] Get EPL betting odds"
+      description: |
+        **DEPRECATED**: This endpoint is deprecated. Please use `/epl/v2/odds` instead.
+
+        Retrieve betting odds for EPL games. Either (season and week) or game_ids is required. EPL odds include moneyline odds for home, away, and draw outcomes only (no spreads or totals).
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - $ref: "#/components/parameters/CursorParam"
         - $ref: "#/components/parameters/PerPageParam"
@@ -12081,8 +12150,10 @@ paths:
 
   /epl/v1/odds/player_props:
     get:
-      summary: Get EPL player prop betting odds
+      summary: "[DEPRECATED] Get EPL player prop betting odds"
       description: |
+        **DEPRECATED**: This endpoint is deprecated. Please use `/epl/v2/odds/player_props` instead.
+
         Retrieve live player prop betting data for EPL games. Player prop data is LIVE and updated in real-time.
         We do not store historical data. As games near completion, many (or all) player props may be removed from sportsbooks.
 
@@ -12093,7 +12164,8 @@ paths:
         - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
 
         Available vendors: draftkings, fanduel, caesars (more coming soon!)
-      tags: [EPL]
+      deprecated: true
+      tags: [EPL v1 (Deprecated)]
       parameters:
         - name: game_id
           in: query
@@ -12137,6 +12209,498 @@ paths:
                       $ref: "#/components/schemas/EPLPlayerProp"
                   meta:
                     $ref: "#/components/schemas/PlayerPropMeta"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  # EPL v2 Endpoints (Current)
+  # Uses shared Soccer schema - same structure as La Liga, Serie A, etc.
+
+  /epl/v2/teams:
+    get:
+      summary: Get EPL teams
+      description: Get all teams participating in the English Premier League for a given season
+      tags: [EPL]
+      parameters:
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year. Defaults to the current season if omitted.
+      responses:
+        "200":
+          description: List of EPL teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerTeam'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /epl/v2/rosters:
+    get:
+      summary: Get EPL team rosters
+      description: Get player roster information for a specific team and season
+      tags: [EPL]
+      parameters:
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+      responses:
+        "200":
+          description: Team roster
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerRoster'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /epl/v2/players:
+    get:
+      summary: Get EPL players
+      description: Get players with optional filtering by team or search term. Supports pagination.
+      tags: [EPL]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search players by name
+      responses:
+        "200":
+          description: List of EPL players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerPlayer'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /epl/v2/standings:
+    get:
+      summary: Get EPL standings
+      description: Get league standings for a specific season
+      tags: [EPL]
+      parameters:
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+      responses:
+        "200":
+          description: League standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerStanding'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /epl/v2/matches:
+    get:
+      summary: Get EPL matches
+      description: Get matches with optional filtering by season, dates, or teams. Supports pagination.
+      tags: [EPL]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by specific dates (YYYY-MM-DD format)
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+      responses:
+        "200":
+          description: List of matches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerMatch'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /epl/v2/match_events:
+    get:
+      summary: Get EPL match events
+      description: Get events (goals, cards, substitutions) for matches. Supports pagination.
+      tags: [EPL]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+      responses:
+        "200":
+          description: List of match events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerMatchEvent'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /epl/v2/match_lineups:
+    get:
+      summary: Get EPL match lineups
+      description: Get player lineups for matches. Supports pagination.
+      tags: [EPL]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+      responses:
+        "200":
+          description: Match lineups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerMatchLineup'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /epl/v2/player_match_stats:
+    get:
+      summary: Get EPL player match statistics
+      description: Get individual player statistics for matches. Supports pagination.
+      tags: [EPL]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+        - name: player_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by player IDs
+      responses:
+        "200":
+          description: Player match statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerPlayerMatchStats'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /epl/v2/team_match_stats:
+    get:
+      summary: Get EPL team match statistics
+      description: Get team-level statistics for matches. Supports pagination.
+      tags: [EPL]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+      responses:
+        "200":
+          description: Team match statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerTeamMatchStats'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /epl/v2/odds:
+    get:
+      summary: Get EPL betting odds
+      description: Get betting odds for EPL matches. Filter by match IDs or dates. Supports pagination.
+      tags: [EPL]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by specific dates (YYYY-MM-DD format)
+      responses:
+        "200":
+          description: Betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerBettingOdd'
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "429":
+          $ref: '#/components/responses/RateLimitError'
+        "500":
+          $ref: '#/components/responses/ServerError'
+
+  /epl/v2/odds/player_props:
+    get:
+      summary: Get EPL player prop betting odds
+      description: |
+        Retrieve live player prop betting data for EPL matches. Player prop data is LIVE and updated in real-time.
+        We do not store historical data. As matches near completion, many (or all) player props may be removed from sportsbooks.
+
+        **Note:** This endpoint returns all player props for the specified match in a single response. Pagination is not supported.
+
+        The API supports two market types:
+        - **over_under**: Traditional over/under markets where users can bet on whether a player will go over or under a specific line value
+        - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
+
+        Available vendors: draftkings, fanduel, caesars (more coming soon!)
+      tags: [EPL]
+      parameters:
+        - name: match_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The match ID to retrieve player props for (required)
+      responses:
+        "200":
+          description: Player prop betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SoccerPlayerProp'
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":

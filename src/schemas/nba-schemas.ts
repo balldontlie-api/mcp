@@ -522,3 +522,58 @@ export const nbaTeamSeasonAveragesSchema = {
   required: ["category", "season", "season_type"],
   additionalProperties: false,
 };
+
+export const nbaAdvancedStatsV2Schema = {
+  type: "object",
+  properties: {
+    player_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by player IDs",
+    },
+    game_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by game IDs",
+    },
+    dates: {
+      type: "array",
+      items: { type: "string", format: "date" },
+      description: "Filter by specific dates (YYYY-MM-DD format)",
+    },
+    start_date: {
+      type: "string",
+      format: "date",
+      description: "Start date for filtering (YYYY-MM-DD)",
+    },
+    end_date: {
+      type: "string",
+      format: "date",
+      description: "End date for filtering (YYYY-MM-DD)",
+    },
+    seasons: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by seasons",
+    },
+    postseason: {
+      type: "boolean",
+      description: "Filter for postseason games only",
+    },
+    period: {
+      type: "number",
+      description: "Filter by game period (0 for full game stats)",
+    },
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
+  },
+  additionalProperties: false,
+};

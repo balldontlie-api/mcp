@@ -27,6 +27,7 @@ import { createMLSTools } from "./tools/mls.js";
 import { createPGATools } from "./tools/pga.js";
 import { createATPTools } from "./tools/atp.js";
 import { createWTATools } from "./tools/wta.js";
+import { createF1Tools } from "./tools/f1.js";
 import { MCPTool } from "./types.js";
 
 const app = express();
@@ -68,6 +69,7 @@ async function initializeTools() {
       ...createPGATools(apiClient),
       ...createATPTools(apiClient),
       ...createWTATools(apiClient),
+      ...createF1Tools(apiClient),
     ];
 
     allTools.forEach((tool) => {

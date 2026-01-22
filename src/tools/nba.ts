@@ -130,6 +130,19 @@ export function createNBATools(apiClient: APIClient): MCPTool[] {
     },
 
     {
+      name: "nba_get_advanced_stats_v2",
+      description: "Get comprehensive NBA advanced statistics (V2) including tracking data, hustle stats, defensive matchups, and usage analytics. Includes data from box score advanced, misc, scoring, four factors, hustle stats, defensive matchups, player tracking, and usage stats.",
+      inputSchema: schemas.nbaAdvancedStatsV2Schema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/nba/v2/stats/advanced",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
       name: "nba_get_box_scores",
       description: "Get NBA game box scores with detailed player statistics",
       inputSchema: schemas.nbaBoxScoresSchema,

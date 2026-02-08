@@ -5621,6 +5621,626 @@ components:
           format: date-time
           description: Last update timestamp
 
+    # NCAAW Components
+    NCAAWConference:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          type: string
+
+    NCAAWTeam:
+      type: object
+      properties:
+        id:
+          type: integer
+        conference_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        full_name:
+          type: string
+        college:
+          type: string
+          nullable: true
+        abbreviation:
+          type: string
+          nullable: true
+
+    NCAAWPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        position:
+          type: string
+          nullable: true
+        height:
+          type: string
+          nullable: true
+        jersey_number:
+          type: string
+          nullable: true
+        team:
+          $ref: '#/components/schemas/NCAAWTeam'
+
+    NCAAWGame:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        season:
+          type: integer
+          description: Season year (note - API accepts and returns season year that is 1 less than DB storage)
+        status:
+          type: string
+          nullable: true
+        period:
+          type: integer
+        period_detail:
+          type: string
+          nullable: true
+        home_team:
+          $ref: '#/components/schemas/NCAAWTeam'
+        visitor_team:
+          $ref: '#/components/schemas/NCAAWTeam'
+        home_score:
+          type: integer
+        away_score:
+          type: integer
+        home_score_q1:
+          type: integer
+          nullable: true
+          description: Home team score in first quarter
+        away_score_q1:
+          type: integer
+          nullable: true
+          description: Away team score in first quarter
+        home_score_q2:
+          type: integer
+          nullable: true
+          description: Home team score in second quarter
+        away_score_q2:
+          type: integer
+          nullable: true
+          description: Away team score in second quarter
+        home_score_q3:
+          type: integer
+          nullable: true
+          description: Home team score in third quarter
+        away_score_q3:
+          type: integer
+          nullable: true
+          description: Away team score in third quarter
+        home_score_q4:
+          type: integer
+          nullable: true
+          description: Home team score in fourth quarter
+        away_score_q4:
+          type: integer
+          nullable: true
+          description: Away team score in fourth quarter
+        home_score_ot:
+          type: integer
+          nullable: true
+          description: Home team total overtime score
+        away_score_ot:
+          type: integer
+          nullable: true
+          description: Away team total overtime score
+        home_ot_scores:
+          type: array
+          items:
+            type: integer
+          nullable: true
+          description: Array of home team scores for each overtime period
+        away_ot_scores:
+          type: array
+          items:
+            type: integer
+          nullable: true
+          description: Array of away team scores for each overtime period
+
+    NCAAWStanding:
+      type: object
+      properties:
+        team:
+          $ref: '#/components/schemas/NCAAWTeam'
+        conference:
+          $ref: '#/components/schemas/NCAAWConference'
+        season:
+          type: integer
+          description: Season year (note - API accepts and returns season year that is 1 less than DB storage)
+        wins:
+          type: integer
+        losses:
+          type: integer
+        win_percentage:
+          type: number
+          nullable: true
+        conference_win_percentage:
+          type: number
+          nullable: true
+        games_behind:
+          type: number
+          nullable: true
+        home_record:
+          type: string
+          nullable: true
+        away_record:
+          type: string
+          nullable: true
+        conference_record:
+          type: string
+          nullable: true
+        playoff_seed:
+          type: integer
+          nullable: true
+
+    NCAAWRanking:
+      type: object
+      properties:
+        poll:
+          type: string
+          nullable: true
+          description: Poll name (ap or coach)
+        team:
+          $ref: '#/components/schemas/NCAAWTeam'
+        season:
+          type: integer
+          description: Season year (note - API accepts and returns season year that is 1 less than DB storage)
+        week:
+          type: integer
+        rank:
+          type: integer
+        first_place_votes:
+          type: integer
+          nullable: true
+        trend:
+          type: string
+          nullable: true
+        points:
+          type: integer
+          nullable: true
+        record:
+          type: string
+          nullable: true
+
+    NCAAWPlayerStat:
+      type: object
+      properties:
+        player:
+          $ref: '#/components/schemas/NCAAWPlayer'
+        team:
+          $ref: '#/components/schemas/NCAAWTeam'
+        game:
+          type: object
+          properties:
+            id:
+              type: integer
+            date:
+              type: string
+              format: date-time
+            season:
+              type: integer
+        min:
+          type: string
+          nullable: true
+        fgm:
+          type: integer
+          nullable: true
+        fga:
+          type: integer
+          nullable: true
+        fg3m:
+          type: integer
+          nullable: true
+        fg3a:
+          type: integer
+          nullable: true
+        ftm:
+          type: integer
+          nullable: true
+        fta:
+          type: integer
+          nullable: true
+        oreb:
+          type: integer
+          nullable: true
+        dreb:
+          type: integer
+          nullable: true
+        reb:
+          type: integer
+          nullable: true
+        ast:
+          type: integer
+          nullable: true
+        stl:
+          type: integer
+          nullable: true
+        blk:
+          type: integer
+          nullable: true
+        turnover:
+          type: integer
+          nullable: true
+        pf:
+          type: integer
+          nullable: true
+        pts:
+          type: integer
+          nullable: true
+
+    NCAAWTeamStat:
+      type: object
+      properties:
+        team:
+          $ref: '#/components/schemas/NCAAWTeam'
+        game:
+          type: object
+          properties:
+            id:
+              type: integer
+            date:
+              type: string
+              format: date-time
+            season:
+              type: integer
+        fgm:
+          type: integer
+          nullable: true
+        fga:
+          type: integer
+          nullable: true
+        fg_pct:
+          type: number
+          nullable: true
+        fg3m:
+          type: integer
+          nullable: true
+        fg3a:
+          type: integer
+          nullable: true
+        fg3_pct:
+          type: number
+          nullable: true
+        ftm:
+          type: integer
+          nullable: true
+        fta:
+          type: integer
+          nullable: true
+        ft_pct:
+          type: number
+          nullable: true
+        oreb:
+          type: integer
+          nullable: true
+        dreb:
+          type: integer
+          nullable: true
+        reb:
+          type: integer
+          nullable: true
+        ast:
+          type: integer
+          nullable: true
+        stl:
+          type: integer
+          nullable: true
+        blk:
+          type: integer
+          nullable: true
+        turnovers:
+          type: integer
+          nullable: true
+        fouls:
+          type: integer
+          nullable: true
+
+    NCAAWPlayerSeasonStat:
+      type: object
+      properties:
+        player:
+          $ref: '#/components/schemas/NCAAWPlayer'
+        team:
+          $ref: '#/components/schemas/NCAAWTeam'
+        season:
+          type: integer
+          description: Season year (note - API accepts and returns season year that is 1 less than DB storage)
+        games_played:
+          type: integer
+          nullable: true
+        min:
+          type: number
+          nullable: true
+        fgm:
+          type: number
+          nullable: true
+        fga:
+          type: number
+          nullable: true
+        fg_pct:
+          type: number
+          nullable: true
+        fg3m:
+          type: number
+          nullable: true
+        fg3a:
+          type: number
+          nullable: true
+        fg3_pct:
+          type: number
+          nullable: true
+        ftm:
+          type: number
+          nullable: true
+        fta:
+          type: number
+          nullable: true
+        ft_pct:
+          type: number
+          nullable: true
+        reb:
+          type: number
+          nullable: true
+        ast:
+          type: number
+          nullable: true
+        stl:
+          type: number
+          nullable: true
+        blk:
+          type: number
+          nullable: true
+        turnover:
+          type: number
+          nullable: true
+        pts:
+          type: number
+          nullable: true
+
+    NCAAWTeamSeasonStat:
+      type: object
+      properties:
+        team:
+          $ref: '#/components/schemas/NCAAWTeam'
+        season:
+          type: integer
+          description: Season year (note - API accepts and returns season year that is 1 less than DB storage)
+        games_played:
+          type: integer
+          nullable: true
+        fgm:
+          type: number
+          nullable: true
+        fga:
+          type: number
+          nullable: true
+        fg_pct:
+          type: number
+          nullable: true
+        fg3m:
+          type: number
+          nullable: true
+        fg3a:
+          type: number
+          nullable: true
+        fg3_pct:
+          type: number
+          nullable: true
+        ftm:
+          type: number
+          nullable: true
+        fta:
+          type: number
+          nullable: true
+        ft_pct:
+          type: number
+          nullable: true
+        oreb:
+          type: number
+          nullable: true
+        dreb:
+          type: number
+          nullable: true
+        reb:
+          type: number
+          nullable: true
+        ast:
+          type: number
+          nullable: true
+        stl:
+          type: number
+          nullable: true
+        blk:
+          type: number
+          nullable: true
+        turnover:
+          type: number
+          nullable: true
+        pts:
+          type: number
+          nullable: true
+
+    NCAAWPlay:
+      type: object
+      properties:
+        game_id:
+          type: integer
+        order:
+          type: integer
+          description: Play order number (starts at 1 and increments sequentially)
+        type:
+          type: string
+          nullable: true
+        text:
+          type: string
+        home_score:
+          type: integer
+        away_score:
+          type: integer
+        period:
+          type: integer
+        clock:
+          type: string
+          nullable: true
+        scoring_play:
+          type: boolean
+        score_value:
+          type: integer
+          nullable: true
+        team:
+          $ref: '#/components/schemas/NCAAWTeam'
+          nullable: true
+
+    NCAAWBracketTeam:
+      type: object
+      description: Team information in bracket context with seed and game outcome
+      properties:
+        id:
+          type: integer
+          nullable: true
+          description: Team ID (null if TBD or placeholder)
+        conference_id:
+          type: integer
+          nullable: true
+          description: Conference ID
+        name:
+          type: string
+          description: Team name
+        full_name:
+          type: string
+          nullable: true
+          description: Team full display name
+        abbreviation:
+          type: string
+          nullable: true
+          description: Team abbreviation
+        seed:
+          type: string
+          nullable: true
+          description: Tournament seed (e.g., "1", "16")
+        score:
+          type: integer
+          nullable: true
+          description: Team's score in this game
+        winner:
+          type: boolean
+          nullable: true
+          description: Whether this team won the game
+
+    NCAAWBracket:
+      type: object
+      description: NCAA Women's Tournament bracket entry representing a single game
+      properties:
+        game_id:
+          type: integer
+          nullable: true
+          description: Associated game ID (references the games endpoint public ID)
+        season:
+          type: integer
+          description: Season year (offset by -1 from database value)
+        round:
+          type: integer
+          description: Round ID (0=First Four/Play-in, 1=Round of 64, 2=Round of 32, 3=Sweet 16, 4=Elite 8, 5=Final Four, 6=Championship)
+        bracket_location:
+          type: integer
+          nullable: true
+          description: Position in bracket visualization
+        date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Game date and time
+        location:
+          type: string
+          nullable: true
+          description: Physical location/venue of the game
+        status:
+          type: string
+          nullable: true
+          description: Game status (pre, in, post)
+        status_detail:
+          type: string
+          nullable: true
+          description: Detailed status information
+        home_team:
+          allOf:
+            - $ref: '#/components/schemas/NCAAWBracketTeam'
+            - nullable: true
+          description: Home team with tournament seed and game outcome
+        away_team:
+          allOf:
+            - $ref: '#/components/schemas/NCAAWBracketTeam'
+            - nullable: true
+          description: Away team with tournament seed and game outcome
+
+    NCAAWBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Betting odd ID
+        game_id:
+          type: integer
+          description: Game ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        spread_home_value:
+          type: string
+          nullable: true
+          description: Home team spread value
+        spread_home_odds:
+          type: integer
+          nullable: true
+          description: Home team spread odds
+        spread_away_value:
+          type: string
+          nullable: true
+          description: Away team spread value
+        spread_away_odds:
+          type: integer
+          nullable: true
+          description: Away team spread odds
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+          description: Home team moneyline odds
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+          description: Away team moneyline odds
+        total_value:
+          type: string
+          nullable: true
+          description: Total points line value
+        total_over_odds:
+          type: integer
+          nullable: true
+          description: Odds for over total
+        total_under_odds:
+          type: integer
+          nullable: true
+          description: Odds for under total
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
     # MMA Components
     MMALeague:
       type: object
@@ -8150,6 +8770,23 @@ components:
         champion:
           $ref: "#/components/schemas/PGAPlayer"
           nullable: true
+        courses:
+          type: array
+          description: Courses used in this tournament with which rounds they are played
+          items:
+            $ref: "#/components/schemas/PGATournamentCourse"
+
+    PGATournamentCourse:
+      type: object
+      description: A course used in a tournament with the rounds it is played
+      properties:
+        course:
+          $ref: "#/components/schemas/PGACourse"
+        rounds:
+          type: array
+          description: Round numbers this course is used for (e.g., [1,2,3] for first 3 rounds)
+          items:
+            type: integer
 
     PGACourse:
       type: object
@@ -8446,6 +9083,10 @@ components:
           $ref: "#/components/schemas/PGATournament"
         player:
           $ref: "#/components/schemas/PGAPlayer"
+        course:
+          $ref: "#/components/schemas/PGACourse"
+          nullable: true
+          description: Course played for this round (useful for multi-course tournaments)
         round_number:
           type: integer
           description: Round number (1-4)
@@ -16117,6 +16758,782 @@ paths:
         "500":
           $ref: "#/components/responses/ServerError"
 
+
+  /ncaaw/v1/conferences:
+    get:
+      summary: Get NCAAW conferences
+      tags: [NCAAW]
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: List of NCAAW conferences
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWConference"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/conferences/{id}:
+    get:
+      summary: Get specific NCAAW conference
+      tags: [NCAAW]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Conference ID
+      responses:
+        "200":
+          description: Conference details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NCAAWConference"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/teams:
+    get:
+      summary: Get NCAAW teams
+      tags: [NCAAW]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: conference_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by conference ID
+      responses:
+        "200":
+          description: List of NCAAW teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWTeam"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/teams/{id}:
+    get:
+      summary: Get specific NCAAW team
+      tags: [NCAAW]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      responses:
+        "200":
+          description: Team details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NCAAWTeam"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/players:
+    get:
+      summary: Get NCAAW players
+      tags: [NCAAW]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+      responses:
+        "200":
+          description: List of NCAAW players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/players/{id}:
+    get:
+      summary: Get specific NCAAW player
+      tags: [NCAAW]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Player ID
+      responses:
+        "200":
+          description: Player details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NCAAWPlayer"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/players/active:
+    get:
+      summary: Get active NCAAW players
+      tags: [NCAAW]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+      responses:
+        "200":
+          description: List of active NCAAW players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/standings:
+    get:
+      summary: Get NCAAW team standings
+      tags: [NCAAW]
+      description: Get team standings. Note - season values are transformed (user sends 2025, API queries DB for 2026, returns 2025)
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Season year (e.g. 2025 for 2025-26 season)
+        - name: conference_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Filter by conference ID (required)
+      responses:
+        "200":
+          description: NCAAW team standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWStanding"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/games:
+    get:
+      summary: Get NCAAW games
+      tags: [NCAAW]
+      description: Get games. Note - season values are transformed (user sends 2025, API queries DB for 2026, returns 2025)
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/DatesParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons (e.g. 2025 for 2025-26 season)
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter games after this date (YYYY-MM-DD)
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter games before this date (YYYY-MM-DD)
+      responses:
+        "200":
+          description: List of NCAAW games
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWGame"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/games/{id}:
+    get:
+      summary: Get specific NCAAW game
+      tags: [NCAAW]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Game ID
+      responses:
+        "200":
+          description: Game details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NCAAWGame"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/rankings:
+    get:
+      summary: Get NCAAW rankings
+      tags: [NCAAW]
+      description: Get team rankings. Note - season values are transformed (user sends 2025, API queries DB for 2026, returns 2025)
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Filter by season (e.g. 2025 for 2025-26 season). Required.
+        - name: week
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by week number
+      responses:
+        "200":
+          description: NCAAW rankings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWRanking"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/plays:
+    get:
+      summary: Get NCAAW play-by-play data
+      tags: [NCAAW]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Game ID (required)
+      responses:
+        "200":
+          description: Play-by-play data for the game
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWPlay"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/player_stats:
+    get:
+      summary: Get NCAAW player game statistics
+      tags: [NCAAW]
+      description: Get player statistics. Note - season values are transformed (user sends 2025, API queries DB for 2026, returns 2025)
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - $ref: "#/components/parameters/DatesParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons (e.g. 2025 for 2025-26 season)
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats before this date
+        - $ref: "#/components/parameters/TeamIdsParam"
+      responses:
+        "200":
+          description: NCAAW player game statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWPlayerStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/team_stats:
+    get:
+      summary: Get NCAAW team game statistics
+      tags: [NCAAW]
+      description: Get team statistics. Note - season values are transformed (user sends 2025, API queries DB for 2026, returns 2025)
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - $ref: "#/components/parameters/DatesParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons (e.g. 2025 for 2025-26 season)
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats before this date
+      responses:
+        "200":
+          description: NCAAW team game statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWTeamStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/player_season_stats:
+    get:
+      summary: Get NCAAW player season statistics
+      tags: [NCAAW]
+      description: Get player season averages. Note - season values are transformed (user sends 2025, API queries DB for 2026, returns 2025)
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season (e.g. 2025 for 2025-26 season)
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+      responses:
+        "200":
+          description: NCAAW player season statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWPlayerSeasonStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/team_season_stats:
+    get:
+      summary: Get NCAAW team season statistics
+      tags: [NCAAW]
+      description: Get team season averages. Note - season values are transformed (user sends 2025, API queries DB for 2026, returns 2025)
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season (e.g. 2025 for 2025-26 season)
+        - $ref: "#/components/parameters/TeamIdsParam"
+      responses:
+        "200":
+          description: NCAAW team season statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWTeamSeasonStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/bracket:
+    get:
+      summary: Get NCAAW tournament bracket data
+      tags: [NCAAW]
+      description: |
+        Retrieve NCAA Women's Basketball tournament bracket data with optional filters (GOAT tier).
+        Season values are offset by -1 from database values.
+
+        Round IDs:
+        - 0: First Four/Play-in games
+        - 1: Round of 64 (First Round)
+        - 2: Round of 32 (Second Round)
+        - 3: Sweet 16 (Regional Semifinals)
+        - 4: Elite 8 (Regional Finals)
+        - 5: Final Four (National Semifinals)
+        - 6: Championship (National Championship)
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season (e.g. 2025 queries database for 2026)
+        - name: round_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 6
+          description: Filter by tournament round (0-6)
+      responses:
+        "200":
+          description: NCAAW tournament bracket data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWBracket"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /ncaaw/v1/odds:
+    get:
+      summary: Get NCAAW betting odds
+      description: Retrieve betting odds for NCAAW games. Either dates or game_ids is required. Note that NCAAW odds data is sparse — coverage is limited compared to other sports, and not all games will have odds available. Data is only available from the 2025-2026 season onwards.
+      tags: [NCAAW]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by game dates (YYYY-MM-DD format)
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: NCAAW betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAWBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
 
   /mma/v1/leagues:
     get:

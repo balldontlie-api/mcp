@@ -28,6 +28,7 @@ import { createPGATools } from "./tools/pga.js";
 import { createATPTools } from "./tools/atp.js";
 import { createWTATools } from "./tools/wta.js";
 import { createF1Tools } from "./tools/f1.js";
+import { createNCAAWTools } from "./tools/ncaaw.js";
 import { MCPTool } from "./types.js";
 
 const app = express();
@@ -70,6 +71,7 @@ async function initializeTools() {
       ...createATPTools(apiClient),
       ...createWTATools(apiClient),
       ...createF1Tools(apiClient),
+      ...createNCAAWTools(apiClient),
     ];
 
     allTools.forEach((tool) => {

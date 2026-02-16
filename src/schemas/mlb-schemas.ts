@@ -120,6 +120,12 @@ export const mlbGamesSchema = {
       type: "boolean",
       description: "Filter for postseason games",
     },
+    season_type: {
+      type: "string",
+      enum: ["spring_training", "regular", "postseason"],
+      description:
+        "Filter by season type (spring_training, regular, or postseason). Takes precedence over postseason parameter.",
+    },
   },
   additionalProperties: false,
 };
@@ -198,6 +204,12 @@ export const mlbSeasonStatsSchema = {
       type: "boolean",
       description: "Filter for postseason stats",
     },
+    season_type: {
+      type: "string",
+      enum: ["spring_training", "regular", "postseason"],
+      description:
+        "Filter by season type. Takes precedence over postseason parameter.",
+    },
     sort_by: {
       type: "string",
       description: "Sort by field",
@@ -225,6 +237,12 @@ export const mlbTeamSeasonStatsSchema = {
     postseason: {
       type: "boolean",
       description: "Filter for postseason stats",
+    },
+    season_type: {
+      type: "string",
+      enum: ["spring_training", "regular", "postseason"],
+      description:
+        "Filter by season type. Takes precedence over postseason parameter.",
     },
     cursor: {
       type: "number",
@@ -309,5 +327,93 @@ export const mlbPlayerVersusSchema = {
     },
   },
   required: ["player_id", "opponent_team_id"],
+  additionalProperties: false,
+};
+
+export const mlbPlaysSchema = {
+  type: "object",
+  properties: {
+    game_id: {
+      type: "number",
+      description: "The game ID (required)",
+    },
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
+  },
+  required: ["game_id"],
+  additionalProperties: false,
+};
+
+export const mlbPlateAppearancesSchema = {
+  type: "object",
+  properties: {
+    game_id: {
+      type: "number",
+      description: "The game ID (required)",
+    },
+  },
+  required: ["game_id"],
+  additionalProperties: false,
+};
+
+export const mlbOddsSchema = {
+  type: "object",
+  properties: {
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
+    dates: {
+      type: "array",
+      items: { type: "string", format: "date" },
+      description: "Filter by specific dates (YYYY-MM-DD format)",
+    },
+    game_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by game IDs",
+    },
+  },
+  additionalProperties: false,
+};
+
+export const mlbPlayerPropsSchema = {
+  type: "object",
+  properties: {
+    game_id: {
+      type: "number",
+      description: "The game ID to retrieve player props for (required)",
+    },
+    player_id: {
+      type: "number",
+      description: "Filter props for a specific player",
+    },
+    prop_type: {
+      type: "string",
+      description:
+        "Filter by prop type. Supported types: hits, home_runs, total_bases, rbis, stolen_bases.",
+    },
+    vendors: {
+      type: "array",
+      items: { type: "string" },
+      description:
+        "Filter by specific sportsbook vendors (e.g., draftkings, fanduel). If not provided, returns props from all available vendors.",
+    },
+  },
+  required: ["game_id"],
   additionalProperties: false,
 };

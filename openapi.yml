@@ -2271,6 +2271,10 @@ components:
           type: integer
         postseason:
           type: boolean
+        season_type:
+          type: string
+          enum: [spring_training, regular, postseason]
+          description: The type of season (spring_training, regular, or postseason)
         date:
           type: string
           format: date-time
@@ -2327,50 +2331,502 @@ components:
       properties:
         player:
           $ref: "#/components/schemas/MLBPlayer"
-        game:
-          $ref: "#/components/schemas/MLBGame"
+        game_id:
+          type: integer
+          description: The ID of the game this stat belongs to
         team_name:
           type: string
         at_bats:
           type: integer
+          nullable: true
         runs:
           type: integer
+          nullable: true
         hits:
           type: integer
+          nullable: true
         rbi:
           type: integer
+          nullable: true
         hr:
           type: integer
+          nullable: true
         bb:
           type: integer
+          nullable: true
         k:
           type: integer
+          nullable: true
         avg:
           type: number
+          nullable: true
         obp:
           type: number
+          nullable: true
         slg:
           type: number
+          nullable: true
+        doubles:
+          type: integer
+          nullable: true
+          description: Doubles (from detailed box score)
+        triples:
+          type: integer
+          nullable: true
+        intentional_walks:
+          type: integer
+          nullable: true
+        hit_by_pitch:
+          type: integer
+          nullable: true
+        stolen_bases:
+          type: integer
+          nullable: true
+        caught_stealing:
+          type: integer
+          nullable: true
+        plate_appearances:
+          type: integer
+          nullable: true
+        total_bases:
+          type: integer
+          nullable: true
+        left_on_base:
+          type: integer
+          nullable: true
+        fly_outs:
+          type: integer
+          nullable: true
+        ground_outs:
+          type: integer
+          nullable: true
+        line_outs:
+          type: integer
+          nullable: true
+        pop_outs:
+          type: integer
+          nullable: true
+        air_outs:
+          type: integer
+          nullable: true
+        gidp:
+          type: integer
+          nullable: true
+          description: Grounded into double play
+        sac_bunts:
+          type: integer
+          nullable: true
+        sac_flies:
+          type: integer
+          nullable: true
         ip:
           type: number
+          nullable: true
+          description: Innings pitched
         p_hits:
           type: integer
+          nullable: true
+          description: Hits allowed (pitching)
         p_runs:
           type: integer
+          nullable: true
+          description: Runs allowed (pitching)
         er:
           type: integer
+          nullable: true
+          description: Earned runs
         p_bb:
           type: integer
+          nullable: true
+          description: Walks allowed (pitching)
         p_k:
           type: integer
+          nullable: true
+          description: Strikeouts (pitching)
         p_hr:
           type: integer
+          nullable: true
+          description: Home runs allowed (pitching)
         pitch_count:
           type: integer
+          nullable: true
         strikes:
           type: integer
+          nullable: true
         era:
           type: number
+          nullable: true
+        batters_faced:
+          type: integer
+          nullable: true
+        pitching_outs:
+          type: integer
+          nullable: true
+        wins:
+          type: integer
+          nullable: true
+        losses:
+          type: integer
+          nullable: true
+        saves:
+          type: integer
+          nullable: true
+        holds:
+          type: integer
+          nullable: true
+        blown_saves:
+          type: integer
+          nullable: true
+        games_started:
+          type: integer
+          nullable: true
+        wild_pitches:
+          type: integer
+          nullable: true
+        balks:
+          type: integer
+          nullable: true
+        pitching_hbp:
+          type: integer
+          nullable: true
+          description: Hit batters (pitching)
+        inherited_runners:
+          type: integer
+          nullable: true
+        inherited_runners_scored:
+          type: integer
+          nullable: true
+        putouts:
+          type: integer
+          nullable: true
+        assists:
+          type: integer
+          nullable: true
+        errors:
+          type: integer
+          nullable: true
+        fielding_chances:
+          type: integer
+          nullable: true
+        fielding_pct:
+          type: number
+          nullable: true
+
+    MLBPlay:
+      type: object
+      properties:
+        game_id:
+          type: integer
+        order:
+          type: integer
+          description: Sequential play order number
+        type:
+          type: string
+          nullable: true
+          description: Type of play (e.g., "Start Batter/Pitcher", "Play Result", "Fly Out")
+        text:
+          type: string
+          nullable: true
+          description: Human-readable play description
+        home_score:
+          type: integer
+        away_score:
+          type: integer
+        inning:
+          type: integer
+        inning_type:
+          type: string
+          nullable: true
+          description: '"Top" or "Bottom"'
+        scoring_play:
+          type: boolean
+        score_value:
+          type: integer
+          nullable: true
+        outs:
+          type: integer
+          nullable: true
+        balls:
+          type: integer
+          nullable: true
+        strikes:
+          type: integer
+          nullable: true
+        batter_id:
+          type: integer
+          nullable: true
+          description: Player ID of the batter
+        pitcher_id:
+          type: integer
+          nullable: true
+          description: Player ID of the pitcher
+        pitch_type:
+          type: string
+          nullable: true
+        pitch_velocity:
+          type: number
+          nullable: true
+          description: Pitch velocity in mph
+        hit_coordinate_x:
+          type: number
+          nullable: true
+        hit_coordinate_y:
+          type: number
+          nullable: true
+        trajectory:
+          type: string
+          nullable: true
+          description: Hit trajectory (F=fly, G=ground, L=line drive)
+
+    MLBPitchDetail:
+      type: object
+      properties:
+        pitch_number:
+          type: integer
+          description: Pitch number within the plate appearance
+        balls:
+          type: integer
+          nullable: true
+          description: Ball count before this pitch
+        strikes:
+          type: integer
+          nullable: true
+          description: Strike count before this pitch
+        pitch_call:
+          type: string
+          nullable: true
+          description: Umpire call (B=ball, S=strike, X=in play)
+        pitch_type_code:
+          type: string
+          nullable: true
+          description: Short pitch type code (FF, SL, CU, CH, etc.)
+        pitch_type:
+          type: string
+          nullable: true
+          description: Full pitch type name (e.g., "4-Seam Fastball")
+        release_speed:
+          type: number
+          nullable: true
+          description: Pitch velocity at release (mph)
+        plate_speed:
+          type: number
+          nullable: true
+          description: Pitch velocity at plate (mph)
+        spin_rate:
+          type: number
+          nullable: true
+          description: Spin rate (RPM)
+        release_extension:
+          type: number
+          nullable: true
+          description: Pitcher extension (feet)
+        plate_time:
+          type: number
+          nullable: true
+          description: Time to reach plate (seconds)
+        plate_x:
+          type: number
+          nullable: true
+          description: Horizontal plate location (feet from center)
+        plate_z:
+          type: number
+          nullable: true
+          description: Vertical plate location (feet above ground)
+        strike_zone:
+          type: integer
+          nullable: true
+          description: Strike zone region (1-14)
+        strike_zone_top:
+          type: number
+          nullable: true
+        strike_zone_bottom:
+          type: number
+          nullable: true
+        horizontal_movement:
+          type: number
+          nullable: true
+          description: Horizontal pitch movement (inches)
+        vertical_movement:
+          type: number
+          nullable: true
+          description: Vertical pitch movement (inches)
+        horizontal_break:
+          type: number
+          nullable: true
+        vertical_break:
+          type: number
+          nullable: true
+        induced_vertical_break:
+          type: number
+          nullable: true
+          description: Gravity-corrected vertical break (inches)
+        release_pos_x:
+          type: number
+          nullable: true
+        release_pos_y:
+          type: number
+          nullable: true
+        release_pos_z:
+          type: number
+          nullable: true
+        velocity_x:
+          type: number
+          nullable: true
+        velocity_y:
+          type: number
+          nullable: true
+        velocity_z:
+          type: number
+          nullable: true
+        acceleration_x:
+          type: number
+          nullable: true
+        acceleration_y:
+          type: number
+          nullable: true
+        acceleration_z:
+          type: number
+          nullable: true
+        bat_speed:
+          type: number
+          nullable: true
+          description: Bat speed on contact (mph)
+        game_pitch_count:
+          type: integer
+          nullable: true
+          description: Total pitches in the game so far
+        pitcher_pitch_count:
+          type: integer
+          nullable: true
+          description: Pitcher's pitch count
+
+    MLBPlateAppearance:
+      type: object
+      properties:
+        batter_id:
+          type: integer
+          description: Player ID of the batter
+        pitcher_id:
+          type: integer
+          description: Player ID of the pitcher
+        inning:
+          type: integer
+        half_inning:
+          type: string
+          description: '"top" or "bottom"'
+        pa_number:
+          type: integer
+          description: Plate appearance number within the game
+        outs:
+          type: integer
+          nullable: true
+          description: Number of outs at the start of the plate appearance
+        batter_side:
+          type: string
+          nullable: true
+          description: Batter stance (L or R)
+        pitcher_hand:
+          type: string
+          nullable: true
+          description: Pitcher throwing hand (L or R)
+        result:
+          type: string
+          nullable: true
+          description: Outcome of the plate appearance (e.g., "Strikeout", "Single")
+        is_ball_in_play_out:
+          type: boolean
+          nullable: true
+        runner_on_first:
+          type: boolean
+          nullable: true
+        runner_on_second:
+          type: boolean
+          nullable: true
+        runner_on_third:
+          type: boolean
+          nullable: true
+        pitches:
+          type: array
+          items:
+            $ref: "#/components/schemas/MLBPitchDetail"
+          description: Individual pitches in this plate appearance
+
+    MLBBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+        game_id:
+          type: integer
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        spread_home_value:
+          type: string
+          nullable: true
+        spread_home_odds:
+          type: integer
+          nullable: true
+        spread_away_value:
+          type: string
+          nullable: true
+        spread_away_odds:
+          type: integer
+          nullable: true
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+        total_value:
+          type: string
+          nullable: true
+        total_over_odds:
+          type: integer
+          nullable: true
+        total_under_odds:
+          type: integer
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+
+    MLBPlayerProp:
+      type: object
+      properties:
+        id:
+          type: integer
+        game_id:
+          type: integer
+        player_id:
+          type: integer
+        vendor:
+          type: string
+        prop_type:
+          type: string
+          description: "Type of prop (e.g., hits, home_runs, pitcher_strikeouts)"
+        line_value:
+          type: string
+        market:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [over_under, milestone]
+            over_odds:
+              type: integer
+              nullable: true
+            under_odds:
+              type: integer
+              nullable: true
+            odds:
+              type: integer
+              nullable: true
+              description: Used for milestone market type
+        updated_at:
+          type: string
+          format: date-time
 
     MLBStandings:
       type: object
@@ -2469,6 +2925,9 @@ components:
           type: integer
         postseason:
           type: boolean
+        season_type:
+          type: string
+          enum: [spring_training, regular, postseason]
         batting_gp:
           type: integer
         batting_ab:
@@ -2577,6 +3036,9 @@ components:
           type: string
         postseason:
           type: boolean
+        season_type:
+          type: string
+          enum: [spring_training, regular, postseason]
         season:
           type: integer
         gp:
@@ -9678,6 +10140,94 @@ components:
           format: date-time
           description: Last update timestamp
 
+    WTAMatchStats:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Stats ID
+        match:
+          type: object
+          properties:
+            id:
+              type: integer
+            tournament_id:
+              type: integer
+            season:
+              type: integer
+            round:
+              type: string
+              nullable: true
+            player1_id:
+              type: integer
+            player2_id:
+              type: integer
+            winner_id:
+              type: integer
+              nullable: true
+        player:
+          $ref: "#/components/schemas/WTAPlayer"
+        set_number:
+          type: integer
+          nullable: true
+          description: Set number (0 for full match stats)
+        serve_rating:
+          type: integer
+          nullable: true
+          description: Serve rating
+        aces:
+          type: integer
+          nullable: true
+          description: Number of aces
+        double_faults:
+          type: integer
+          nullable: true
+          description: Number of double faults
+        first_serve_pct:
+          type: number
+          nullable: true
+          description: First serve percentage
+        first_serve_points_won_pct:
+          type: number
+          nullable: true
+          description: First serve points won percentage
+        second_serve_points_won_pct:
+          type: number
+          nullable: true
+          description: Second serve points won percentage
+        break_points_saved_pct:
+          type: number
+          nullable: true
+          description: Break points saved percentage
+        return_rating:
+          type: integer
+          nullable: true
+          description: Return rating
+        first_return_won_pct:
+          type: number
+          nullable: true
+          description: First return points won percentage
+        second_return_won_pct:
+          type: number
+          nullable: true
+          description: Second return points won percentage
+        break_points_converted_pct:
+          type: number
+          nullable: true
+          description: Break points converted percentage
+        total_service_points_won_pct:
+          type: number
+          nullable: true
+          description: Total service points won percentage
+        total_return_points_won_pct:
+          type: number
+          nullable: true
+          description: Total return points won percentage
+        total_points_won_pct:
+          type: number
+          nullable: true
+          description: Total points won percentage
+
   parameters:
     CursorParam:
       name: cursor
@@ -12309,6 +12859,13 @@ paths:
           schema:
             type: boolean
           description: Filter by postseason games
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [spring_training, regular, postseason]
+          description: Filter by season type (spring_training, regular, or postseason). Takes precedence over postseason parameter.
       responses:
         "200":
           description: List of MLB games
@@ -12461,6 +13018,13 @@ paths:
           schema:
             type: boolean
           description: Get postseason stats
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [spring_training, regular, postseason]
+          description: Filter by season type. Takes precedence over postseason parameter.
         - name: sort_by
           in: query
           required: false
@@ -12515,6 +13079,13 @@ paths:
           schema:
             type: boolean
           description: Get postseason stats
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [spring_training, regular, postseason]
+          description: Filter by season type. Takes precedence over postseason parameter.
       responses:
         "200":
           description: MLB team season stats
@@ -12779,6 +13350,193 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         "400":
           $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /mlb/v1/plays:
+    get:
+      summary: Get MLB play-by-play data
+      description: Returns play-by-play data for a specific game including game state, scoring plays, and batted ball details.
+      tags: [MLB]
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID (required)
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: MLB play-by-play data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPlay"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /mlb/v1/plate_appearances:
+    get:
+      summary: Get MLB plate appearance data
+      description: Returns plate appearance data for a specific game. Each plate appearance includes the outcome and all individual pitches with detailed Statcast metrics. All plate appearances for the game are returned in a single response (no pagination).
+      tags: [MLB]
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID (required)
+      responses:
+        "200":
+          description: MLB plate appearance data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPlateAppearance"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /mlb/v1/odds:
+    get:
+      summary: Get MLB betting odds
+      description: Retrieve betting odds for MLB games. Either dates or game_ids is required.
+      tags: [MLB]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by specific dates (YYYY-MM-DD format)
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: MLB betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /mlb/v1/odds/player_props:
+    get:
+      summary: Get MLB player prop betting odds
+      description: |
+        Retrieve live player prop betting data for MLB games. Player prop data is LIVE and updated in real-time.
+        We do not store historical data. As games near completion, many (or all) player props may be removed from sportsbooks.
+
+        **Note:** This endpoint returns all player props for the specified game in a single response. Pagination is not supported.
+
+        The API supports two market types:
+        - **over_under**: Traditional over/under markets where users can bet on whether a player will go over or under a specific line value
+        - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
+
+        Available vendors: draftkings, fanatics, fanduel, betmgm
+      tags: [MLB]
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID to retrieve player props for (required)
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter props for a specific player
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: "Filter by prop type. Supported types: hits, home_runs, total_bases, rbis, stolen_bases."
+        - name: vendors
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by specific sportsbook vendors (e.g., draftkings, fanduel). If not provided, returns props from all available vendors.
+      responses:
+        "200":
+          description: MLB player prop betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPlayerProp"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
         "429":
           $ref: "#/components/responses/RateLimitError"
         "500":
@@ -24550,6 +25308,8 @@ paths:
       description: Retrieve betting odds for ATP matches. Requires at least one filter. Requires GOAT tier.
       tags: [ATP Tennis]
       parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
         - name: match_ids
           in: query
           required: false
@@ -24585,6 +25345,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/ATPBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "400":
@@ -25144,6 +25906,8 @@ paths:
       description: Retrieve betting odds for WTA matches. Requires at least one filter. Requires GOAT tier.
       tags: [WTA Tennis]
       parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
         - name: match_ids
           in: query
           required: false
@@ -25179,6 +25943,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/WTABettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
               example:
                 data:
                   - id: 90174363
@@ -25201,6 +25967,55 @@ paths:
                     player1_odds: -2500
                     player2_odds: 1100
                     updated_at: "2026-01-18T03:00:22.637Z"
+                meta:
+                  next_cursor: 90174363
+                  per_page: 25
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /wta/v1/match_stats:
+    get:
+      summary: Get WTA match statistics
+      description: Retrieve detailed match statistics. Requires GOAT tier.
+      tags: [WTA Tennis]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by match IDs
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: set_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by set number (0 for full match stats)
+      responses:
+        "200":
+          description: Match statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WTAMatchStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "400":

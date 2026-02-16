@@ -200,6 +200,16 @@ export const wtaHeadToHeadSchema = {
 export const wtaOddsSchema = {
   type: "object",
   properties: {
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
     match_ids: {
       type: "array",
       items: { type: "number" },
@@ -218,6 +228,37 @@ export const wtaOddsSchema = {
     season: {
       type: "number",
       description: "Filter by season year",
+    },
+  },
+  additionalProperties: false,
+};
+
+export const wtaMatchStatsSchema = {
+  type: "object",
+  properties: {
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
+    match_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by match IDs",
+    },
+    player_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by player IDs",
+    },
+    set_number: {
+      type: "number",
+      description: "Filter by set number (0 for full match stats)",
     },
   },
   additionalProperties: false,

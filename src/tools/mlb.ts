@@ -176,5 +176,53 @@ export function createMLBTools(apiClient: APIClient): MCPTool[] {
         );
       },
     },
+
+    {
+      name: "mlb_get_plays",
+      description:
+        "Get MLB play-by-play data for a specific game including game state, scoring plays, and batted ball details.",
+      inputSchema: schemas.mlbPlaysSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest("/mlb/v1/plays", params, headers);
+      },
+    },
+
+    {
+      name: "mlb_get_plate_appearances",
+      description:
+        "Get MLB plate appearance data for a specific game. Each plate appearance includes the outcome and all individual pitches with detailed Statcast metrics.",
+      inputSchema: schemas.mlbPlateAppearancesSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/mlb/v1/plate_appearances",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
+      name: "mlb_get_odds",
+      description:
+        "Get MLB betting odds. Either dates or game_ids is required.",
+      inputSchema: schemas.mlbOddsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest("/mlb/v1/odds", params, headers);
+      },
+    },
+
+    {
+      name: "mlb_get_player_props",
+      description:
+        "Get MLB player prop betting odds. Live data updated in real-time. Requires game_id.",
+      inputSchema: schemas.mlbPlayerPropsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/mlb/v1/odds/player_props",
+          params,
+          headers
+        );
+      },
+    },
   ];
 }

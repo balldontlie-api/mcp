@@ -279,6 +279,16 @@ export const atpHeadToHeadSchema = {
 export const atpOddsSchema = {
   type: "object",
   properties: {
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
     match_ids: {
       type: "array",
       items: { type: "number" },

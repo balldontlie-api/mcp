@@ -116,5 +116,19 @@ export function createWTATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest("/wta/v1/odds", params, headers);
       },
     },
+
+    {
+      name: "wta_get_match_stats",
+      description:
+        "Get detailed WTA match statistics. Requires GOAT tier.",
+      inputSchema: schemas.wtaMatchStatsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/wta/v1/match_stats",
+          params,
+          headers
+        );
+      },
+    },
   ];
 }

@@ -95,6 +95,16 @@ export function createPGATools(apiClient: APIClient): MCPTool[] {
     },
 
     {
+      name: "pga_get_tournament_field",
+      description:
+        "Get PGA tournament field entries showing which players are in a tournament. Requires GOAT tier.",
+      inputSchema: schemas.pgaTournamentFieldSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest("/pga/v1/tournament_field", params, headers);
+      },
+    },
+
+    {
       name: "pga_get_futures",
       description:
         "Get PGA futures betting odds (e.g., tournament winner). Requires GOAT tier.",

@@ -56,8 +56,8 @@ export const pgaTournamentsSchema = {
     },
     status: {
       type: "string",
-      enum: ["COMPLETED", "IN_PROGRESS", "SCHEDULED"],
-      description: "Filter by status (COMPLETED, IN_PROGRESS, SCHEDULED)",
+      enum: ["COMPLETED", "IN_PROGRESS", "SCHEDULED", "NOT_STARTED"],
+      description: "Filter by status (COMPLETED, IN_PROGRESS, SCHEDULED, NOT_STARTED)",
     },
     cursor: {
       type: "number",
@@ -339,6 +339,32 @@ export const pgaPlayerScorecardsSchema = {
       description: "Number of results per page (max 100)",
     },
   },
+  additionalProperties: false,
+};
+
+export const pgaTournamentFieldSchema = {
+  type: "object",
+  properties: {
+    tournament_id: {
+      type: "number",
+      description: "Tournament ID (required)",
+    },
+    entry_status: {
+      type: "string",
+      description: "Filter by entry status",
+    },
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
+  },
+  required: ["tournament_id"],
   additionalProperties: false,
 };
 

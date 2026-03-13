@@ -1280,6 +1280,11 @@ components:
           format: date-time
           nullable: true
           description: Real-world timestamp of play
+        participants:
+          type: array
+          items:
+            type: integer
+          description: Array of player IDs involved in this play
 
     NFLTeam:
       type: object
@@ -4592,6 +4597,9 @@ components:
           nullable: true
         time_remaining:
           type: string
+          nullable: true
+        in_intermission:
+          type: boolean
           nullable: true
         postseason:
           type: boolean
@@ -9943,7 +9951,7 @@ components:
         status:
           type: string
           nullable: true
-          description: Tournament status (COMPLETED, IN_PROGRESS, SCHEDULED)
+          description: Tournament status (COMPLETED, IN_PROGRESS, SCHEDULED, NOT_STARTED)
         champion:
           $ref: "#/components/schemas/PGAPlayer"
           nullable: true
@@ -10038,6 +10046,37 @@ components:
           type: integer
           nullable: true
           description: Score relative to par
+        earnings:
+          type: number
+          nullable: true
+          description: Player earnings in dollars
+
+    PGATournamentField:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Tournament field entry ID
+        tournament:
+          $ref: "#/components/schemas/PGATournament"
+        player:
+          $ref: "#/components/schemas/PGAPlayer"
+        entry_status:
+          type: string
+          nullable: true
+          description: Entry status (e.g., "IN")
+        qualifier:
+          type: string
+          nullable: true
+          description: How the player qualified (e.g., "Current Tournament Winners")
+        owgr:
+          type: integer
+          nullable: true
+          description: Official World Golf Ranking at time of entry
+        is_amateur:
+          type: boolean
+          nullable: true
+          description: Whether the player is an amateur
 
     PGATournamentCourseStats:
       type: object
@@ -10463,6 +10502,41 @@ components:
           type: string
           nullable: true
           description: Match score (e.g., 6-3 6-4 7-5)
+        set_scores:
+          type: array
+          description: Structured set-by-set scores parsed from the score string
+          items:
+            type: object
+            properties:
+              set_number:
+                type: integer
+                description: Set number (1, 2, 3, etc.)
+              player1_games:
+                type: integer
+                description: Games won by player 1 in this set
+              player2_games:
+                type: integer
+                description: Games won by player 2 in this set
+              player1_tiebreak:
+                type: integer
+                nullable: true
+                description: Player 1 tiebreak score (null if no tiebreak)
+              player2_tiebreak:
+                type: integer
+                nullable: true
+                description: Player 2 tiebreak score (null if no tiebreak)
+        player1_game_score:
+          type: string
+          nullable: true
+          description: "Current game score for player 1 during live matches (e.g., 0, 15, 30, 40, AD). Null for finished matches."
+        player2_game_score:
+          type: string
+          nullable: true
+          description: "Current game score for player 2 during live matches (e.g., 0, 15, 30, 40, AD). Null for finished matches."
+        server:
+          type: integer
+          nullable: true
+          description: Which player is currently serving (1 or 2). Null for finished matches.
         duration:
           type: string
           nullable: true
@@ -10826,6 +10900,41 @@ components:
           type: string
           nullable: true
           description: Match score (e.g., 6-3 6-4 7-5)
+        set_scores:
+          type: array
+          description: Structured set-by-set scores parsed from the score string
+          items:
+            type: object
+            properties:
+              set_number:
+                type: integer
+                description: Set number (1, 2, 3, etc.)
+              player1_games:
+                type: integer
+                description: Games won by player 1 in this set
+              player2_games:
+                type: integer
+                description: Games won by player 2 in this set
+              player1_tiebreak:
+                type: integer
+                nullable: true
+                description: Player 1 tiebreak score (null if no tiebreak)
+              player2_tiebreak:
+                type: integer
+                nullable: true
+                description: Player 2 tiebreak score (null if no tiebreak)
+        player1_game_score:
+          type: string
+          nullable: true
+          description: "Current game score for player 1 during live matches (e.g., 0, 15, 30, 40, AD). Null for finished matches."
+        player2_game_score:
+          type: string
+          nullable: true
+          description: "Current game score for player 2 during live matches (e.g., 0, 15, 30, 40, AD). Null for finished matches."
+        server:
+          type: integer
+          nullable: true
+          description: Which player is currently serving (1 or 2). Null for finished matches.
         duration:
           type: string
           nullable: true
@@ -25971,7 +26080,7 @@ paths:
           required: false
           schema:
             type: string
-          description: Filter by status (COMPLETED, IN_PROGRESS, SCHEDULED)
+          description: Filter by status (COMPLETED, IN_PROGRESS, SCHEDULED, NOT_STARTED)
       responses:
         "200":
           description: List of PGA Tour tournaments
@@ -26075,6 +26184,49 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/PGATournamentResult"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /pga/v1/tournament_field:
+    get:
+      summary: Get PGA tournament field
+      description: Retrieve tournament field entries showing which players are in a tournament. Requires GOAT tier.
+      tags: [PGA Tour]
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Tournament ID (required)
+        - name: entry_status
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by entry status
+      responses:
+        "200":
+          description: Tournament field entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGATournamentField"
                   meta:
                     $ref: "#/components/schemas/Pagination"
         "401":

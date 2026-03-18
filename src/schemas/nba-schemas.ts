@@ -196,6 +196,22 @@ export const nbaStatsSchema = {
   additionalProperties: false,
 };
 
+export const nbaSimpleSeasonAveragesSchema = {
+  type: "object",
+  properties: {
+    season: {
+      type: "number",
+      description: "Season year (required)",
+    },
+    player_id: {
+      type: "number",
+      description: "Player ID (required)",
+    },
+  },
+  required: ["season", "player_id"],
+  additionalProperties: false,
+};
+
 export const nbaSeasonAveragesSchema = {
   type: "object",
   properties: {

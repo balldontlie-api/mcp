@@ -98,6 +98,19 @@ export function createNBATools(apiClient: APIClient): MCPTool[] {
     },
 
     {
+      name: "nba_get_simple_season_averages",
+      description: "Get basic NBA player season averages (points, rebounds, assists, etc.) for a specific player and season",
+      inputSchema: schemas.nbaSimpleSeasonAveragesSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/nba/v1/season_averages",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
       name: "nba_get_season_averages",
       description: "Get NBA player season averages by category and type",
       inputSchema: schemas.nbaSeasonAveragesSchema,
@@ -111,19 +124,6 @@ export function createNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           `/v1/season_averages/${category}`,
           { season_type, ...queryParams },
-          headers
-        );
-      },
-    },
-
-    {
-      name: "nba_get_advanced_stats",
-      description: "Get NBA advanced statistics and analytics",
-      inputSchema: schemas.nbaStatsSchema,
-      handler: async (params: any, headers?: Record<string, string>) => {
-        return await apiClient.makeRequest(
-          "/v1/stats/advanced",
-          params,
           headers
         );
       },

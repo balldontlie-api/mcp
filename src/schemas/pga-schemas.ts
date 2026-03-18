@@ -368,6 +368,39 @@ export const pgaTournamentFieldSchema = {
   additionalProperties: false,
 };
 
+export const pgaTeeTimesSchema = {
+  type: "object",
+  properties: {
+    tournament_id: {
+      type: "number",
+      description: "Tournament ID (required)",
+    },
+    round_number: {
+      type: "number",
+      minimum: 1,
+      maximum: 4,
+      description: "Filter by round number (1-4)",
+    },
+    player_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by player IDs",
+    },
+    cursor: {
+      type: "number",
+      description: "Pagination cursor",
+    },
+    per_page: {
+      type: "number",
+      minimum: 1,
+      maximum: 100,
+      description: "Number of results per page (max 100)",
+    },
+  },
+  required: ["tournament_id"],
+  additionalProperties: false,
+};
+
 export const pgaFuturesSchema = {
   type: "object",
   properties: {

@@ -1,0 +1,1534 @@
+openapi: 3.1.0
+info:
+  title: BALLDONTLIE - Formula 1 API
+  version: 1.0.0
+  description: Formula 1 endpoints for the BallDontLie API.
+servers:
+  - url: https://api.balldontlie.io
+    description: Production server
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+    F1Circuit:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+        country_code:
+          type: string
+          nullable: true
+          description: ISO country code
+        country_name:
+          type: string
+          nullable: true
+    F1Driver:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        display_name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+          description: Three-letter abbreviation (e.g., VER, HAM, LEC)
+        country_code:
+          type: string
+          nullable: true
+          description: ISO country code
+        country_name:
+          type: string
+          nullable: true
+        racing_number:
+          type: string
+          nullable: true
+          description: Driver's racing number
+    F1DriverStanding:
+      type: object
+      properties:
+        id:
+          type: integer
+        season:
+          type: integer
+        driver:
+          $ref: "#/components/schemas/F1DriverWithTeam"
+        position:
+          type: integer
+          nullable: true
+        points:
+          type: number
+          nullable: true
+    F1DriverWithTeam:
+      type: object
+      description: Driver with team information (used in session-related endpoints)
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        display_name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+          description: Three-letter abbreviation (e.g., VER, HAM, LEC)
+        country_code:
+          type: string
+          nullable: true
+          description: ISO country code
+        country_name:
+          type: string
+          nullable: true
+        racing_number:
+          type: string
+          nullable: true
+          description: Driver's racing number
+        team:
+          $ref: "#/components/schemas/F1Team"
+          nullable: true
+          description: Driver's team for the event season
+    F1Event:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: Event name (e.g., Monaco Grand Prix)
+        short_name:
+          type: string
+          nullable: true
+        season:
+          type: integer
+        start_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Event weekend start date
+        end_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Event weekend end date
+        status:
+          type: string
+          nullable: true
+        circuit:
+          $ref: "#/components/schemas/F1Circuit"
+          nullable: true
+        location:
+          type: string
+          nullable: true
+          description: City or location name
+        country_code:
+          type: string
+          nullable: true
+        country_name:
+          type: string
+          nullable: true
+    F1FuturesOdd:
+      type: object
+      description: F1 futures betting odds (championship winner, constructor championship, etc.)
+      properties:
+        id:
+          type: integer
+          description: Unique futures odd ID
+        market_type:
+          type: string
+          description: Type of futures market (e.g., driver_championship, constructor_championship)
+        market_name:
+          type: string
+          description: Display name of the futures market
+        subject:
+          oneOf:
+            - $ref: "#/components/schemas/F1FuturesOddSubjectDriver"
+            - $ref: "#/components/schemas/F1FuturesOddSubjectConstructor"
+          description: The driver or constructor this odd is for
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        american_odds:
+          type: integer
+          nullable: true
+          description: American odds format
+        decimal_odds:
+          type: number
+          nullable: true
+          description: Decimal odds format
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Last update timestamp
+    F1FuturesOddSubjectConstructor:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - constructor
+        team:
+          $ref: "#/components/schemas/F1Team"
+    F1FuturesOddSubjectDriver:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - driver
+        driver:
+          $ref: "#/components/schemas/F1Driver"
+    F1LapTime:
+      type: object
+      properties:
+        id:
+          type: integer
+        session:
+          $ref: "#/components/schemas/F1Session"
+        driver:
+          $ref: "#/components/schemas/F1DriverWithTeam"
+        lap_number:
+          type: integer
+        lap_time:
+          type: string
+          nullable: true
+          description: Lap time in MM:SS.mmm format
+        lap_time_ms:
+          type: integer
+          nullable: true
+          description: Lap time in milliseconds
+        is_pit_out_lap:
+          type: boolean
+        is_pit_in_lap:
+          type: boolean
+    F1PitStop:
+      type: object
+      properties:
+        id:
+          type: integer
+        session:
+          $ref: "#/components/schemas/F1Session"
+        driver:
+          $ref: "#/components/schemas/F1DriverWithTeam"
+        stop_number:
+          type: integer
+        lap:
+          type: integer
+        time_of_day:
+          type: string
+          nullable: true
+          description: Time of day in HH:MM:SS format
+        duration_seconds:
+          type: number
+          nullable: true
+          description: Pit stop duration in seconds
+        total_time_seconds:
+          type: number
+          nullable: true
+          description: Total time lost including entry/exit
+    F1PositionHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+        session:
+          $ref: "#/components/schemas/F1Session"
+        driver:
+          $ref: "#/components/schemas/F1DriverWithTeam"
+        lap_number:
+          type: integer
+        position:
+          type: integer
+    F1QualifyingResult:
+      type: object
+      properties:
+        id:
+          type: integer
+        session:
+          $ref: "#/components/schemas/F1Session"
+        driver:
+          $ref: "#/components/schemas/F1DriverWithTeam"
+        q1_time:
+          type: string
+          nullable: true
+          description: Q1 lap time
+        q1_time_ms:
+          type: integer
+          nullable: true
+        q1_lap:
+          type: integer
+          nullable: true
+        q2_time:
+          type: string
+          nullable: true
+          description: Q2 lap time
+        q2_time_ms:
+          type: integer
+          nullable: true
+        q2_lap:
+          type: integer
+          nullable: true
+        q3_time:
+          type: string
+          nullable: true
+          description: Q3 lap time
+        q3_time_ms:
+          type: integer
+          nullable: true
+        q3_lap:
+          type: integer
+          nullable: true
+        final_position:
+          type: integer
+          nullable: true
+          description: Final qualifying position
+    F1RaceControlMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+        session:
+          $ref: "#/components/schemas/F1Session"
+        utc_time:
+          type: string
+          format: date-time
+          nullable: true
+        lap:
+          type: integer
+          nullable: true
+        category:
+          type: string
+          nullable: true
+          description: Message category (Flag, SafetyCar, DRS, etc.)
+        flag:
+          type: string
+          nullable: true
+          description: Flag type (GREEN, YELLOW, RED, etc.)
+        scope:
+          type: string
+          nullable: true
+          description: Scope (Track, Sector, Driver)
+        sector:
+          type: integer
+          nullable: true
+        driver_number:
+          type: string
+          nullable: true
+        message:
+          type: string
+          nullable: true
+    F1Season:
+      type: object
+      properties:
+        year:
+          type: integer
+        display_name:
+          type: string
+          nullable: true
+    F1Session:
+      type: object
+      properties:
+        id:
+          type: integer
+        event:
+          $ref: "#/components/schemas/F1Event"
+        type:
+          type: string
+          description: Session type (Practice, Qualifying, Sprint, Race)
+        name:
+          type: string
+          nullable: true
+        date:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          nullable: true
+    F1SessionResult:
+      type: object
+      properties:
+        id:
+          type: integer
+        session:
+          $ref: "#/components/schemas/F1Session"
+        driver:
+          $ref: "#/components/schemas/F1DriverWithTeam"
+        position:
+          type: integer
+          nullable: true
+        is_winner:
+          type: boolean
+          description: True if position is 1
+        laps_completed:
+          type: integer
+          nullable: true
+        pit_stops:
+          type: integer
+          nullable: true
+        retired:
+          type: boolean
+          description: Whether driver retired from the session
+    F1SessionTimingStats:
+      type: object
+      properties:
+        id:
+          type: integer
+        session:
+          $ref: "#/components/schemas/F1Session"
+        driver:
+          $ref: "#/components/schemas/F1DriverWithTeam"
+        best_lap_time:
+          type: string
+          nullable: true
+        best_lap_time_ms:
+          type: integer
+          nullable: true
+        best_lap_number:
+          type: integer
+          nullable: true
+        best_sector_1:
+          type: number
+          nullable: true
+          description: Best sector 1 time in milliseconds
+        best_sector_2:
+          type: number
+          nullable: true
+          description: Best sector 2 time in milliseconds
+        best_sector_3:
+          type: number
+          nullable: true
+          description: Best sector 3 time in milliseconds
+        speed_i1:
+          type: integer
+          nullable: true
+          description: Speed at intermediate 1
+        speed_i2:
+          type: integer
+          nullable: true
+          description: Speed at intermediate 2
+        speed_fl:
+          type: integer
+          nullable: true
+          description: Speed at finish line
+        speed_trap:
+          type: integer
+          nullable: true
+          description: Maximum speed trap measurement
+    F1SessionWeather:
+      type: object
+      properties:
+        id:
+          type: integer
+        session:
+          $ref: "#/components/schemas/F1Session"
+        air_temp:
+          type: number
+          nullable: true
+          description: Air temperature in Celsius
+        track_temp:
+          type: number
+          nullable: true
+          description: Track temperature in Celsius
+        humidity:
+          type: number
+          nullable: true
+          description: Humidity percentage
+        pressure:
+          type: number
+          nullable: true
+          description: Atmospheric pressure
+        wind_speed:
+          type: number
+          nullable: true
+          description: Wind speed
+        wind_direction:
+          type: integer
+          nullable: true
+          description: Wind direction in degrees
+        rainfall:
+          type: number
+          nullable: true
+          description: Rainfall amount
+    F1Team:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        display_name:
+          type: string
+          nullable: true
+        color:
+          type: string
+          nullable: true
+          description: Team color hex code
+    F1TeamStanding:
+      type: object
+      properties:
+        id:
+          type: integer
+        season:
+          type: integer
+        team:
+          $ref: "#/components/schemas/F1Team"
+        position:
+          type: integer
+          nullable: true
+        points:
+          type: number
+          nullable: true
+    F1TireStint:
+      type: object
+      properties:
+        id:
+          type: integer
+        session:
+          $ref: "#/components/schemas/F1Session"
+        driver:
+          $ref: "#/components/schemas/F1DriverWithTeam"
+        stint_number:
+          type: integer
+        compound:
+          type: string
+          nullable: true
+          description: Tire compound (SOFT, MEDIUM, HARD, INTERMEDIATE, WET)
+        is_new:
+          type: boolean
+          nullable: true
+          description: Whether tires were new
+        start_lap:
+          type: integer
+          nullable: true
+        total_laps:
+          type: integer
+          nullable: true
+    F1TrackStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+        session:
+          $ref: "#/components/schemas/F1Session"
+        utc_time:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Track status code
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type: integer
+          description: Cursor for the next page of results
+        prev_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the previous page of results
+        per_page:
+          type: integer
+          description: Number of results per page
+    PlayerPropMeta:
+      type: object
+      description: Metadata for player prop responses (no pagination - all results returned in single response)
+      properties:
+        per_page:
+          type: integer
+          description: Total number of results returned
+  parameters:
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The cursor for pagination
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        maximum: 100
+        default: 25
+      description: Number of results per page
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequestError:
+      description: Bad Request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+security:
+  - ApiKeyAuth: []
+paths:
+  /f1/v1/drivers:
+    get:
+      summary: Get F1 drivers
+      description: Retrieve a list of Formula 1 drivers with optional filtering. FREE tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search drivers by name
+        - name: country_code
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by ISO country code
+        - name: driver_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by specific driver IDs
+      responses:
+        "200":
+          description: List of F1 drivers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1Driver"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/teams:
+    get:
+      summary: Get F1 teams
+      description: Retrieve a list of Formula 1 teams with optional filtering. FREE tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search teams by name
+        - name: team_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by specific team IDs
+      responses:
+        "200":
+          description: List of F1 teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1Team"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/circuits:
+    get:
+      summary: Get F1 circuits
+      description: Retrieve a list of Formula 1 circuits with optional filtering. FREE tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search circuits by name
+        - name: country_code
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by ISO country code
+        - name: circuit_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by specific circuit IDs
+      responses:
+        "200":
+          description: List of F1 circuits
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1Circuit"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/seasons:
+    get:
+      summary: Get F1 seasons
+      description: Retrieve a list of Formula 1 seasons. FREE tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: List of F1 seasons
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1Season"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/events:
+    get:
+      summary: Get F1 events
+      description: Retrieve a list of Formula 1 race events (Grand Prix weekends) with optional filtering. FREE tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by event status
+        - name: circuit_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by circuit IDs
+        - name: event_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by specific event IDs
+      responses:
+        "200":
+          description: List of F1 events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1Event"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/sessions:
+    get:
+      summary: Get F1 sessions
+      description: Retrieve a list of Formula 1 sessions (Practice, Qualifying, Sprint, Race) with optional filtering. Requires PAID tier or higher.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: event_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by event IDs
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by session type (Practice, Qualifying, Sprint, Race)
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by session status
+      responses:
+        "200":
+          description: List of F1 sessions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1Session"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/session_results:
+    get:
+      summary: Get F1 session results
+      description: Retrieve Formula 1 session results (finishing positions, laps completed, etc.) with optional filtering. Requires PAID tier or higher.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: session_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by session IDs
+        - name: driver_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by driver IDs
+      responses:
+        "200":
+          description: List of F1 session results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1SessionResult"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/driver_standings:
+    get:
+      summary: Get F1 driver standings
+      description: Retrieve Formula 1 Driver Championship standings for a specific season. Requires PAID tier or higher.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year (required)
+        - name: driver_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by driver IDs
+      responses:
+        "200":
+          description: Driver championship standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1DriverStanding"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/team_standings:
+    get:
+      summary: Get F1 team standings
+      description: Retrieve Formula 1 Constructors Championship standings for a specific season. Requires PAID tier or higher.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year (required)
+        - name: team_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+      responses:
+        "200":
+          description: Constructors championship standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1TeamStanding"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/lap_times:
+    get:
+      summary: Get F1 lap times
+      description: Retrieve detailed lap-by-lap timing data for Formula 1 sessions. Requires PAID+ tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: session_ids[]
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by session IDs (required)
+        - name: driver_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by driver IDs
+        - name: lap_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by specific lap number
+      responses:
+        "200":
+          description: Lap timing data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1LapTime"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/qualifying_results:
+    get:
+      summary: Get F1 qualifying results
+      description: Retrieve detailed qualifying session results including Q1, Q2, and Q3 times. Requires PAID+ tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: session_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by session IDs
+        - name: driver_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by driver IDs
+      responses:
+        "200":
+          description: Qualifying results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1QualifyingResult"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/pit_stops:
+    get:
+      summary: Get F1 pit stops
+      description: Retrieve pit stop data including duration and timing. Requires PAID+ tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: session_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by session IDs
+        - name: driver_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by driver IDs
+      responses:
+        "200":
+          description: Pit stop data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1PitStop"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/tire_stints:
+    get:
+      summary: Get F1 tire stints
+      description: Retrieve tire compound and stint data for each driver. Requires PAID+ tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: session_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by session IDs
+        - name: driver_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by driver IDs
+      responses:
+        "200":
+          description: Tire stint data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1TireStint"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/session_weather:
+    get:
+      summary: Get F1 session weather
+      description: Retrieve weather conditions during Formula 1 sessions. Requires PAID+ tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: session_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by session IDs
+      responses:
+        "200":
+          description: Session weather data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1SessionWeather"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/race_control_messages:
+    get:
+      summary: Get F1 race control messages
+      description: Retrieve race control messages including flags, safety car, and DRS notifications. Requires PAID+ tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: session_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by session IDs
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by message category
+        - name: flag
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by flag type
+      responses:
+        "200":
+          description: Race control messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1RaceControlMessage"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/position_history:
+    get:
+      summary: Get F1 position history
+      description: Retrieve lap-by-lap position changes for drivers during sessions. Requires PAID+ tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: session_ids[]
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by session IDs (required)
+        - name: driver_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by driver IDs
+        - name: lap_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by specific lap number
+      responses:
+        "200":
+          description: Position history data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1PositionHistory"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/session_timing_stats:
+    get:
+      summary: Get F1 session timing stats
+      description: Retrieve detailed timing statistics including best laps, sector times, and speed trap data. Requires PAID+ tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: session_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by session IDs
+        - name: driver_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by driver IDs
+      responses:
+        "200":
+          description: Session timing statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1SessionTimingStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/track_status:
+    get:
+      summary: Get F1 track status
+      description: Retrieve track status changes during sessions (green flag, yellow flag, safety car, etc.). Requires PAID+ tier.
+      tags:
+        - F1
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: session_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by session IDs
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by track status code
+      responses:
+        "200":
+          description: Track status history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1TrackStatus"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /f1/v1/odds/futures:
+    get:
+      summary: Get F1 futures odds
+      description: |
+        Retrieve futures betting odds for Formula 1 championships (e.g., driver championship winner,
+        constructor championship winner). Requires PAID+ tier.
+      tags:
+        - F1
+      parameters:
+        - name: event_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by event IDs
+        - name: market_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by market type (e.g., driver_championship, constructor_championship)
+      responses:
+        "200":
+          description: F1 futures betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/F1FuturesOdd"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"

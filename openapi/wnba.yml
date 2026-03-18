@@ -1,0 +1,1176 @@
+openapi: 3.1.0
+info:
+  title: BALLDONTLIE - WNBA API
+  version: 1.0.0
+  description: WNBA endpoints for the BallDontLie API.
+servers:
+  - url: https://api.balldontlie.io
+    description: Production server
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type: integer
+          description: Cursor for the next page of results
+        prev_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the previous page of results
+        per_page:
+          type: integer
+          description: Number of results per page
+    PlayerPropMeta:
+      type: object
+      description: Metadata for player prop responses (no pagination - all results returned in single response)
+      properties:
+        per_page:
+          type: integer
+          description: Total number of results returned
+    WNBAGame:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Game ID
+        date:
+          type: string
+          format: date-time
+          description: Game date and time
+        season:
+          type: integer
+          description: Season year
+        postseason:
+          type: boolean
+          description: Whether this is a postseason game
+        status:
+          type: string
+          description: Game status
+        period:
+          type: integer
+          description: Current period
+        time:
+          type: string
+          description: Time remaining in period
+        home_team:
+          $ref: "#/components/schemas/WNBATeam"
+        visitor_team:
+          $ref: "#/components/schemas/WNBATeam"
+        home_score:
+          type: integer
+          description: Home team score
+        away_score:
+          type: integer
+          description: Away team score
+    WNBAPlay:
+      type: object
+      properties:
+        game_id:
+          type: integer
+          description: Game ID
+        order:
+          type: integer
+          description: Play order number (starts at 1 and increments sequentially)
+        type:
+          type: string
+          description: Play type
+        text:
+          type: string
+          description: Play description
+        home_score:
+          type: integer
+          description: Home team score after play
+        away_score:
+          type: integer
+          description: Away team score after play
+        period:
+          type: integer
+          description: Period number
+        clock:
+          type: string
+          description: Game clock
+        scoring_play:
+          type: boolean
+          description: Whether this is a scoring play
+        score_value:
+          type: integer
+          description: Points scored on this play
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+    WNBAPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Player ID
+        first_name:
+          type: string
+          description: Player first name
+        last_name:
+          type: string
+          description: Player last name
+        position:
+          type: string
+          description: Player position
+        position_abbreviation:
+          type: string
+          description: Player position abbreviation
+        height:
+          type: string
+          description: Player height
+        weight:
+          type: string
+          description: Player weight
+        jersey_number:
+          type: string
+          description: Player jersey number
+        college:
+          type: string
+          description: Player college
+        age:
+          type: integer
+          description: Player age
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+    WNBAPlayerInjury:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/WNBAPlayer"
+        status:
+          type: string
+          description: Injury status
+        return_date:
+          type: string
+          description: Estimated return date
+        comment:
+          type: string
+          description: Injury details
+    WNBAPlayerSeasonStat:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/WNBAPlayer"
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+        season:
+          type: integer
+          description: Season year
+        season_type:
+          type: integer
+          description: Season type (2=regular, 3=playoffs)
+        games_played:
+          type: integer
+          description: Games played
+        min:
+          type: number
+          description: Average minutes per game
+        fgm:
+          type: number
+          description: Average field goals made
+        fga:
+          type: number
+          description: Average field goals attempted
+        fg_pct:
+          type: number
+          description: Field goal percentage
+        fg3m:
+          type: number
+          description: Average three-pointers made
+        fg3a:
+          type: number
+          description: Average three-pointers attempted
+        fg3_pct:
+          type: number
+          description: Three-point percentage
+        ftm:
+          type: number
+          description: Average free throws made
+        fta:
+          type: number
+          description: Average free throws attempted
+        ft_pct:
+          type: number
+          description: Free throw percentage
+        reb:
+          type: number
+          description: Average rebounds
+        ast:
+          type: number
+          description: Average assists
+        stl:
+          type: number
+          description: Average steals
+        blk:
+          type: number
+          description: Average blocks
+        turnover:
+          type: number
+          description: Average turnovers
+        pts:
+          type: number
+          description: Average points
+    WNBAPlayerStat:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/WNBAPlayer"
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+        game:
+          type: object
+          properties:
+            id:
+              type: integer
+            date:
+              type: string
+              format: date-time
+            season:
+              type: integer
+        min:
+          type: string
+          description: Minutes played
+        fgm:
+          type: integer
+          description: Field goals made
+        fga:
+          type: integer
+          description: Field goals attempted
+        fg3m:
+          type: integer
+          description: Three-pointers made
+        fg3a:
+          type: integer
+          description: Three-pointers attempted
+        ftm:
+          type: integer
+          description: Free throws made
+        fta:
+          type: integer
+          description: Free throws attempted
+        oreb:
+          type: integer
+          description: Offensive rebounds
+        dreb:
+          type: integer
+          description: Defensive rebounds
+        reb:
+          type: integer
+          description: Total rebounds
+        ast:
+          type: integer
+          description: Assists
+        stl:
+          type: integer
+          description: Steals
+        blk:
+          type: integer
+          description: Blocks
+        turnover:
+          type: integer
+          description: Turnovers
+        pf:
+          type: integer
+          description: Personal fouls
+        pts:
+          type: integer
+          description: Points scored
+        plus_minus:
+          type: integer
+          description: Plus/minus rating
+    WNBAStanding:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+        season:
+          type: integer
+          description: Season year
+        conference:
+          type: string
+          description: Conference name
+        wins:
+          type: integer
+          description: Number of wins
+        losses:
+          type: integer
+          description: Number of losses
+        win_percentage:
+          type: number
+          description: Win percentage
+        games_behind:
+          type: number
+          description: Games behind leader
+        home_record:
+          type: string
+          description: Home record
+        away_record:
+          type: string
+          description: Away record
+        conference_record:
+          type: string
+          description: Conference record
+        playoff_seed:
+          type: integer
+          description: Playoff seed
+    WNBATeam:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Team ID
+        conference:
+          type: string
+          description: Conference name
+        city:
+          type: string
+          description: Team city
+        name:
+          type: string
+          description: Team name
+        full_name:
+          type: string
+          description: Team full name
+        abbreviation:
+          type: string
+          description: Team abbreviation
+    WNBATeamSeasonStat:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+        season:
+          type: integer
+          description: Season year
+        season_type:
+          type: integer
+          description: Season type (2=regular, 3=playoffs)
+        games_played:
+          type: integer
+          description: Games played
+        fgm:
+          type: number
+          description: Average field goals made
+        fga:
+          type: number
+          description: Average field goals attempted
+        fg_pct:
+          type: number
+          description: Field goal percentage
+        fg3m:
+          type: number
+          description: Average three-pointers made
+        fg3a:
+          type: number
+          description: Average three-pointers attempted
+        fg3_pct:
+          type: number
+          description: Three-point percentage
+        ftm:
+          type: number
+          description: Average free throws made
+        fta:
+          type: number
+          description: Average free throws attempted
+        ft_pct:
+          type: number
+          description: Free throw percentage
+        oreb:
+          type: number
+          description: Average offensive rebounds
+        dreb:
+          type: number
+          description: Average defensive rebounds
+        reb:
+          type: number
+          description: Average total rebounds
+        ast:
+          type: number
+          description: Average assists
+        stl:
+          type: number
+          description: Average steals
+        blk:
+          type: number
+          description: Average blocks
+        turnover:
+          type: number
+          description: Average turnovers
+        pts:
+          type: number
+          description: Average points
+    WNBATeamStat:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+        game:
+          type: object
+          properties:
+            id:
+              type: integer
+            date:
+              type: string
+              format: date-time
+            season:
+              type: integer
+        fgm:
+          type: integer
+          description: Field goals made
+        fga:
+          type: integer
+          description: Field goals attempted
+        fg_pct:
+          type: number
+          description: Field goal percentage
+        fg3m:
+          type: integer
+          description: Three-pointers made
+        fg3a:
+          type: integer
+          description: Three-pointers attempted
+        fg3_pct:
+          type: number
+          description: Three-point percentage
+        ftm:
+          type: integer
+          description: Free throws made
+        fta:
+          type: integer
+          description: Free throws attempted
+        ft_pct:
+          type: number
+          description: Free throw percentage
+        oreb:
+          type: integer
+          description: Offensive rebounds
+        dreb:
+          type: integer
+          description: Defensive rebounds
+        reb:
+          type: integer
+          description: Total rebounds
+        ast:
+          type: integer
+          description: Assists
+        stl:
+          type: integer
+          description: Steals
+        blk:
+          type: integer
+          description: Blocks
+        turnovers:
+          type: integer
+          description: Turnovers
+        fouls:
+          type: integer
+          description: Team fouls
+  parameters:
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The cursor for pagination
+    DatesParam:
+      name: dates[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: date
+      style: form
+      explode: true
+      description: Filter by dates (YYYY-MM-DD)
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        maximum: 100
+        default: 25
+      description: Number of results per page
+    PlayerIdsParam:
+      name: player_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by player IDs
+    TeamIdsParam:
+      name: team_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by team IDs
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequestError:
+      description: Bad Request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+security:
+  - ApiKeyAuth: []
+paths:
+  /wnba/v1/teams:
+    get:
+      summary: Get WNBA teams
+      tags:
+        - WNBA
+      parameters:
+        - name: conference
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - Eastern
+              - Western
+          description: Filter by conference
+      responses:
+        "200":
+          description: List of WNBA teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBATeam"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/teams/{id}:
+    get:
+      summary: Get specific WNBA team
+      tags:
+        - WNBA
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      responses:
+        "200":
+          description: Team details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WNBATeam"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/players:
+    get:
+      summary: Get WNBA players
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+        - name: first_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by first name
+        - name: last_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by last name
+      responses:
+        "200":
+          description: List of WNBA players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/players/active:
+    get:
+      summary: Get active WNBA players
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+        - name: first_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by first name
+        - name: last_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by last name
+      responses:
+        "200":
+          description: List of active WNBA players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/players/{id}:
+    get:
+      summary: Get specific WNBA player
+      tags:
+        - WNBA
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Player ID
+      responses:
+        "200":
+          description: Player details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WNBAPlayer"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/games:
+    get:
+      summary: Get WNBA games
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/DatesParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter games after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter games before this date
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by season type
+      responses:
+        "200":
+          description: List of WNBA games
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAGame"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/games/{id}:
+    get:
+      summary: Get specific WNBA game
+      tags:
+        - WNBA
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Game ID
+      responses:
+        "200":
+          description: Game details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WNBAGame"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/player_stats:
+    get:
+      summary: Get WNBA player statistics
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - $ref: "#/components/parameters/DatesParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats before this date
+      responses:
+        "200":
+          description: List of WNBA player stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAPlayerStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/team_stats:
+    get:
+      summary: Get WNBA team statistics
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - $ref: "#/components/parameters/DatesParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats before this date
+      responses:
+        "200":
+          description: List of WNBA team stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBATeamStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/player_season_stats:
+    get:
+      summary: Get WNBA player season statistics
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season type
+      responses:
+        "200":
+          description: WNBA player season stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAPlayerSeasonStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/team_season_stats:
+    get:
+      summary: Get WNBA team season statistics
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season type
+      responses:
+        "200":
+          description: WNBA team season stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBATeamSeasonStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/standings:
+    get:
+      summary: Get WNBA standings
+      tags:
+        - WNBA
+      parameters:
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season
+        - name: conference
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - Eastern
+              - Western
+          description: Filter by conference
+      responses:
+        "200":
+          description: WNBA standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAStanding"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/player_injuries:
+    get:
+      summary: Get WNBA player injuries
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+      responses:
+        "200":
+          description: List of WNBA player injuries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAPlayerInjury"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/plays:
+    get:
+      summary: Get WNBA play-by-play data
+      tags:
+        - WNBA
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Game ID (required)
+      responses:
+        "200":
+          description: Play-by-play data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAPlay"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"

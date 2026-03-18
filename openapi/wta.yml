@@ -1,0 +1,1108 @@
+openapi: 3.1.0
+info:
+  title: BALLDONTLIE - WTA Tennis API
+  version: 1.0.0
+  description: WTA Tennis endpoints for the BallDontLie API.
+servers:
+  - url: https://api.balldontlie.io
+    description: Production server
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type: integer
+          description: Cursor for the next page of results
+        prev_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the previous page of results
+        per_page:
+          type: integer
+          description: Number of results per page
+    PlayerPropMeta:
+      type: object
+      description: Metadata for player prop responses (no pagination - all results returned in single response)
+      properties:
+        per_page:
+          type: integer
+          description: Total number of results returned
+    WTABettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Odds ID
+        match_id:
+          type: integer
+          description: Match ID
+        vendor:
+          type: string
+          description: Sportsbook vendor (draftkings, fanduel, caesars)
+        player1:
+          $ref: "#/components/schemas/WTAPlayer"
+          nullable: true
+        player2:
+          $ref: "#/components/schemas/WTAPlayer"
+          nullable: true
+        player1_odds:
+          type: integer
+          nullable: true
+          description: Player 1 moneyline odds (American format)
+        player2_odds:
+          type: integer
+          nullable: true
+          description: Player 2 moneyline odds (American format)
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+    WTAHeadToHead:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Head-to-head record ID
+        player1:
+          $ref: "#/components/schemas/WTAPlayer"
+        player2:
+          $ref: "#/components/schemas/WTAPlayer"
+        player1_wins:
+          type: integer
+          description: Player 1 wins in head-to-head
+        player2_wins:
+          type: integer
+          description: Player 2 wins in head-to-head
+    WTAMatch:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Match ID
+        tournament:
+          $ref: "#/components/schemas/WTATournament"
+        season:
+          type: integer
+          description: Match season year
+        round:
+          type: string
+          nullable: true
+          description: Match round (Finals, Semi-Finals, etc.)
+        player1:
+          $ref: "#/components/schemas/WTAPlayer"
+        player2:
+          $ref: "#/components/schemas/WTAPlayer"
+        winner:
+          $ref: "#/components/schemas/WTAPlayer"
+          nullable: true
+        score:
+          type: string
+          nullable: true
+          description: Match score (e.g., 6-3 6-4 7-5)
+        set_scores:
+          type: array
+          description: Structured set-by-set scores parsed from the score string
+          items:
+            type: object
+            properties:
+              set_number:
+                type: integer
+                description: Set number (1, 2, 3, etc.)
+              player1_games:
+                type: integer
+                description: Games won by player 1 in this set
+              player2_games:
+                type: integer
+                description: Games won by player 2 in this set
+              player1_tiebreak:
+                type: integer
+                nullable: true
+                description: Player 1 tiebreak score (null if no tiebreak)
+              player2_tiebreak:
+                type: integer
+                nullable: true
+                description: Player 2 tiebreak score (null if no tiebreak)
+        player1_game_score:
+          type: string
+          nullable: true
+          description: Current game score for player 1 during live matches (e.g., 0, 15, 30, 40, AD). Null for finished matches.
+        player2_game_score:
+          type: string
+          nullable: true
+          description: Current game score for player 2 during live matches (e.g., 0, 15, 30, 40, AD). Null for finished matches.
+        server:
+          type: integer
+          nullable: true
+          description: Which player is currently serving (1 or 2). Null for finished matches.
+        duration:
+          type: string
+          nullable: true
+          description: Match duration (e.g., 02:35:00)
+        number_of_sets:
+          type: integer
+          nullable: true
+          description: Number of sets played
+        match_status:
+          type: string
+          nullable: true
+          enum:
+            - finished
+            - in_progress
+            - scheduled
+            - walkover
+            - retired
+            - defaulted
+          description: "Match status: finished, in_progress, scheduled, walkover, retired, or defaulted"
+        is_live:
+          type: boolean
+          description: Whether match is currently live
+    WTAMatchStats:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Stats ID
+        match:
+          type: object
+          properties:
+            id:
+              type: integer
+            tournament_id:
+              type: integer
+            season:
+              type: integer
+            round:
+              type: string
+              nullable: true
+            player1_id:
+              type: integer
+            player2_id:
+              type: integer
+            winner_id:
+              type: integer
+              nullable: true
+        player:
+          $ref: "#/components/schemas/WTAPlayer"
+        set_number:
+          type: integer
+          nullable: true
+          description: Set number (0 for full match stats)
+        serve_rating:
+          type: integer
+          nullable: true
+          description: Serve rating
+        aces:
+          type: integer
+          nullable: true
+          description: Number of aces
+        double_faults:
+          type: integer
+          nullable: true
+          description: Number of double faults
+        first_serve_pct:
+          type: number
+          nullable: true
+          description: First serve percentage
+        first_serve_points_won_pct:
+          type: number
+          nullable: true
+          description: First serve points won percentage
+        second_serve_points_won_pct:
+          type: number
+          nullable: true
+          description: Second serve points won percentage
+        break_points_saved_pct:
+          type: number
+          nullable: true
+          description: Break points saved percentage
+        return_rating:
+          type: integer
+          nullable: true
+          description: Return rating
+        first_return_won_pct:
+          type: number
+          nullable: true
+          description: First return points won percentage
+        second_return_won_pct:
+          type: number
+          nullable: true
+          description: Second return points won percentage
+        break_points_converted_pct:
+          type: number
+          nullable: true
+          description: Break points converted percentage
+        total_service_points_won_pct:
+          type: number
+          nullable: true
+          description: Total service points won percentage
+        total_return_points_won_pct:
+          type: number
+          nullable: true
+          description: Total return points won percentage
+        total_points_won_pct:
+          type: number
+          nullable: true
+          description: Total points won percentage
+    WTAPlayer:
+      type: object
+      description: WTA tennis player (women's singles only)
+      properties:
+        id:
+          type: integer
+          description: Player ID
+        first_name:
+          type: string
+          nullable: true
+          description: Player first name
+        last_name:
+          type: string
+          nullable: true
+          description: Player last name
+        full_name:
+          type: string
+          nullable: true
+          description: Player full name
+        country:
+          type: string
+          nullable: true
+          description: Player country
+        country_code:
+          type: string
+          nullable: true
+          description: Player country code (e.g., USA, POL)
+        birth_place:
+          type: string
+          nullable: true
+          description: Player birth place
+        age:
+          type: integer
+          nullable: true
+          description: Player age
+        height_cm:
+          type: integer
+          nullable: true
+          description: Player height in centimeters
+        weight_kg:
+          type: integer
+          nullable: true
+          description: Player weight in kilograms
+        plays:
+          type: string
+          nullable: true
+          description: Playing hand (e.g., Right-Handed)
+        turned_pro:
+          type: integer
+          nullable: true
+          description: Year player turned professional
+    WTARanking:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Ranking ID
+        player:
+          $ref: "#/components/schemas/WTAPlayer"
+        rank:
+          type: integer
+          description: Current WTA ranking
+        points:
+          type: integer
+          description: WTA ranking points
+        movement:
+          type: integer
+          nullable: true
+          description: Ranking change from previous week
+        ranking_date:
+          type: string
+          format: date
+          description: Date of ranking
+    WTATournament:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Tournament ID
+        name:
+          type: string
+          nullable: true
+          description: Tournament name
+        location:
+          type: string
+          nullable: true
+          description: Tournament location
+        surface:
+          type: string
+          nullable: true
+          description: Court surface (Hard, Clay, Grass, Carpet)
+        category:
+          type: string
+          nullable: true
+          description: Tournament category (Grand Slam, WTA 1000, WTA 500, WTA 250)
+        season:
+          type: integer
+          nullable: true
+          description: Tournament season year
+        start_date:
+          type: string
+          format: date
+          nullable: true
+          description: Tournament start date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+          description: Tournament end date
+        prize_money:
+          type: integer
+          nullable: true
+          description: Total prize money
+        prize_currency:
+          type: string
+          nullable: true
+          description: Prize money currency
+        draw_size:
+          type: integer
+          nullable: true
+          description: Number of players in draw
+  parameters:
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The cursor for pagination
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        maximum: 100
+        default: 25
+      description: Number of results per page
+    PlayerIdsParam:
+      name: player_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by player IDs
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequestError:
+      description: Bad Request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+security:
+  - ApiKeyAuth: []
+paths:
+  /wta/v1/players:
+    get:
+      summary: Get WTA players
+      description: Retrieve WTA tennis players with optional filters. Women's singles only. Free tier.
+      tags:
+        - WTA Tennis
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+        - name: first_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by first name
+        - name: last_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by last name
+        - name: country
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by country
+        - name: country_code
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by country code (e.g., USA, POL)
+      responses:
+        "200":
+          description: List of WTA players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WTAPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+              example:
+                data:
+                  - id: 1
+                    first_name: Aryna
+                    last_name: Sabalenka
+                    full_name: Aryna Sabalenka
+                    country: null
+                    country_code: BLR
+                    birth_place: null
+                    age: null
+                    height_cm: null
+                    weight_kg: null
+                    plays: null
+                    turned_pro: null
+                  - id: 2
+                    first_name: Iga
+                    last_name: Swiatek
+                    full_name: Iga Swiatek
+                    country: null
+                    country_code: POL
+                    birth_place: null
+                    age: null
+                    height_cm: null
+                    weight_kg: null
+                    plays: null
+                    turned_pro: null
+                meta:
+                  next_cursor: 2
+                  per_page: 2
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wta/v1/players/{id}:
+    get:
+      summary: Get specific WTA player
+      description: Retrieve a single WTA player by ID. Free tier.
+      tags:
+        - WTA Tennis
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Player ID
+      responses:
+        "200":
+          description: WTA player details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WTAPlayer"
+              example:
+                data:
+                  id: 1
+                  first_name: Aryna
+                  last_name: Sabalenka
+                  full_name: Aryna Sabalenka
+                  country: null
+                  country_code: BLR
+                  birth_place: null
+                  age: null
+                  height_cm: null
+                  weight_kg: null
+                  plays: null
+                  turned_pro: null
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wta/v1/tournaments:
+    get:
+      summary: Get WTA tournaments
+      description: Retrieve WTA tournaments with optional filters. Free tier.
+      tags:
+        - WTA Tennis
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+        - name: surface
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by surface (Hard, Clay, Grass, Carpet)
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by category (Grand Slam, WTA 1000, WTA 500, WTA 250)
+      responses:
+        "200":
+          description: List of WTA tournaments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WTATournament"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+              example:
+                data:
+                  - id: 1
+                    name: UNITED CUP
+                    location: PERTH + SYDNEY, AUSTRALIA
+                    surface: Hard
+                    category: WTA 500
+                    season: 2026
+                    start_date: "2026-01-02"
+                    end_date: "2026-01-11"
+                    prize_money: null
+                    prize_currency: USD
+                    draw_size: null
+                  - id: 2
+                    name: BRISBANE
+                    location: BRISBANE, AUSTRALIA
+                    surface: Hard
+                    category: WTA 500
+                    season: 2026
+                    start_date: "2026-01-04"
+                    end_date: "2026-01-11"
+                    prize_money: 1206446
+                    prize_currency: USD
+                    draw_size: 48
+                meta:
+                  next_cursor: 2
+                  per_page: 2
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wta/v1/tournaments/{id}:
+    get:
+      summary: Get specific WTA tournament
+      description: Retrieve a single WTA tournament by ID. Free tier.
+      tags:
+        - WTA Tennis
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tournament ID
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Get tournament info for specific season year
+      responses:
+        "200":
+          description: WTA tournament details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WTATournament"
+              example:
+                data:
+                  id: 1
+                  name: UNITED CUP
+                  location: PERTH + SYDNEY, AUSTRALIA
+                  surface: Hard
+                  category: WTA 500
+                  season: 2026
+                  start_date: "2026-01-02"
+                  end_date: "2026-01-11"
+                  prize_money: null
+                  prize_currency: USD
+                  draw_size: null
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wta/v1/rankings:
+    get:
+      summary: Get WTA rankings
+      description: Retrieve current WTA rankings. Free tier.
+      tags:
+        - WTA Tennis
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Get rankings for specific date (YYYY-MM-DD)
+      responses:
+        "200":
+          description: WTA rankings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WTARanking"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+              example:
+                data:
+                  - id: 1131
+                    player:
+                      id: 1
+                      first_name: Aryna
+                      last_name: Sabalenka
+                      full_name: Aryna Sabalenka
+                      country: null
+                      country_code: BLR
+                      birth_place: null
+                      age: null
+                      height_cm: null
+                      weight_kg: null
+                      plays: null
+                      turned_pro: null
+                    rank: 1
+                    points: 10990
+                    movement: 0
+                    ranking_date: "2026-01-19"
+                  - id: 1132
+                    player:
+                      id: 2
+                      first_name: Iga
+                      last_name: Swiatek
+                      full_name: Iga Swiatek
+                      country: null
+                      country_code: POL
+                      birth_place: null
+                      age: null
+                      height_cm: null
+                      weight_kg: null
+                      plays: null
+                      turned_pro: null
+                    rank: 2
+                    points: 8328
+                    movement: 0
+                    ranking_date: "2026-01-19"
+                meta:
+                  next_cursor: 1132
+                  per_page: 2
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wta/v1/matches:
+    get:
+      summary: Get WTA matches
+      description: Retrieve WTA matches with optional filters. Requires ALL-STAR tier.
+      tags:
+        - WTA Tennis
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+        - name: round
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by round (Finals, Semi-Finals, etc.)
+        - name: is_live
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter for live matches only
+      responses:
+        "200":
+          description: List of WTA matches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WTAMatch"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+              example:
+                data:
+                  - id: 1
+                    tournament:
+                      id: 7
+                      name: AUSTRALIAN OPEN
+                      location: MELBOURNE, AUSTRALIA
+                      surface: Hard
+                      category: Grand Slam
+                      season: 2026
+                      start_date: "2026-01-18"
+                      end_date: "2026-02-01"
+                      prize_money: null
+                      prize_currency: USD
+                      draw_size: 128
+                    season: 2026
+                    round: Quarterfinals
+                    player1:
+                      id: 91
+                      first_name: Zeynep
+                      last_name: Sonmez
+                      full_name: Zeynep Sonmez
+                      country: null
+                      country_code: TUR
+                    player2:
+                      id: 92
+                      first_name: Anastasia
+                      last_name: Gasanova
+                      full_name: Anastasia Gasanova
+                      country: null
+                      country_code: null
+                    winner:
+                      id: 91
+                      first_name: Zeynep
+                      last_name: Sonmez
+                      full_name: Zeynep Sonmez
+                      country: null
+                      country_code: TUR
+                    score: 6-3 6-2
+                    duration: null
+                    number_of_sets: 2
+                    match_status: finished
+                    is_live: false
+                meta:
+                  next_cursor: 2
+                  per_page: 2
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wta/v1/matches/{id}:
+    get:
+      summary: Get specific WTA match
+      description: Retrieve a single WTA match by ID. Requires ALL-STAR tier.
+      tags:
+        - WTA Tennis
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Match ID
+      responses:
+        "200":
+          description: WTA match details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WTAMatch"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wta/v1/head_to_head:
+    get:
+      summary: Get WTA head-to-head record
+      description: Retrieve head-to-head record between two players. Requires GOAT tier.
+      tags:
+        - WTA Tennis
+      parameters:
+        - name: player1_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: First player ID
+        - name: player2_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Second player ID
+      responses:
+        "200":
+          description: Head-to-head record
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WTAHeadToHead"
+              example:
+                data:
+                  id: 39
+                  player1:
+                    id: 1
+                    first_name: Aryna
+                    last_name: Sabalenka
+                    full_name: Aryna Sabalenka
+                    country: null
+                    country_code: BLR
+                  player2:
+                    id: 2
+                    first_name: Iga
+                    last_name: Swiatek
+                    full_name: Iga Swiatek
+                    country: null
+                    country_code: POL
+                  player1_wins: 5
+                  player2_wins: 8
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wta/v1/odds:
+    get:
+      summary: Get WTA betting odds
+      description: Retrieve betting odds for WTA matches. Requires at least one filter. Requires GOAT tier.
+      tags:
+        - WTA Tennis
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by match IDs
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by tournament IDs
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+      responses:
+        "200":
+          description: Betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WTABettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+              example:
+                data:
+                  - id: 90174363
+                    match_id: 31
+                    vendor: caesars
+                    player1:
+                      id: 151
+                      first_name: Yulia
+                      last_name: Putintseva
+                      full_name: Yulia Putintseva
+                      country: null
+                      country_code: KAZ
+                    player2:
+                      id: 152
+                      first_name: Beatriz
+                      last_name: Haddad Maia
+                      full_name: Beatriz Haddad Maia
+                      country: null
+                      country_code: BRA
+                    player1_odds: -2500
+                    player2_odds: 1100
+                    updated_at: "2026-01-18T03:00:22.637Z"
+                meta:
+                  next_cursor: 90174363
+                  per_page: 25
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wta/v1/match_stats:
+    get:
+      summary: Get WTA match statistics
+      description: Retrieve detailed match statistics. Requires GOAT tier.
+      tags:
+        - WTA Tennis
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by match IDs
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: set_number
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by set number (0 for full match stats)
+      responses:
+        "200":
+          description: Match statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WTAMatchStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"

@@ -1,0 +1,2052 @@
+openapi: 3.1.0
+info:
+  title: BALLDONTLIE - NFL API
+  version: 1.0.0
+  description: NFL endpoints for the BallDontLie API.
+servers:
+  - url: https://api.balldontlie.io
+    description: Production server
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+    NFLAdvancedPassingStats:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/NFLPlayer"
+        season:
+          type: integer
+        week:
+          type: integer
+        postseason:
+          type: boolean
+        aggressiveness:
+          type: number
+        attempts:
+          type: integer
+        avg_air_distance:
+          type: number
+        avg_air_yards_differential:
+          type: number
+        avg_air_yards_to_sticks:
+          type: number
+        avg_completed_air_yards:
+          type: number
+        avg_intended_air_yards:
+          type: number
+        avg_time_to_throw:
+          type: number
+        completion_percentage:
+          type: number
+        completion_percentage_above_expectation:
+          type: number
+        completions:
+          type: integer
+        expected_completion_percentage:
+          type: number
+        games_played:
+          type: number
+        interceptions:
+          type: number
+        max_air_distance:
+          type: number
+        max_completed_air_distance:
+          type: number
+        pass_touchdowns:
+          type: number
+        pass_yards:
+          type: number
+        passer_rating:
+          type: number
+    NFLAdvancedReceivingStats:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/NFLPlayer"
+        season:
+          type: integer
+        week:
+          type: integer
+        postseason:
+          type: boolean
+        avg_cushion:
+          type: number
+        avg_expected_yac:
+          type: number
+        avg_intended_air_yards:
+          type: number
+        avg_separation:
+          type: number
+        avg_yac:
+          type: number
+        avg_yac_above_expectation:
+          type: number
+        catch_percentage:
+          type: number
+        percent_share_of_intended_air_yards:
+          type: number
+        rec_touchdowns:
+          type: integer
+        receptions:
+          type: integer
+        targets:
+          type: integer
+        yards:
+          type: integer
+    NFLAdvancedRushingStats:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/NFLPlayer"
+        season:
+          type: integer
+        week:
+          type: integer
+        postseason:
+          type: boolean
+        avg_time_to_los:
+          type: number
+        expected_rush_yards:
+          type: number
+        rush_attempts:
+          type: integer
+        rush_pct_over_expected:
+          type: number
+        rush_touchdowns:
+          type: integer
+        rush_yards:
+          type: integer
+        rush_yards_over_expected:
+          type: number
+        rush_yards_over_expected_per_att:
+          type: number
+        efficiency:
+          type: number
+        percent_attempts_gte_eight_defenders:
+          type: number
+        avg_rush_yards:
+          type: number
+    NFLBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Betting odd ID
+        game_id:
+          type: integer
+          description: Game ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        spread_home_value:
+          type: string
+          nullable: true
+          description: Home team spread value
+        spread_home_odds:
+          type: integer
+          nullable: true
+          description: Home team spread odds
+        spread_away_value:
+          type: string
+          nullable: true
+          description: Away team spread value
+        spread_away_odds:
+          type: integer
+          nullable: true
+          description: Away team spread odds
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+          description: Home team moneyline odds
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+          description: Away team moneyline odds
+        total_value:
+          type: string
+          nullable: true
+          description: Total points line value
+        total_over_odds:
+          type: integer
+          nullable: true
+          description: Over total odds
+        total_under_odds:
+          type: integer
+          nullable: true
+          description: Under total odds
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+    NFLGame:
+      type: object
+      properties:
+        id:
+          type: integer
+        visitor_team:
+          $ref: "#/components/schemas/NFLTeam"
+        home_team:
+          $ref: "#/components/schemas/NFLTeam"
+        summary:
+          type: string
+        venue:
+          type: string
+        week:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        season:
+          type: integer
+        postseason:
+          type: boolean
+        status:
+          type: string
+        home_team_score:
+          type: integer
+        visitor_team_score:
+          type: integer
+        home_team_q1:
+          type: integer
+        home_team_q2:
+          type: integer
+        home_team_q3:
+          type: integer
+        home_team_q4:
+          type: integer
+        home_team_ot:
+          type: integer
+        visitor_team_q1:
+          type: integer
+        visitor_team_q2:
+          type: integer
+        visitor_team_q3:
+          type: integer
+        visitor_team_q4:
+          type: integer
+        visitor_team_ot:
+          type: integer
+    NFLPlay:
+      type: object
+      description: Play-by-play data for NFL games
+      properties:
+        id:
+          type: string
+        game:
+          $ref: "#/components/schemas/NFLGame"
+        type_slug:
+          type: string
+          nullable: true
+        type_abbreviation:
+          type: string
+          nullable: true
+        type_text:
+          type: string
+          nullable: true
+        text:
+          type: string
+          description: Full play description
+        short_text:
+          type: string
+          nullable: true
+        away_score:
+          type: integer
+        home_score:
+          type: integer
+        scoring_play:
+          type: boolean
+        period:
+          type: integer
+        clock_display:
+          type: string
+          nullable: true
+        team:
+          allOf:
+            - $ref: "#/components/schemas/NFLTeam"
+          nullable: true
+        start_yard_line:
+          type: integer
+          nullable: true
+        start_down:
+          type: integer
+          nullable: true
+        start_distance:
+          type: integer
+          nullable: true
+        end_yard_line:
+          type: integer
+          nullable: true
+        end_down:
+          type: integer
+          nullable: true
+        end_distance:
+          type: integer
+          nullable: true
+        stat_yardage:
+          type: integer
+          nullable: true
+        home_win_probability:
+          type: number
+          nullable: true
+        wallclock:
+          type: string
+          format: date-time
+          nullable: true
+          description: Real-time timestamp of the play
+    NFLPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        position:
+          type: string
+        position_abbreviation:
+          type: string
+        height:
+          type: string
+        weight:
+          type: string
+        jersey_number:
+          type: string
+        college:
+          type: string
+        experience:
+          type: string
+        age:
+          type: integer
+        team:
+          $ref: "#/components/schemas/NFLTeam"
+    NFLPlayerInjury:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/NFLPlayer"
+        status:
+          type: string
+        comment:
+          type: string
+        date:
+          type: string
+          format: date-time
+    NFLPlayerProp:
+      type: object
+      description: NFL player prop betting data
+      required:
+        - id
+        - game_id
+        - player_id
+        - vendor
+        - prop_type
+        - line_value
+        - market
+        - updated_at
+      properties:
+        id:
+          type: integer
+          description: Unique player prop ID
+        game_id:
+          type: integer
+          description: NFL game ID
+        player_id:
+          type: integer
+          description: NFL player ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+          enum:
+            - draftkings
+            - betway
+            - betrivers
+            - ballybet
+            - betparx
+        prop_type:
+          type: string
+          description: Type of player prop
+          enum:
+            - anytime_td
+            - anytime_td_1h
+            - anytime_td_1q
+            - anytime_td_2h
+            - fg_made
+            - fg_made_1h
+            - first_td
+            - interceptions
+            - kicking_points
+            - longest_pass
+            - longest_reception
+            - longest_rush
+            - passing_attempts
+            - passing_completions
+            - passing_tds
+            - passing_tds_1h
+            - passing_yards
+            - passing_yards_1h
+            - receiving_yards
+            - receiving_yards_1h
+            - receptions
+            - rushing_attempts
+            - rushing_receiving_yards
+            - rushing_yards
+            - rushing_yards_1h
+          example: rushing_yards
+        line_value:
+          type: string
+          description: The line value for the prop
+          example: "275.5"
+        market:
+          oneOf:
+            - $ref: "#/components/schemas/NFLPlayerPropMarketOverUnder"
+            - $ref: "#/components/schemas/NFLPlayerPropMarketMilestone"
+          description: Market information - either over_under or milestone type
+        updated_at:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of when this prop was last updated
+    NFLPlayerPropMarketMilestone:
+      type: object
+      description: Milestone market type for NFL player props
+      required:
+        - type
+        - odds
+      properties:
+        type:
+          type: string
+          enum:
+            - milestone
+          description: Market type identifier
+        odds:
+          type: integer
+          description: American odds for milestone bet
+    NFLPlayerPropMarketOverUnder:
+      type: object
+      description: Over/under market type for NFL player props
+      required:
+        - type
+        - over_odds
+        - under_odds
+      properties:
+        type:
+          type: string
+          enum:
+            - over_under
+          description: Market type identifier
+        over_odds:
+          type: integer
+          description: American odds for over bet
+        under_odds:
+          type: integer
+          description: American odds for under bet
+    NFLRosterEntry:
+      type: object
+      description: NFL team roster entry with depth chart information
+      properties:
+        player:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/NFLRosterPlayer"
+        position:
+          type: string
+          description: Position on the depth chart
+        depth:
+          type: integer
+          description: Depth chart position (1 = starter, 2 = backup, etc.)
+        player_name:
+          type: string
+          description: Player name
+        injury_status:
+          type: string
+          nullable: true
+          description: Current injury status if applicable
+    NFLRosterPlayer:
+      type: object
+      description: NFL player object without team reference (used in roster responses)
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        position:
+          type: string
+        position_abbreviation:
+          type: string
+        height:
+          type: string
+          nullable: true
+        weight:
+          type: string
+          nullable: true
+        jersey_number:
+          type: string
+          nullable: true
+        college:
+          type: string
+          nullable: true
+        experience:
+          type: string
+          nullable: true
+        age:
+          type: integer
+          nullable: true
+    NFLSeasonStats:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/NFLPlayer"
+        games_played:
+          type: integer
+        season:
+          type: integer
+        postseason:
+          type: boolean
+        passing_completions:
+          type: integer
+        passing_attempts:
+          type: integer
+        passing_yards:
+          type: integer
+        passing_yards_per_game:
+          type: number
+        passing_touchdowns:
+          type: integer
+        passing_interceptions:
+          type: integer
+        passing_completion_pct:
+          type: number
+        passing_first_downs:
+          type: integer
+        passing_first_down_pct:
+          type: number
+        passing_20_plus_yards:
+          type: integer
+        passing_40_plus_yards:
+          type: integer
+        passing_long:
+          type: integer
+        passing_sacks:
+          type: integer
+        passing_sack_yards:
+          type: integer
+        qb_rating:
+          type: number
+        rushing_attempts:
+          type: integer
+        rushing_yards:
+          type: integer
+        rushing_yards_per_game:
+          type: number
+        rushing_average:
+          type: number
+        rushing_touchdowns:
+          type: integer
+        rushing_first_downs:
+          type: integer
+        rushing_first_down_pct:
+          type: number
+        rushing_20_plus_yards:
+          type: integer
+        rushing_40_plus_yards:
+          type: integer
+        rushing_long:
+          type: integer
+        rushing_fumbles:
+          type: integer
+        receptions:
+          type: integer
+        receiving_yards:
+          type: integer
+        receiving_yards_per_game:
+          type: number
+        receiving_average:
+          type: number
+        receiving_touchdowns:
+          type: integer
+        receiving_targets:
+          type: integer
+        receiving_first_downs:
+          type: integer
+        receiving_first_down_pct:
+          type: number
+        receiving_20_plus_yards:
+          type: integer
+        receiving_40_plus_yards:
+          type: integer
+        receiving_long:
+          type: integer
+        receiving_fumbles:
+          type: integer
+        fumbles:
+          type: integer
+        fumbles_lost:
+          type: integer
+        fumbles_forced:
+          type: integer
+        fumbles_recovered:
+          type: integer
+        fumbles_touchdowns:
+          type: integer
+    NFLStandings:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/NFLTeam"
+        win_streak:
+          type: integer
+        points_for:
+          type: integer
+        points_against:
+          type: integer
+        playoff_seed:
+          type: integer
+        point_differential:
+          type: integer
+        overall_record:
+          type: string
+        conference_record:
+          type: string
+        division_record:
+          type: string
+        wins:
+          type: integer
+        losses:
+          type: integer
+        ties:
+          type: integer
+        home_record:
+          type: string
+        road_record:
+          type: string
+        season:
+          type: integer
+    NFLStats:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/NFLPlayer"
+        team:
+          $ref: "#/components/schemas/NFLTeam"
+        game:
+          $ref: "#/components/schemas/NFLGame"
+        passing_completions:
+          type: integer
+        passing_attempts:
+          type: integer
+        passing_yards:
+          type: integer
+        yards_per_pass_attempt:
+          type: integer
+        passing_touchdowns:
+          type: integer
+        passing_interceptions:
+          type: integer
+        sacks:
+          type: integer
+        sacks_loss:
+          type: integer
+        qbr:
+          type: integer
+        qb_rating:
+          type: integer
+        rushing_attempts:
+          type: integer
+        rushing_yards:
+          type: integer
+        yards_per_rush_attempt:
+          type: integer
+        rushing_touchdowns:
+          type: integer
+        long_rushing:
+          type: integer
+        receptions:
+          type: integer
+        receiving_yards:
+          type: integer
+        yards_per_reception:
+          type: integer
+        receiving_touchdowns:
+          type: integer
+        long_reception:
+          type: integer
+        receiving_targets:
+          type: integer
+        fumbles:
+          type: integer
+        fumbles_lost:
+          type: integer
+        fumbles_recovered:
+          type: integer
+        total_tackles:
+          type: integer
+        defensive_sacks:
+          type: integer
+        solo_tackles:
+          type: integer
+        tackles_for_loss:
+          type: integer
+        passes_defended:
+          type: integer
+        qb_hits:
+          type: integer
+        fumbles_touchdowns:
+          type: integer
+        defensive_interceptions:
+          type: integer
+        interception_yards:
+          type: integer
+        interception_touchdowns:
+          type: integer
+        kick_returns:
+          type: integer
+        kick_return_yards:
+          type: integer
+        yards_per_kick_return:
+          type: integer
+        long_kick_return:
+          type: integer
+        kick_return_touchdowns:
+          type: integer
+        punt_returns:
+          type: integer
+        punt_return_yards:
+          type: integer
+        yards_per_punt_return:
+          type: integer
+        long_punt_return:
+          type: integer
+        punt_return_touchdowns:
+          type: integer
+        field_goal_attempts:
+          type: integer
+        field_goals_made:
+          type: integer
+        field_goal_pct:
+          type: integer
+        long_field_goal_made:
+          type: integer
+        extra_points_made:
+          type: integer
+        total_points:
+          type: integer
+        punts:
+          type: integer
+        punt_yards:
+          type: integer
+        gross_avg_punt_yards:
+          type: integer
+        touchbacks:
+          type: integer
+        punts_inside_20:
+          type: integer
+        long_punt:
+          type: integer
+    NFLTeam:
+      type: object
+      properties:
+        id:
+          type: integer
+        conference:
+          type: string
+          enum:
+            - AFC
+            - NFC
+        division:
+          type: string
+          enum:
+            - NORTH
+            - SOUTH
+            - EAST
+            - WEST
+        location:
+          type: string
+        name:
+          type: string
+        full_name:
+          type: string
+        abbreviation:
+          type: string
+    NFLTeamSeasonStat:
+      type: object
+      description: Comprehensive team season statistics including offense, defense, special teams, and opponent stats
+      properties:
+        team:
+          $ref: "#/components/schemas/NFLTeam"
+        season:
+          type: integer
+        season_type:
+          type: integer
+          description: Season type (2 = regular season, 3 = postseason)
+        games_played:
+          type: number
+          nullable: true
+        total_offensive_yards:
+          type: number
+          nullable: true
+          description: Total offensive yards (corrected from passing_total_yards)
+        total_offensive_yards_per_game:
+          type: number
+          nullable: true
+        total_points:
+          type: number
+          nullable: true
+        total_points_per_game:
+          type: number
+          nullable: true
+        passing_completions:
+          type: number
+          nullable: true
+        passing_yards:
+          type: number
+          nullable: true
+        passing_yards_per_game:
+          type: number
+          nullable: true
+        passing_attempts:
+          type: number
+          nullable: true
+        passing_touchdowns:
+          type: number
+          nullable: true
+        passing_interceptions:
+          type: number
+          nullable: true
+        rushing_yards:
+          type: number
+          nullable: true
+        rushing_yards_per_game:
+          type: number
+          nullable: true
+        rushing_attempts:
+          type: number
+          nullable: true
+        rushing_touchdowns:
+          type: number
+          nullable: true
+        receiving_receptions:
+          type: number
+          nullable: true
+        receiving_yards:
+          type: number
+          nullable: true
+        receiving_touchdowns:
+          type: number
+          nullable: true
+    NFLTeamStat:
+      type: object
+      description: Team game statistics
+      properties:
+        game:
+          $ref: "#/components/schemas/NFLGame"
+        team:
+          $ref: "#/components/schemas/NFLTeam"
+        home_away:
+          type: string
+          description: Whether team is home or away
+        first_downs:
+          type: integer
+          nullable: true
+        first_downs_passing:
+          type: integer
+          nullable: true
+        first_downs_rushing:
+          type: integer
+          nullable: true
+        third_down_efficiency:
+          type: string
+          nullable: true
+        third_down_conversions:
+          type: integer
+          nullable: true
+        third_down_attempts:
+          type: integer
+          nullable: true
+        total_yards:
+          type: integer
+          nullable: true
+        yards_per_play:
+          type: integer
+          nullable: true
+        net_passing_yards:
+          type: integer
+          nullable: true
+        passing_completions:
+          type: integer
+          nullable: true
+        passing_attempts:
+          type: integer
+          nullable: true
+        sacks:
+          type: integer
+          nullable: true
+        rushing_yards:
+          type: integer
+          nullable: true
+        rushing_attempts:
+          type: integer
+          nullable: true
+        turnovers:
+          type: integer
+          nullable: true
+        fumbles_lost:
+          type: integer
+          nullable: true
+        interceptions_thrown:
+          type: integer
+          nullable: true
+        penalties:
+          type: integer
+          nullable: true
+        penalty_yards:
+          type: integer
+          nullable: true
+        possession_time:
+          type: string
+          nullable: true
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type: integer
+          description: Cursor for the next page of results
+        prev_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the previous page of results
+        per_page:
+          type: integer
+          description: Number of results per page
+    PlayerPropMeta:
+      type: object
+      description: Metadata for player prop responses (no pagination - all results returned in single response)
+      properties:
+        per_page:
+          type: integer
+          description: Total number of results returned
+  parameters:
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The cursor for pagination
+    DatesParam:
+      name: dates[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: date
+      style: form
+      explode: true
+      description: Filter by dates (YYYY-MM-DD)
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        maximum: 100
+        default: 25
+      description: Number of results per page
+    PlayerIdsParam:
+      name: player_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by player IDs
+    SeasonParam:
+      name: season
+      in: query
+      required: true
+      schema:
+        type: integer
+      description: The season year
+    TeamIdsParam:
+      name: team_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by team IDs
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequestError:
+      description: Bad Request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+security:
+  - ApiKeyAuth: []
+paths:
+  /nfl/v1/teams:
+    get:
+      summary: Get NFL teams
+      tags:
+        - NFL
+      parameters:
+        - name: division
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by division
+        - name: conference
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by conference
+      responses:
+        "200":
+          description: List of NFL teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLTeam"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/teams/{id}:
+    get:
+      summary: Get specific NFL team
+      tags:
+        - NFL
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      responses:
+        "200":
+          description: Team details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NFLTeam"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/teams/{id}/roster:
+    get:
+      summary: Get NFL team roster
+      description: |
+        Retrieve the current roster and depth chart for a specific NFL team.
+        Note: Roster data is only available starting with the 2025 season.
+      tags:
+        - NFL
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Season year (defaults to most recent season in database). Data only available for 2025 season and later.
+      responses:
+        "200":
+          description: Team roster with depth chart information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLRosterEntry"
+              example:
+                data:
+                  - player:
+                      id: 2153
+                      first_name: Connor
+                      last_name: McGovern
+                      position: Center
+                      position_abbreviation: C
+                      height: 6' 5"
+                      weight: 318 lbs
+                      jersey_number: "66"
+                      college: Penn State
+                      experience: 7th Season
+                      age: 28
+                    position: C
+                    depth: 1
+                    player_name: Connor McGovern
+                    injury_status: null
+                  - player:
+                      id: 279668
+                      first_name: Alec
+                      last_name: Anderson
+                      position: Offensive Tackle
+                      position_abbreviation: OT
+                      height: 6' 5"
+                      weight: 305 lbs
+                      jersey_number: "70"
+                      college: UCLA
+                      experience: 3rd Season
+                      age: 26
+                    position: C
+                    depth: 2
+                    player_name: Alec Anderson
+                    injury_status: null
+                  - player:
+                      id: 279664
+                      first_name: Sedrick
+                      last_name: Van Pran-Granger
+                      position: Center
+                      position_abbreviation: C
+                      height: 6' 4"
+                      weight: 310 lbs
+                      jersey_number: "62"
+                      college: Georgia
+                      experience: 2nd Season
+                      age: 24
+                    position: C
+                    depth: 3
+                    player_name: Sedrick Van Pran-Granger
+                    injury_status: null
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          description: Forbidden - GOAT tier subscription required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/players:
+    get:
+      summary: Get NFL players
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+        - name: first_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by first name
+        - name: last_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by last name
+      responses:
+        "200":
+          description: List of NFL players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/players/{id}:
+    get:
+      summary: Get specific NFL player
+      tags:
+        - NFL
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Player ID
+      responses:
+        "200":
+          description: Player details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NFLPlayer"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/players/active:
+    get:
+      summary: Get active NFL players
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+        - name: first_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by first name
+        - name: last_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by last name
+      responses:
+        "200":
+          description: List of active NFL players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/games:
+    get:
+      summary: Get NFL games
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/DatesParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter by postseason games
+        - name: weeks[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by weeks
+      responses:
+        "200":
+          description: List of NFL games
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLGame"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/games/{id}:
+    get:
+      summary: Get specific NFL game
+      tags:
+        - NFL
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Game ID
+      responses:
+        "200":
+          description: Game details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NFLGame"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/stats:
+    get:
+      summary: Get NFL stats
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+      responses:
+        "200":
+          description: List of NFL stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/standings:
+    get:
+      summary: Get NFL team standings
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/SeasonParam"
+      responses:
+        "200":
+          description: Team standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLStandings"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/player_injuries:
+    get:
+      summary: Get NFL player injuries
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+      responses:
+        "200":
+          description: List of NFL player injuries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLPlayerInjury"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/season_stats:
+    get:
+      summary: Get NFL season stats
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/SeasonParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by team ID
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Get postseason stats
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Attribute to sort by
+        - name: sort_order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          description: Sort order
+      responses:
+        "200":
+          description: NFL season stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLSeasonStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/advanced_stats/rushing:
+    get:
+      summary: Get NFL advanced rushing stats
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/SeasonParam"
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by player ID
+        - name: week
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by week (0 for full season)
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter for postseason stats
+      responses:
+        "200":
+          description: NFL advanced rushing stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLAdvancedRushingStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/advanced_stats/passing:
+    get:
+      summary: Get NFL advanced passing stats
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/SeasonParam"
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by player ID
+        - name: week
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by week (0 for full season)
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter for postseason stats
+      responses:
+        "200":
+          description: NFL advanced passing stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLAdvancedPassingStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/advanced_stats/receiving:
+    get:
+      summary: Get NFL advanced receiving stats
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/SeasonParam"
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by player ID
+        - name: week
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by week (0 for full season)
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter for postseason stats
+      responses:
+        "200":
+          description: NFL advanced receiving stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLAdvancedReceivingStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/odds:
+    get:
+      summary: Get NFL betting odds
+      description: Retrieve betting odds for NFL games. Either (season and week) or game_ids is required. Available starting from 2025 season, week 8 onwards.
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season (must be provided with week)
+        - name: week
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by week (must be provided with season)
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: NFL betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/odds/player_props:
+    get:
+      summary: Get NFL player prop betting odds
+      description: |
+        Retrieve live player prop betting data for NFL games. Player prop data is LIVE and updated in real-time.
+        We do not store historical data. As games near completion, many (or all) player props may be removed from sportsbooks.
+
+        **Note:** This endpoint returns all player props for the specified game in a single response. Pagination is not supported.
+
+        The API supports two market types:
+        - **over_under**: Traditional over/under markets where users can bet on whether a player will go over or under a specific line value
+        - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
+
+        Available vendors: draftkings, betway, betrivers, ballybet, betparx (more coming soon!)
+      tags:
+        - NFL
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID to retrieve player props for (required)
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter props for a specific player
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - anytime_td
+              - anytime_td_1h
+              - anytime_td_1q
+              - anytime_td_2h
+              - fg_made
+              - fg_made_1h
+              - first_td
+              - interceptions
+              - kicking_points
+              - longest_pass
+              - longest_reception
+              - longest_rush
+              - passing_attempts
+              - passing_completions
+              - passing_tds
+              - passing_tds_1h
+              - passing_yards
+              - passing_yards_1h
+              - receiving_yards
+              - receiving_yards_1h
+              - receptions
+              - rushing_attempts
+              - rushing_receiving_yards
+              - rushing_yards
+              - rushing_yards_1h
+          description: Filter by prop type. Supported values include passing, rushing, receiving, touchdown, and kicking statistics.
+        - name: vendors
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by specific sportsbook vendors (e.g., draftkings, betrivers). If not provided, returns props from all available vendors.
+      responses:
+        "200":
+          description: NFL player prop betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLPlayerProp"
+                  meta:
+                    $ref: "#/components/schemas/PlayerPropMeta"
+              example:
+                data:
+                  - id: 111967700
+                    game_id: 424129
+                    player_id: 490
+                    vendor: betway
+                    prop_type: rushing_yards
+                    line_value: "85.5"
+                    market:
+                      type: over_under
+                      over_odds: -115
+                      under_odds: -110
+                    updated_at: "2025-11-29T16:28:13.503Z"
+                  - id: 112042232
+                    game_id: 424129
+                    player_id: 490
+                    vendor: draftkings
+                    prop_type: anytime_td
+                    line_value: "0.5"
+                    market:
+                      type: milestone
+                      odds: -250
+                    updated_at: "2025-11-29T16:31:25.627Z"
+                meta:
+                  next_cursor: 112042641
+                  per_page: 25
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/team_season_stats:
+    get:
+      summary: Get NFL team season stats
+      description: Retrieve comprehensive team season statistics including offense, defense, special teams, and opponent stats
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: team_ids
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs (required)
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Filter by season (required)
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter for postseason stats (true) or regular season (false)
+      responses:
+        "200":
+          description: NFL team season stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLTeamSeasonStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/team_stats:
+    get:
+      summary: Get NFL team game stats
+      description: Retrieve team statistics for individual games
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+        - name: seasons
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: NFL team game stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLTeamStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nfl/v1/plays:
+    get:
+      summary: Get NFL play-by-play data
+      description: Retrieve play-by-play data for NFL games, ordered chronologically by wallclock time
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Filter by game ID (required)
+      responses:
+        "200":
+          description: NFL play-by-play data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLPlay"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"

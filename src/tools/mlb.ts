@@ -180,7 +180,7 @@ export function createMLBTools(apiClient: APIClient): MCPTool[] {
     {
       name: "mlb_get_plays",
       description:
-        "Get MLB play-by-play data for a specific game including game state, scoring plays, and batted ball details.",
+        "Get MLB play-by-play data for a specific game including game state, scoring plays, and batted ball details. For detailed pitch-level data (exit velocity, launch angle, bat speed), use mlb_get_plate_appearances instead.",
       inputSchema: schemas.mlbPlaysSchema,
       handler: async (params: any, headers?: Record<string, string>) => {
         return await apiClient.makeRequest("/mlb/v1/plays", params, headers);
@@ -190,7 +190,7 @@ export function createMLBTools(apiClient: APIClient): MCPTool[] {
     {
       name: "mlb_get_plate_appearances",
       description:
-        "Get MLB plate appearance data for a specific game. Each plate appearance includes the outcome and all individual pitches with detailed Statcast metrics.",
+        "Get MLB plate appearance data for a specific game. Each plate appearance includes the outcome and all individual pitches with detailed pitch-level data including exit_velocity, launch_angle, bat_speed, hit_distance, expected_batting_average, is_barrel, hit coordinates, spin_rate, release_speed, and pitch movement data.",
       inputSchema: schemas.mlbPlateAppearancesSchema,
       handler: async (params: any, headers?: Record<string, string>) => {
         return await apiClient.makeRequest(

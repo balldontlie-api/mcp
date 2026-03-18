@@ -203,7 +203,7 @@ export function createNCAABTools(apiClient: APIClient): MCPTool[] {
       inputSchema: schemas.ncaabBracketsSchema,
       handler: async (params: any, headers?: Record<string, string>) => {
         return await apiClient.makeRequest(
-          "/ncaab/v1/brackets",
+          "/ncaab/v1/bracket",
           params,
           headers
         );

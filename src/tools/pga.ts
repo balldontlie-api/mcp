@@ -105,6 +105,16 @@ export function createPGATools(apiClient: APIClient): MCPTool[] {
     },
 
     {
+      name: "pga_get_tee_times",
+      description:
+        "Get PGA tee time groupings for a tournament. Shows which players are grouped together, their tee times, starting tees, and course assignments. Requires GOAT tier.",
+      inputSchema: schemas.pgaTeeTimesSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest("/pga/v1/tee_times", params, headers);
+      },
+    },
+
+    {
       name: "pga_get_futures",
       description:
         "Get PGA futures betting odds (e.g., tournament winner). Requires GOAT tier.",

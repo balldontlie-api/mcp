@@ -1,0 +1,1289 @@
+openapi: 3.1.0
+info:
+  title: BALLDONTLIE - NHL API
+  version: 1.0.0
+  description: NHL endpoints for the BallDontLie API.
+servers:
+  - url: https://api.balldontlie.io
+    description: Production server
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+    NHLBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Betting odd ID
+        game_id:
+          type: integer
+          description: Game ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        spread_home_value:
+          type: string
+          nullable: true
+          description: Home team spread value (puck line)
+        spread_home_odds:
+          type: integer
+          nullable: true
+          description: Home team spread odds
+        spread_away_value:
+          type: string
+          nullable: true
+          description: Away team spread value (puck line)
+        spread_away_odds:
+          type: integer
+          nullable: true
+          description: Away team spread odds
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+          description: Home team moneyline odds
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+          description: Away team moneyline odds
+        total_value:
+          type: string
+          nullable: true
+          description: Total goals line value
+        total_over_odds:
+          type: integer
+          nullable: true
+          description: Over total odds
+        total_under_odds:
+          type: integer
+          nullable: true
+          description: Under total odds
+        updated_at:
+          type: string
+          format: date-time
+    NHLBoxScore:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/NHLPlayer"
+        team:
+          $ref: "#/components/schemas/NHLTeam"
+        game:
+          $ref: "#/components/schemas/NHLGame"
+        position:
+          type: string
+        goals:
+          type: integer
+          nullable: true
+        assists:
+          type: integer
+          nullable: true
+        points:
+          type: integer
+          nullable: true
+        plus_minus:
+          type: integer
+          nullable: true
+        penalty_minutes:
+          type: integer
+          nullable: true
+        power_play_goals:
+          type: integer
+          nullable: true
+        shots_on_goal:
+          type: integer
+          nullable: true
+        faceoff_winning_pctg:
+          type: number
+          nullable: true
+        time_on_ice:
+          type: string
+          nullable: true
+        blocked_shots:
+          type: integer
+          nullable: true
+        hits:
+          type: integer
+          nullable: true
+        shifts:
+          type: integer
+          nullable: true
+        giveaways:
+          type: integer
+          nullable: true
+        takeaways:
+          type: integer
+          nullable: true
+        sweater_number:
+          type: integer
+          nullable: true
+        saves:
+          type: integer
+          nullable: true
+        shots_against:
+          type: integer
+          nullable: true
+        save_pctg:
+          type: number
+          nullable: true
+        goals_against:
+          type: integer
+          nullable: true
+        starter:
+          type: boolean
+          nullable: true
+        decision:
+          type: string
+          nullable: true
+    NHLGame:
+      type: object
+      properties:
+        id:
+          type: integer
+        season:
+          type: integer
+        game_date:
+          type: string
+          format: date
+        start_time_utc:
+          type: string
+          nullable: true
+        home_team:
+          $ref: "#/components/schemas/NHLTeam"
+        away_team:
+          $ref: "#/components/schemas/NHLTeam"
+        home_sog:
+          type: integer
+          nullable: true
+        away_sog:
+          type: integer
+          nullable: true
+        home_score:
+          type: integer
+          nullable: true
+        away_score:
+          type: integer
+          nullable: true
+        venue:
+          type: string
+          nullable: true
+        venue_location:
+          type: string
+          nullable: true
+        game_state:
+          type: string
+          nullable: true
+        period:
+          type: integer
+          nullable: true
+        time_remaining:
+          type: string
+          nullable: true
+        in_intermission:
+          type: boolean
+          nullable: true
+        postseason:
+          type: boolean
+    NHLPlay:
+      type: object
+      properties:
+        game_id:
+          type: integer
+        order:
+          type: integer
+          description: Sequential play number (1, 2, 3, ...)
+        period:
+          type: integer
+        period_type:
+          type: string
+          nullable: true
+        time_in_period:
+          type: string
+          nullable: true
+        time_remaining:
+          type: string
+          nullable: true
+        type:
+          type: string
+          description: Play type (e.g., faceoff, shot-on-goal, goal, hit, penalty)
+        away_score:
+          type: integer
+          nullable: true
+        home_score:
+          type: integer
+          nullable: true
+        details:
+          type: object
+          additionalProperties: true
+          description: Play-specific details (coordinates, player IDs, etc.)
+    NHLPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        full_name:
+          type: string
+          nullable: true
+        position_code:
+          type: string
+        shoots_catches:
+          type: string
+          nullable: true
+        height_in_inches:
+          type: integer
+          nullable: true
+        weight_in_pounds:
+          type: integer
+          nullable: true
+        birth_date:
+          type: string
+          nullable: true
+        birth_place:
+          type: string
+          nullable: true
+        teams:
+          type: array
+          items:
+            $ref: "#/components/schemas/NHLTeam"
+          nullable: true
+        sweater_number:
+          type: integer
+          nullable: true
+    NHLPlayerInjury:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/NHLPlayer"
+        status:
+          type: string
+          nullable: true
+          description: Injury status (e.g., Day-To-Day, Out)
+        status_abbreviation:
+          type: string
+          nullable: true
+          description: Abbreviated injury status (e.g., DTD, OUT)
+        injury_type:
+          type: string
+          nullable: true
+          description: Type of injury (e.g., Undisclosed, Lower Body)
+        return_date:
+          type: string
+          nullable: true
+          description: Expected return date if known
+        comment:
+          type: string
+          nullable: true
+          description: Additional comments about the injury
+    NHLPlayerProp:
+      type: object
+      description: NHL player prop betting data
+      required:
+        - id
+        - game_id
+        - player_id
+        - vendor
+        - prop_type
+        - line_value
+        - market
+        - updated_at
+      properties:
+        id:
+          type: integer
+          description: Unique player prop ID
+        game_id:
+          type: integer
+          description: NHL game ID
+        player_id:
+          type: integer
+          description: NHL player ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+          enum:
+            - fanduel
+            - draftkings
+            - caesars
+        prop_type:
+          type: string
+          description: Type of player prop
+          enum:
+            - anytime_goal
+            - anytime_goal_1p
+            - anytime_goal_2p
+            - anytime_goal_3p
+            - assists
+            - first_goal
+            - first_goal_2p
+            - first_goal_3p
+            - goals
+            - last_goal
+            - overtime_goal
+            - points
+            - points_1p
+            - points_2p
+            - points_3p
+            - power_play_points
+            - saves
+            - second_goal
+            - shots_on_goal
+            - shots_on_goal_1p
+            - shots_on_goal_2p
+            - shots_on_goal_3p
+            - third_goal
+          example: points
+        line_value:
+          type: string
+          description: The line value for the prop
+          example: "1.5"
+        market:
+          oneOf:
+            - $ref: "#/components/schemas/NHLPlayerPropMarketOverUnder"
+            - $ref: "#/components/schemas/NHLPlayerPropMarketMilestone"
+          description: Market information - either over_under or milestone type
+        updated_at:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of when this prop was last updated
+    NHLPlayerPropMarketMilestone:
+      type: object
+      description: Milestone market type for NHL player props
+      required:
+        - type
+        - odds
+      properties:
+        type:
+          type: string
+          enum:
+            - milestone
+          description: Market type identifier
+        odds:
+          type: integer
+          description: American odds for milestone bet
+    NHLPlayerPropMarketOverUnder:
+      type: object
+      description: Over/under market type for NHL player props
+      required:
+        - type
+        - over_odds
+        - under_odds
+      properties:
+        type:
+          type: string
+          enum:
+            - over_under
+          description: Market type identifier
+        over_odds:
+          type: integer
+          description: American odds for over bet
+        under_odds:
+          type: integer
+          description: American odds for under bet
+    NHLPlayerSeasonStat:
+      type: object
+      properties:
+        value:
+          type: number
+        name:
+          type: string
+    NHLPlayerStatLeader:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/NHLPlayer"
+        name:
+          type: string
+        value:
+          type: number
+        season:
+          type: integer
+        postseason:
+          type: boolean
+    NHLStanding:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/NHLTeam"
+        season:
+          type: integer
+        conference_name:
+          type: string
+        division_name:
+          type: string
+        games_played:
+          type: integer
+        points:
+          type: integer
+        regulation_wins:
+          type: integer
+        regulation_plus_ot_wins:
+          type: integer
+        wins:
+          type: integer
+        losses:
+          type: integer
+        ot_losses:
+          type: integer
+        points_pctg:
+          type: number
+        goals_for:
+          type: integer
+        goals_against:
+          type: integer
+        goal_differential:
+          type: integer
+        home_record:
+          type: string
+        road_record:
+          type: string
+        streak:
+          type: string
+          nullable: true
+    NHLTeam:
+      type: object
+      properties:
+        id:
+          type: integer
+        full_name:
+          type: string
+        tricode:
+          type: string
+        conference_name:
+          type: string
+          nullable: true
+        division_name:
+          type: string
+          nullable: true
+        season:
+          type: integer
+          nullable: true
+    NHLTeamSeasonStat:
+      type: object
+      properties:
+        value:
+          type: number
+        name:
+          type: string
+    NHLTeamStatLeader:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/NHLTeam"
+        name:
+          type: string
+        value:
+          type: number
+        season:
+          type: integer
+        postseason:
+          type: boolean
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type: integer
+          description: Cursor for the next page of results
+        prev_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the previous page of results
+        per_page:
+          type: integer
+          description: Number of results per page
+    PlayerPropMeta:
+      type: object
+      description: Metadata for player prop responses (no pagination - all results returned in single response)
+      properties:
+        per_page:
+          type: integer
+          description: Total number of results returned
+  parameters:
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The cursor for pagination
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        maximum: 100
+        default: 25
+      description: Number of results per page
+    PlayerIdsParam:
+      name: player_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by player IDs
+    TeamIdsParam:
+      name: team_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by team IDs
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequestError:
+      description: Bad Request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+security:
+  - ApiKeyAuth: []
+paths:
+  /nhl/v1/teams:
+    get:
+      summary: Get NHL teams
+      tags:
+        - NHL
+      parameters:
+        - name: conference
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by conference
+        - name: division
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by division
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: List of NHL teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLTeam"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/teams/{id}:
+    get:
+      summary: Get specific NHL team
+      tags:
+        - NHL
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      responses:
+        "200":
+          description: Team details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NHLTeam"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/teams/{id}/season_stats:
+    get:
+      summary: Get NHL team season statistics
+      tags:
+        - NHL
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter for postseason stats
+      responses:
+        "200":
+          description: Team season statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLTeamSeasonStat"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/players:
+    get:
+      summary: Get NHL players
+      tags:
+        - NHL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by player name
+        - name: seasons
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by seasons
+      responses:
+        "200":
+          description: List of NHL players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/players/{id}/season_stats:
+    get:
+      summary: Get NHL player season statistics
+      tags:
+        - NHL
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Player ID
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter for postseason stats
+      responses:
+        "200":
+          description: Player season statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLPlayerSeasonStat"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/games:
+    get:
+      summary: Get NHL games
+      tags:
+        - NHL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          description: Filter by specific dates
+        - name: seasons
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by seasons
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by game IDs
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter for postseason games
+      responses:
+        "200":
+          description: List of NHL games
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLGame"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/standings:
+    get:
+      summary: Get NHL standings
+      tags:
+        - NHL
+      parameters:
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Season year
+        - name: conference
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by conference
+        - name: division
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by division
+      responses:
+        "200":
+          description: NHL standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLStanding"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/box_scores:
+    get:
+      summary: Get NHL box scores
+      tags:
+        - NHL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          description: Filter by specific dates
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: NHL box scores
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLBoxScore"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/plays:
+    get:
+      summary: Get NHL play-by-play data
+      description: Returns play-by-play data for a specific game. Plays are returned in chronological order with a sequential order field starting from 1.
+      tags:
+        - NHL
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID (required)
+      responses:
+        "200":
+          description: NHL play-by-play data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLPlay"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/player_injuries:
+    get:
+      summary: Get all currently injured NHL players
+      description: Returns all players currently on the injury report. The data is updated regularly to reflect the latest injury reports.
+      tags:
+        - NHL
+      responses:
+        "200":
+          description: List of all currently injured NHL players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLPlayerInjury"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/player_stats/leaders:
+    get:
+      summary: Get NHL player statistical leaders
+      tags:
+        - NHL
+      parameters:
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - goals
+              - power_play_points
+              - game_winning_goals
+              - plus_minus
+              - even_strength_points
+              - shots_against
+              - goals_against_average
+              - games_played
+              - goals_against
+              - shots
+              - games_started
+              - short_handed_goals
+              - short_handed_points
+              - faceoff_win_pct
+              - assists
+              - save_pct
+              - power_play_goals
+              - time_on_ice_per_game
+              - wins
+              - ot_losses
+              - overtime_goals
+              - penalty_minutes
+              - saves
+              - points
+              - even_strength_goals
+              - shutouts
+              - shooting_pct
+              - time_on_ice
+              - points_per_game
+              - losses
+          description: Type of statistic
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter for postseason stats
+      responses:
+        "200":
+          description: NHL player statistical leaders
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLPlayerStatLeader"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/team_stats/leaders:
+    get:
+      summary: Get NHL team statistical leaders
+      tags:
+        - NHL
+      parameters:
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - faceoff_win_percentage
+              - shots_for_per_game
+              - penalty_kill_percentage
+              - goals_against_per_game
+              - games_played
+              - goals_for_per_game
+              - goals_against
+              - points_pct
+              - points
+              - power_play_percentage
+              - shots_against_per_game
+              - goals_for
+              - wins
+              - goal_differential
+              - ot_losses
+              - losses
+          description: Type of statistic
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter for postseason stats
+      responses:
+        "200":
+          description: NHL team statistical leaders
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLTeamStatLeader"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/odds:
+    get:
+      summary: Get NHL betting odds
+      description: Retrieve betting odds for NHL games. Either dates or game_ids is required.
+      tags:
+        - NHL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by specific dates (YYYY-MM-DD format)
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: NHL betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /nhl/v1/odds/player_props:
+    get:
+      summary: Get NHL player prop betting odds
+      description: |
+        Retrieve live player prop betting data for NHL games. Player prop data is LIVE and updated in real-time.
+        We do not store historical data. As games near completion, many (or all) player props may be removed from sportsbooks.
+
+        **Note:** This endpoint returns all player props for the specified game in a single response. Pagination is not supported.
+
+        The API supports two market types:
+        - **over_under**: Traditional over/under markets where users can bet on whether a player will go over or under a specific line value
+        - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
+
+        Available vendors: fanduel, draftkings, betmgm, caesars, betrivers (more coming soon!)
+      tags:
+        - NHL
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID to retrieve player props for (required)
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter props for a specific player
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by prop type. Supported types include anytime_goal, anytime_goal_1p, anytime_goal_2p, anytime_goal_3p, assists, first_goal, first_goal_2p, first_goal_3p, goals, last_goal, overtime_goal, points, points_1p, points_2p, points_3p, power_play_points, saves, second_goal, shots_on_goal, shots_on_goal_1p, shots_on_goal_2p, shots_on_goal_3p, third_goal.
+        - name: vendors
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by specific sportsbook vendors (e.g., draftkings, fanduel). If not provided, returns props from all available vendors.
+      responses:
+        "200":
+          description: NHL player prop betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NHLPlayerProp"
+                  meta:
+                    $ref: "#/components/schemas/PlayerPropMeta"
+              example:
+                data:
+                  - id: 12345678
+                    game_id: 67890
+                    player_id: 123
+                    vendor: draftkings
+                    prop_type: points
+                    line_value: "1.5"
+                    market:
+                      type: over_under
+                      over_odds: 120
+                      under_odds: -145
+                    updated_at: "2025-01-09T12:00:00.000Z"
+                  - id: 87654321
+                    game_id: 67890
+                    player_id: 123
+                    vendor: fanduel
+                    prop_type: goals
+                    line_value: "1"
+                    market:
+                      type: milestone
+                      odds: 250
+                    updated_at: "2025-01-09T12:00:00.000Z"
+                meta:
+                  next_cursor: 87654322
+                  per_page: 25
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"

@@ -1,0 +1,986 @@
+openapi: 3.1.0
+info:
+  title: BALLDONTLIE - La Liga API
+  version: 1.0.0
+  description: La Liga endpoints for the BallDontLie API.
+servers:
+  - url: https://api.balldontlie.io
+    description: Production server
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type: integer
+          description: Cursor for the next page of results
+        prev_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the previous page of results
+        per_page:
+          type: integer
+          description: Number of results per page
+    PlayerPropMeta:
+      type: object
+      description: Metadata for player prop responses (no pagination - all results returned in single response)
+      properties:
+        per_page:
+          type: integer
+          description: Total number of results returned
+    SoccerBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Betting odd ID
+        match_id:
+          type: integer
+          description: Match ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+          description: Home team moneyline odds
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+          description: Away team moneyline odds
+        moneyline_draw_odds:
+          type: integer
+          nullable: true
+          description: Draw moneyline odds
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+    SoccerMatch:
+      type: object
+      properties:
+        id:
+          type: integer
+        season:
+          type: integer
+        home_team_id:
+          type: integer
+          nullable: true
+        away_team_id:
+          type: integer
+          nullable: true
+        date:
+          type: string
+          format: date-time
+        name:
+          type: string
+          nullable: true
+        short_name:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        status_detail:
+          type: string
+          nullable: true
+        home_score:
+          type: integer
+          nullable: true
+        away_score:
+          type: integer
+          nullable: true
+        venue_name:
+          type: string
+          nullable: true
+        venue_city:
+          type: string
+          nullable: true
+        attendance:
+          type: integer
+          nullable: true
+    SoccerMatchEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        team_id:
+          type: integer
+          nullable: true
+        event_type:
+          type: string
+          description: Type of event (e.g., goal, yellow_card, red_card, substitution)
+        event_time:
+          type: integer
+          nullable: true
+          description: Time in minutes when the event occurred
+        period:
+          type: integer
+          nullable: true
+          description: Period/half when the event occurred
+        player:
+          $ref: "#/components/schemas/SoccerPlayer"
+          nullable: true
+        secondary_player:
+          $ref: "#/components/schemas/SoccerPlayer"
+          nullable: true
+          description: Second player involved (e.g., substitute coming in, assisting player)
+        goal_type:
+          type: string
+          nullable: true
+        is_own_goal:
+          type: boolean
+    SoccerMatchLineup:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        team_id:
+          type: integer
+        player:
+          $ref: "#/components/schemas/SoccerPlayer"
+        is_starter:
+          type: boolean
+        position:
+          type: string
+          nullable: true
+        position_abbreviation:
+          type: string
+          nullable: true
+        formation_position:
+          type: string
+          nullable: true
+        jersey_number:
+          type: string
+          nullable: true
+    SoccerPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        display_name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        age:
+          type: integer
+          nullable: true
+        height:
+          type: string
+          nullable: true
+        weight:
+          type: string
+          nullable: true
+        citizenship:
+          type: string
+          nullable: true
+        team_ids:
+          type: array
+          nullable: true
+          items:
+            type: integer
+    SoccerPlayerMatchStats:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        player_id:
+          type: integer
+        team_id:
+          type: integer
+        appearances:
+          type: integer
+        goals:
+          type: integer
+        assists:
+          type: integer
+        shots_total:
+          type: integer
+          nullable: true
+        shots_on_target:
+          type: integer
+          nullable: true
+        fouls_committed:
+          type: integer
+          nullable: true
+        fouls_suffered:
+          type: integer
+          nullable: true
+        offsides:
+          type: integer
+          nullable: true
+        saves:
+          type: integer
+          nullable: true
+        yellow_cards:
+          type: integer
+        red_cards:
+          type: integer
+        own_goals:
+          type: integer
+    SoccerPlayerProp:
+      type: object
+      description: Soccer player prop betting data
+      required:
+        - id
+        - match_id
+        - player_id
+        - vendor
+        - prop_type
+        - line_value
+        - market
+        - updated_at
+      properties:
+        id:
+          type: integer
+          description: Unique player prop ID
+        match_id:
+          type: integer
+          description: Match ID
+        player_id:
+          type: integer
+          description: Player ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+          enum:
+            - draftkings
+            - fanduel
+            - caesars
+        prop_type:
+          type: string
+          description: Type of player prop
+          enum:
+            - anytime_goal
+            - assists
+            - first_goal
+            - first_half_goal
+            - goals_assists
+            - header_goal
+            - last_goal
+            - outside_box_goal
+            - saves
+            - second_half_goal
+            - shots
+            - shots_on_target
+            - tackles
+          example: anytime_goal
+        line_value:
+          type: string
+          description: The line value for the prop
+          example: "0.5"
+        market:
+          oneOf:
+            - $ref: "#/components/schemas/SoccerPlayerPropMarketOverUnder"
+            - $ref: "#/components/schemas/SoccerPlayerPropMarketMilestone"
+          description: Market information - either over_under or milestone type
+        updated_at:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of when this prop was last updated
+    SoccerPlayerPropMarketMilestone:
+      type: object
+      description: Milestone market type for soccer player props
+      required:
+        - type
+        - odds
+      properties:
+        type:
+          type: string
+          enum:
+            - milestone
+          description: Market type identifier
+        odds:
+          type: integer
+          description: American odds for milestone bet
+    SoccerPlayerPropMarketOverUnder:
+      type: object
+      description: Over/under market type for soccer player props
+      required:
+        - type
+        - over_odds
+        - under_odds
+      properties:
+        type:
+          type: string
+          enum:
+            - over_under
+          description: Market type identifier
+        over_odds:
+          type: integer
+          description: American odds for over bet
+        under_odds:
+          type: integer
+          description: American odds for under bet
+    SoccerRoster:
+      type: object
+      properties:
+        team_id:
+          type: integer
+        player:
+          $ref: "#/components/schemas/SoccerPlayer"
+        season:
+          type: integer
+        jersey_number:
+          type: string
+          nullable: true
+        position:
+          type: string
+          nullable: true
+        position_abbreviation:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+    SoccerStanding:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/SoccerTeam"
+        season:
+          type: integer
+        rank:
+          type: integer
+        rank_change:
+          type: integer
+          nullable: true
+        group_name:
+          type: string
+          nullable: true
+          description: Group identifier for tournament-style leagues (e.g., UCL Group A)
+        note:
+          type: string
+          nullable: true
+        games_played:
+          type: integer
+        wins:
+          type: integer
+        losses:
+          type: integer
+        draws:
+          type: integer
+        points:
+          type: integer
+        goals_for:
+          type: integer
+        goals_against:
+          type: integer
+        goal_differential:
+          type: integer
+        points_per_game:
+          type: number
+          nullable: true
+    SoccerTeam:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+        abbreviation:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+    SoccerTeamMatchStats:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        team_id:
+          type: integer
+        possession_pct:
+          type: number
+          nullable: true
+        shots:
+          type: integer
+          nullable: true
+        shots_on_target:
+          type: integer
+          nullable: true
+        fouls:
+          type: integer
+          nullable: true
+        yellow_cards:
+          type: integer
+          nullable: true
+        red_cards:
+          type: integer
+          nullable: true
+        corners:
+          type: integer
+          nullable: true
+        passes:
+          type: integer
+          nullable: true
+        pass_accuracy_pct:
+          type: number
+          nullable: true
+  parameters:
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The cursor for pagination
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        maximum: 100
+        default: 25
+      description: Number of results per page
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequestError:
+      description: Bad Request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+security:
+  - ApiKeyAuth: []
+paths:
+  /laliga/v1/teams:
+    get:
+      summary: Get La Liga teams
+      description: Get all teams participating in La Liga for a given season
+      tags:
+        - La Liga
+      parameters:
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year. Defaults to the current season if omitted.
+      responses:
+        "200":
+          description: List of La Liga teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerTeam"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /laliga/v1/rosters:
+    get:
+      summary: Get La Liga team rosters
+      description: Get player roster information for a specific team and season
+      tags:
+        - La Liga
+      parameters:
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+      responses:
+        "200":
+          description: Team roster
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerRoster"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /laliga/v1/players:
+    get:
+      summary: Get La Liga players
+      description: Get players with optional filtering by team or search term. Supports pagination.
+      tags:
+        - La Liga
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search players by name
+      responses:
+        "200":
+          description: List of La Liga players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /laliga/v1/standings:
+    get:
+      summary: Get La Liga standings
+      description: Get league standings for a specific season
+      tags:
+        - La Liga
+      parameters:
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+      responses:
+        "200":
+          description: League standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerStanding"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /laliga/v1/matches:
+    get:
+      summary: Get La Liga matches
+      description: Get matches with optional filtering by season, dates, or teams. Supports pagination.
+      tags:
+        - La Liga
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by specific dates (YYYY-MM-DD format)
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+      responses:
+        "200":
+          description: List of matches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerMatch"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /laliga/v1/match_events:
+    get:
+      summary: Get La Liga match events
+      description: Get match events (goals, cards, substitutions, etc.) with optional filtering by matches. Supports pagination.
+      tags:
+        - La Liga
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+      responses:
+        "200":
+          description: List of match events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerMatchEvent"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /laliga/v1/match_lineups:
+    get:
+      summary: Get La Liga match lineups
+      description: Get match lineups (starting and substitute players) with optional filtering by matches. Supports pagination.
+      tags:
+        - La Liga
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+      responses:
+        "200":
+          description: List of match lineups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerMatchLineup"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /laliga/v1/player_match_stats:
+    get:
+      summary: Get La Liga player match statistics
+      description: Get player match statistics with optional filtering by matches or players. Supports pagination.
+      tags:
+        - La Liga
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+        - name: player_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by player IDs
+      responses:
+        "200":
+          description: List of player match statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerPlayerMatchStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /laliga/v1/team_match_stats:
+    get:
+      summary: Get La Liga team match statistics
+      description: Get team match statistics with optional filtering by matches or teams. Supports pagination.
+      tags:
+        - La Liga
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+      responses:
+        "200":
+          description: List of team match statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerTeamMatchStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /laliga/v1/odds:
+    get:
+      summary: Get La Liga betting odds
+      description: Retrieve betting odds for La Liga matches. Supports filtering by match IDs or dates. La Liga odds include moneyline odds for home, away, and draw outcomes only (no spreads or totals). Supports pagination.
+      tags:
+        - La Liga
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by specific dates (YYYY-MM-DD format)
+      responses:
+        "200":
+          description: La Liga betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /laliga/v1/odds/player_props:
+    get:
+      summary: Get La Liga player prop betting odds
+      description: |
+        Retrieve live player prop betting data for La Liga matches. Player prop data is LIVE and updated in real-time.
+        We do not store historical data. As matches near completion, many (or all) player props may be removed from sportsbooks.
+
+        **Note:** This endpoint returns all player props for the specified match in a single response. Pagination is not supported.
+
+        The API supports two market types:
+        - **over_under**: Traditional over/under markets where users can bet on whether a player will go over or under a specific line value
+        - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
+
+        Available vendors: draftkings, fanduel, caesars (more coming soon!)
+      tags:
+        - La Liga
+      parameters:
+        - name: match_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The match ID to retrieve player props for (required)
+      responses:
+        "200":
+          description: La Liga player prop betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerPlayerProp"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"

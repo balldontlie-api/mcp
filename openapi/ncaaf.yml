@@ -1,0 +1,1338 @@
+openapi: 3.1.0
+info:
+  title: BALLDONTLIE - NCAAF (College Football) API
+  version: 1.0.0
+  description: NCAAF (College Football) endpoints for the BallDontLie API.
+servers:
+  - url: https://api.balldontlie.io
+    description: Production server
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+    NCAAFBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Betting odd ID
+        game_id:
+          type: integer
+          description: Game ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        spread_home_value:
+          type: string
+          nullable: true
+          description: Home team spread value
+        spread_home_odds:
+          type: integer
+          nullable: true
+          description: Home team spread odds
+        spread_away_value:
+          type: string
+          nullable: true
+          description: Away team spread value
+        spread_away_odds:
+          type: integer
+          nullable: true
+          description: Away team spread odds
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+          description: Home team moneyline odds
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+          description: Away team moneyline odds
+        total_value:
+          type: string
+          nullable: true
+          description: Total points line value
+        total_over_odds:
+          type: integer
+          nullable: true
+          description: Over total odds
+        total_under_odds:
+          type: integer
+          nullable: true
+          description: Under total odds
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+    NCAAFConference:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        abbreviation:
+          type: string
+    NCAAFGame:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        season:
+          type: integer
+        week:
+          type: integer
+        status:
+          type: string
+          nullable: true
+        period:
+          type: integer
+        time:
+          type: string
+          nullable: true
+        home_team:
+          $ref: "#/components/schemas/NCAAFTeam"
+        visitor_team:
+          $ref: "#/components/schemas/NCAAFTeam"
+        home_score_q1:
+          type: integer
+          nullable: true
+        home_score_q2:
+          type: integer
+          nullable: true
+        home_score_q3:
+          type: integer
+          nullable: true
+        home_score_q4:
+          type: integer
+          nullable: true
+        home_score_ot:
+          type: integer
+          nullable: true
+        away_score_q1:
+          type: integer
+          nullable: true
+        away_score_q2:
+          type: integer
+          nullable: true
+        away_score_q3:
+          type: integer
+          nullable: true
+        away_score_q4:
+          type: integer
+          nullable: true
+        away_score_ot:
+          type: integer
+          nullable: true
+        home_score:
+          type: integer
+        away_score:
+          type: integer
+    NCAAFPlay:
+      type: object
+      properties:
+        game_id:
+          type: integer
+        order:
+          type: integer
+          description: Play order number (starts at 1 and increments sequentially)
+        type:
+          type: string
+          nullable: true
+        text:
+          type: string
+        home_score:
+          type: integer
+        away_score:
+          type: integer
+        period:
+          type: integer
+        clock:
+          type: string
+          nullable: true
+        scoring_play:
+          type: boolean
+        score_value:
+          type: integer
+          nullable: true
+        team:
+          $ref: "#/components/schemas/NCAAFTeam"
+          nullable: true
+    NCAAFPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        position:
+          type: string
+          nullable: true
+        position_abbreviation:
+          type: string
+          nullable: true
+        height:
+          type: string
+          nullable: true
+        weight:
+          type: string
+          nullable: true
+        jersey_number:
+          type: string
+          nullable: true
+        team:
+          $ref: "#/components/schemas/NCAAFTeam"
+    NCAAFPlayerSeasonStat:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/NCAAFPlayer"
+        team:
+          $ref: "#/components/schemas/NCAAFTeam"
+        season:
+          type: integer
+        passing_completions:
+          type: integer
+          nullable: true
+        passing_attempts:
+          type: integer
+          nullable: true
+        passing_yards:
+          type: integer
+          nullable: true
+        passing_touchdowns:
+          type: integer
+          nullable: true
+        passing_interceptions:
+          type: integer
+          nullable: true
+        passing_yards_per_game:
+          type: number
+          nullable: true
+        passing_rating:
+          type: number
+          nullable: true
+        rushing_attempts:
+          type: integer
+          nullable: true
+        rushing_yards:
+          type: integer
+          nullable: true
+        rushing_touchdowns:
+          type: integer
+          nullable: true
+        rushing_yards_per_game:
+          type: number
+          nullable: true
+        rushing_avg:
+          type: number
+          nullable: true
+        receptions:
+          type: integer
+          nullable: true
+        receiving_yards:
+          type: integer
+          nullable: true
+        receiving_touchdowns:
+          type: integer
+          nullable: true
+        receiving_yards_per_game:
+          type: number
+          nullable: true
+        receiving_avg:
+          type: number
+          nullable: true
+        total_tackles:
+          type: integer
+          nullable: true
+        solo_tackles:
+          type: integer
+          nullable: true
+        tackles_for_loss:
+          type: number
+          nullable: true
+        sacks:
+          type: number
+          nullable: true
+        interceptions:
+          type: integer
+          nullable: true
+        passes_defended:
+          type: integer
+          nullable: true
+    NCAAFPlayerStat:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/NCAAFPlayer"
+        team:
+          $ref: "#/components/schemas/NCAAFTeam"
+        game:
+          $ref: "#/components/schemas/NCAAFGame"
+        passing_completions:
+          type: integer
+          nullable: true
+        passing_attempts:
+          type: integer
+          nullable: true
+        passing_yards:
+          type: integer
+          nullable: true
+        passing_touchdowns:
+          type: integer
+          nullable: true
+        passing_interceptions:
+          type: integer
+          nullable: true
+        passing_qbr:
+          type: number
+          nullable: true
+        passing_rating:
+          type: number
+          nullable: true
+        rushing_attempts:
+          type: integer
+          nullable: true
+        rushing_yards:
+          type: integer
+          nullable: true
+        rushing_touchdowns:
+          type: integer
+          nullable: true
+        rushing_long:
+          type: integer
+          nullable: true
+        receptions:
+          type: integer
+          nullable: true
+        receiving_yards:
+          type: integer
+          nullable: true
+        receiving_touchdowns:
+          type: integer
+          nullable: true
+        receiving_targets:
+          type: integer
+          nullable: true
+        receiving_long:
+          type: integer
+          nullable: true
+        total_tackles:
+          type: integer
+          nullable: true
+        solo_tackles:
+          type: integer
+          nullable: true
+        tackles_for_loss:
+          type: number
+          nullable: true
+        sacks:
+          type: number
+          nullable: true
+        interceptions:
+          type: integer
+          nullable: true
+        passes_defended:
+          type: integer
+          nullable: true
+    NCAAFRanking:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/NCAAFTeam"
+        season:
+          type: integer
+        week:
+          type: integer
+        rank:
+          type: integer
+        first_place_votes:
+          type: integer
+          nullable: true
+        points:
+          type: integer
+          nullable: true
+        trend:
+          type: string
+          nullable: true
+        record:
+          type: string
+          nullable: true
+    NCAAFStanding:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/NCAAFTeam"
+        conference:
+          $ref: "#/components/schemas/NCAAFConference"
+        season:
+          type: integer
+        wins:
+          type: integer
+        losses:
+          type: integer
+        win_percentage:
+          type: number
+          nullable: true
+        games_behind:
+          type: number
+          nullable: true
+        home_record:
+          type: string
+          nullable: true
+        away_record:
+          type: string
+          nullable: true
+        conference_record:
+          type: string
+          nullable: true
+    NCAAFTeam:
+      type: object
+      properties:
+        id:
+          type: integer
+        conference:
+          type: string
+        city:
+          type: string
+        name:
+          type: string
+        full_name:
+          type: string
+        abbreviation:
+          type: string
+    NCAAFTeamSeasonStat:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/NCAAFTeam"
+        season:
+          type: integer
+        passing_yards:
+          type: number
+          nullable: true
+        passing_yards_per_game:
+          type: number
+          nullable: true
+        passing_touchdowns:
+          type: number
+          nullable: true
+        passing_interceptions:
+          type: number
+          nullable: true
+        passing_qb_rating:
+          type: number
+          nullable: true
+        rushing_yards:
+          type: number
+          nullable: true
+        rushing_yards_per_game:
+          type: number
+          nullable: true
+        rushing_touchdowns:
+          type: number
+          nullable: true
+        receiving_yards:
+          type: number
+          nullable: true
+        receiving_touchdowns:
+          type: number
+          nullable: true
+        opp_passing_yards:
+          type: number
+          nullable: true
+        opp_rushing_yards:
+          type: number
+          nullable: true
+    NCAAFTeamStat:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/NCAAFTeam"
+        game:
+          type: object
+          properties:
+            id:
+              type: integer
+            date:
+              type: string
+              format: date-time
+            season:
+              type: integer
+            week:
+              type: integer
+        first_downs:
+          type: integer
+          nullable: true
+        third_down_efficiency:
+          type: string
+          nullable: true
+        fourth_down_efficiency:
+          type: string
+          nullable: true
+        passing_yards:
+          type: integer
+          nullable: true
+        rushing_yards:
+          type: integer
+          nullable: true
+        total_yards:
+          type: integer
+          nullable: true
+        turnovers:
+          type: integer
+          nullable: true
+        penalties:
+          type: integer
+          nullable: true
+        penalty_yards:
+          type: integer
+          nullable: true
+        possession_time:
+          type: string
+          nullable: true
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type: integer
+          description: Cursor for the next page of results
+        prev_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the previous page of results
+        per_page:
+          type: integer
+          description: Number of results per page
+    PlayerPropMeta:
+      type: object
+      description: Metadata for player prop responses (no pagination - all results returned in single response)
+      properties:
+        per_page:
+          type: integer
+          description: Total number of results returned
+  parameters:
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The cursor for pagination
+    DatesParam:
+      name: dates[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: date
+      style: form
+      explode: true
+      description: Filter by dates (YYYY-MM-DD)
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        maximum: 100
+        default: 25
+      description: Number of results per page
+    PlayerIdsParam:
+      name: player_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by player IDs
+    TeamIdsParam:
+      name: team_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by team IDs
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequestError:
+      description: Bad Request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+security:
+  - ApiKeyAuth: []
+paths:
+  /ncaaf/v1/conferences:
+    get:
+      summary: Get NCAAF conferences
+      tags:
+        - NCAAF
+      responses:
+        "200":
+          description: List of NCAAF conferences
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFConference"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/conferences/{id}:
+    get:
+      summary: Get specific NCAAF conference
+      tags:
+        - NCAAF
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Conference ID
+      responses:
+        "200":
+          description: Conference details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NCAAFConference"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/teams:
+    get:
+      summary: Get NCAAF teams
+      tags:
+        - NCAAF
+      parameters:
+        - name: conference_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by conference id
+      responses:
+        "200":
+          description: List of NCAAF teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFTeam"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/teams/{id}:
+    get:
+      summary: Get specific NCAAF team
+      tags:
+        - NCAAF
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      responses:
+        "200":
+          description: Team details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NCAAFTeam"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/players:
+    get:
+      summary: Get NCAAF players
+      tags:
+        - NCAAF
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+        - name: first_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by first name
+        - name: last_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by last name
+      responses:
+        "200":
+          description: List of NCAAF players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/players/active:
+    get:
+      summary: Get active NCAAF players
+      tags:
+        - NCAAF
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+        - name: first_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by first name
+        - name: last_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by last name
+      responses:
+        "200":
+          description: List of active NCAAF players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/players/{id}:
+    get:
+      summary: Get specific NCAAF player
+      tags:
+        - NCAAF
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Player ID
+      responses:
+        "200":
+          description: Player details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NCAAFPlayer"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/standings:
+    get:
+      summary: Get NCAAF standings
+      tags:
+        - NCAAF
+      parameters:
+        - name: conference_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Conference ID (required)
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year (required)
+      responses:
+        "200":
+          description: NCAAF standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFStanding"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/games:
+    get:
+      summary: Get NCAAF games
+      tags:
+        - NCAAF
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/DatesParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter games after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter games before this date
+        - name: weeks[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by weeks
+      responses:
+        "200":
+          description: List of NCAAF games
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFGame"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/games/{id}:
+    get:
+      summary: Get specific NCAAF game
+      tags:
+        - NCAAF
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Game ID
+      responses:
+        "200":
+          description: Game details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NCAAFGame"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/rankings:
+    get:
+      summary: Get NCAAF rankings
+      tags:
+        - NCAAF
+      parameters:
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year (required)
+        - name: week
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by week
+      responses:
+        "200":
+          description: NCAAF rankings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFRanking"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/plays:
+    get:
+      summary: Get NCAAF play-by-play data
+      tags:
+        - NCAAF
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Game ID (required)
+      responses:
+        "200":
+          description: Play-by-play data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFPlay"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/player_stats:
+    get:
+      summary: Get NCAAF player statistics
+      tags:
+        - NCAAF
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - $ref: "#/components/parameters/DatesParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats before this date
+        - name: weeks[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by weeks
+      responses:
+        "200":
+          description: List of NCAAF player stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFPlayerStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/team_stats:
+    get:
+      summary: Get NCAAF team statistics
+      tags:
+        - NCAAF
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - $ref: "#/components/parameters/DatesParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats before this date
+        - name: weeks[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by weeks
+      responses:
+        "200":
+          description: List of NCAAF team stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFTeamStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/player_season_stats:
+    get:
+      summary: Get NCAAF player season statistics
+      tags:
+        - NCAAF
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season
+      responses:
+        "200":
+          description: NCAAF player season stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFPlayerSeasonStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/team_season_stats:
+    get:
+      summary: Get NCAAF team season statistics
+      tags:
+        - NCAAF
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season
+      responses:
+        "200":
+          description: NCAAF team season stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFTeamSeasonStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /ncaaf/v1/odds:
+    get:
+      summary: Get NCAAF betting odds
+      description: Retrieve betting odds for NCAAF games. Either (season and week) or game_ids is required.
+      tags:
+        - NCAAF
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season (must be provided with week)
+        - name: week
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by week (must be provided with season)
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: NCAAF betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NCAAFBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"

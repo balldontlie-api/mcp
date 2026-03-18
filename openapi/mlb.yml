@@ -1,0 +1,2070 @@
+openapi: 3.1.0
+info:
+  title: BALLDONTLIE - MLB API
+  version: 1.0.0
+  description: MLB endpoints for the BallDontLie API.
+servers:
+  - url: https://api.balldontlie.io
+    description: Production server
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+    MLBBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+        game_id:
+          type: integer
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        spread_home_value:
+          type: string
+          nullable: true
+        spread_home_odds:
+          type: integer
+          nullable: true
+        spread_away_value:
+          type: string
+          nullable: true
+        spread_away_odds:
+          type: integer
+          nullable: true
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+        total_value:
+          type: string
+          nullable: true
+        total_over_odds:
+          type: integer
+          nullable: true
+        total_under_odds:
+          type: integer
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+    MLBGame:
+      type: object
+      properties:
+        id:
+          type: integer
+        home_team_name:
+          type: string
+        away_team_name:
+          type: string
+        home_team:
+          $ref: "#/components/schemas/MLBTeam"
+        away_team:
+          $ref: "#/components/schemas/MLBTeam"
+        season:
+          type: integer
+        postseason:
+          type: boolean
+        season_type:
+          type: string
+          enum:
+            - spring_training
+            - regular
+            - postseason
+          description: The type of season (spring_training, regular, or postseason)
+        date:
+          type: string
+          format: date-time
+        home_team_data:
+          type: object
+          properties:
+            hits:
+              type: integer
+            runs:
+              type: integer
+            errors:
+              type: integer
+            inning_scores:
+              type: array
+              items:
+                type: integer
+        away_team_data:
+          type: object
+          properties:
+            hits:
+              type: integer
+            runs:
+              type: integer
+            errors:
+              type: integer
+            inning_scores:
+              type: array
+              items:
+                type: integer
+        venue:
+          type: string
+        attendance:
+          type: integer
+        conference_play:
+          type: boolean
+        period:
+          type: integer
+          nullable: true
+        clock:
+          type: integer
+          nullable: true
+        display_clock:
+          type: string
+          nullable: true
+        scoring_summary:
+          type: array
+          items:
+            type: object
+            properties:
+              play:
+                type: string
+              inning:
+                type: string
+              period:
+                type: string
+              away_score:
+                type: integer
+              home_score:
+                type: integer
+        status:
+          type: string
+    MLBPitchDetail:
+      type: object
+      properties:
+        pitch_number:
+          type: integer
+          description: Pitch number within the plate appearance
+        balls:
+          type: integer
+          nullable: true
+          description: Ball count before this pitch
+        strikes:
+          type: integer
+          nullable: true
+          description: Strike count before this pitch
+        pitch_call:
+          type: string
+          nullable: true
+          description: Umpire call (B=ball, S=strike, X=in play)
+        pitch_type_code:
+          type: string
+          nullable: true
+          description: Short pitch type code (FF, SL, CU, CH, etc.)
+        pitch_type:
+          type: string
+          nullable: true
+          description: Full pitch type name (e.g., "4-Seam Fastball")
+        release_speed:
+          type: number
+          nullable: true
+          description: Pitch velocity at release (mph)
+        plate_speed:
+          type: number
+          nullable: true
+          description: Pitch velocity at plate (mph)
+        spin_rate:
+          type: number
+          nullable: true
+          description: Spin rate (RPM)
+        release_extension:
+          type: number
+          nullable: true
+          description: Pitcher extension (feet)
+        plate_time:
+          type: number
+          nullable: true
+          description: Time to reach plate (seconds)
+        plate_x:
+          type: number
+          nullable: true
+          description: Horizontal plate location (feet from center)
+        plate_z:
+          type: number
+          nullable: true
+          description: Vertical plate location (feet above ground)
+        strike_zone:
+          type: integer
+          nullable: true
+          description: Strike zone region (1-14)
+        strike_zone_top:
+          type: number
+          nullable: true
+        strike_zone_bottom:
+          type: number
+          nullable: true
+        horizontal_movement:
+          type: number
+          nullable: true
+          description: Horizontal pitch movement (inches)
+        vertical_movement:
+          type: number
+          nullable: true
+          description: Vertical pitch movement (inches)
+        horizontal_break:
+          type: number
+          nullable: true
+        vertical_break:
+          type: number
+          nullable: true
+        induced_vertical_break:
+          type: number
+          nullable: true
+          description: Gravity-corrected vertical break (inches)
+        release_pos_x:
+          type: number
+          nullable: true
+        release_pos_y:
+          type: number
+          nullable: true
+        release_pos_z:
+          type: number
+          nullable: true
+        velocity_x:
+          type: number
+          nullable: true
+        velocity_y:
+          type: number
+          nullable: true
+        velocity_z:
+          type: number
+          nullable: true
+        acceleration_x:
+          type: number
+          nullable: true
+        acceleration_y:
+          type: number
+          nullable: true
+        acceleration_z:
+          type: number
+          nullable: true
+        bat_speed:
+          type: number
+          nullable: true
+          description: Bat speed on contact (mph)
+        exit_velocity:
+          type: number
+          nullable: true
+          description: Exit velocity off the bat (mph). Only populated for balls in play.
+        launch_angle:
+          type: number
+          nullable: true
+          description: Launch angle off the bat (degrees). Only populated for balls in play.
+        hit_distance:
+          type: integer
+          nullable: true
+          description: Projected hit distance (feet). Only populated for balls in play.
+        expected_batting_average:
+          type: number
+          nullable: true
+          description: Expected batting average based on exit velocity and launch angle. Only populated for balls in play.
+        is_barrel:
+          type: boolean
+          nullable: true
+          description: Whether the batted ball qualifies as a barrel. Only populated for balls in play.
+        hit_coordinate_x:
+          type: number
+          nullable: true
+          description: Horizontal hit coordinate on the field spray chart. Only populated for balls in play.
+        hit_coordinate_y:
+          type: number
+          nullable: true
+          description: Vertical hit coordinate on the field spray chart. Only populated for balls in play.
+        game_pitch_count:
+          type: integer
+          nullable: true
+          description: Total pitches in the game so far
+        pitcher_pitch_count:
+          type: integer
+          nullable: true
+          description: Pitcher's pitch count
+    MLBPlateAppearance:
+      type: object
+      properties:
+        batter_id:
+          type: integer
+          description: Player ID of the batter
+        pitcher_id:
+          type: integer
+          description: Player ID of the pitcher
+        inning:
+          type: integer
+        half_inning:
+          type: string
+          description: "\"top\" or \"bottom\""
+        pa_number:
+          type: integer
+          description: Plate appearance number within the game
+        outs:
+          type: integer
+          nullable: true
+          description: Number of outs at the start of the plate appearance
+        batter_side:
+          type: string
+          nullable: true
+          description: Batter stance (L or R)
+        pitcher_hand:
+          type: string
+          nullable: true
+          description: Pitcher throwing hand (L or R)
+        result:
+          type: string
+          nullable: true
+          description: Outcome of the plate appearance (e.g., "Strikeout", "Single")
+        is_ball_in_play_out:
+          type: boolean
+          nullable: true
+        runner_on_first:
+          type: boolean
+          nullable: true
+        runner_on_second:
+          type: boolean
+          nullable: true
+        runner_on_third:
+          type: boolean
+          nullable: true
+        pitches:
+          type: array
+          items:
+            $ref: "#/components/schemas/MLBPitchDetail"
+          description: Individual pitches in this plate appearance
+    MLBPlay:
+      type: object
+      properties:
+        game_id:
+          type: integer
+        order:
+          type: integer
+          description: Sequential play order number
+        type:
+          type: string
+          nullable: true
+          description: Type of play (e.g., "Start Batter/Pitcher", "Play Result", "Fly Out")
+        text:
+          type: string
+          nullable: true
+          description: Human-readable play description
+        home_score:
+          type: integer
+        away_score:
+          type: integer
+        inning:
+          type: integer
+        inning_type:
+          type: string
+          nullable: true
+          description: "\"Top\" or \"Bottom\""
+        scoring_play:
+          type: boolean
+        score_value:
+          type: integer
+          nullable: true
+        outs:
+          type: integer
+          nullable: true
+        balls:
+          type: integer
+          nullable: true
+        strikes:
+          type: integer
+          nullable: true
+        batter_id:
+          type: integer
+          nullable: true
+          description: Player ID of the batter
+        pitcher_id:
+          type: integer
+          nullable: true
+          description: Player ID of the pitcher
+        pitch_type:
+          type: string
+          nullable: true
+        pitch_velocity:
+          type: number
+          nullable: true
+          description: Pitch velocity in mph
+        hit_coordinate_x:
+          type: number
+          nullable: true
+        hit_coordinate_y:
+          type: number
+          nullable: true
+        trajectory:
+          type: string
+          nullable: true
+          description: Hit trajectory (F=fly, G=ground, L=line drive)
+    MLBPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        full_name:
+          type: string
+        debut_year:
+          type: integer
+          nullable: true
+        jersey:
+          type: string
+        college:
+          type: string
+        position:
+          type: string
+        active:
+          type: boolean
+        birth_place:
+          type: string
+        dob:
+          type: string
+        age:
+          type: integer
+          nullable: true
+        height:
+          type: string
+        weight:
+          type: string
+        draft:
+          type: string
+        bats_throws:
+          type: string
+        team:
+          $ref: "#/components/schemas/MLBTeam"
+    MLBPlayerProp:
+      type: object
+      properties:
+        id:
+          type: integer
+        game_id:
+          type: integer
+        player_id:
+          type: integer
+        vendor:
+          type: string
+        prop_type:
+          type: string
+          description: Type of prop (e.g., hits, home_runs, pitcher_strikeouts)
+        line_value:
+          type: string
+        market:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - over_under
+                - milestone
+            over_odds:
+              type: integer
+              nullable: true
+            under_odds:
+              type: integer
+              nullable: true
+            odds:
+              type: integer
+              nullable: true
+              description: Used for milestone market type
+        updated_at:
+          type: string
+          format: date-time
+    MLBSeasonStats:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/MLBPlayer"
+        team_name:
+          type: string
+        season:
+          type: integer
+        postseason:
+          type: boolean
+        season_type:
+          type: string
+          enum:
+            - spring_training
+            - regular
+            - postseason
+        batting_gp:
+          type: integer
+        batting_ab:
+          type: integer
+        batting_r:
+          type: integer
+        batting_h:
+          type: integer
+        batting_avg:
+          type: number
+        batting_2b:
+          type: integer
+        batting_3b:
+          type: integer
+        batting_hr:
+          type: integer
+        batting_rbi:
+          type: integer
+        batting_tb:
+          type: integer
+        batting_bb:
+          type: integer
+        batting_so:
+          type: integer
+        batting_sb:
+          type: integer
+        batting_obp:
+          type: number
+        batting_slg:
+          type: number
+        batting_ops:
+          type: number
+        batting_war:
+          type: number
+        pitching_gp:
+          type: integer
+        pitching_gs:
+          type: integer
+        pitching_qs:
+          type: integer
+        pitching_w:
+          type: integer
+        pitching_l:
+          type: integer
+        pitching_era:
+          type: number
+        pitching_sv:
+          type: integer
+        pitching_hld:
+          type: integer
+        pitching_ip:
+          type: number
+        pitching_h:
+          type: integer
+        pitching_er:
+          type: integer
+        pitching_hr:
+          type: integer
+        pitching_bb:
+          type: integer
+        pitching_whip:
+          type: number
+        pitching_k:
+          type: integer
+        pitching_k_per_9:
+          type: number
+        pitching_war:
+          type: number
+        fielding_gp:
+          type: integer
+        fielding_gs:
+          type: integer
+        fielding_fip:
+          type: number
+        fielding_tc:
+          type: integer
+        fielding_po:
+          type: integer
+        fielding_a:
+          type: integer
+        fielding_fp:
+          type: number
+        fielding_e:
+          type: integer
+        fielding_dp:
+          type: integer
+        fielding_rf:
+          type: number
+        fielding_dwar:
+          type: number
+        fielding_pb:
+          type: integer
+        fielding_cs:
+          type: integer
+        fielding_cs_percent:
+          type: number
+        fielding_sba:
+          type: integer
+    MLBStandings:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/MLBTeam"
+        league_name:
+          type: string
+        league_short_name:
+          type: string
+        division_name:
+          type: string
+        division_short_name:
+          type: string
+        wins:
+          type: integer
+        losses:
+          type: integer
+        win_percent:
+          type: number
+        games_behind:
+          type: number
+        streak:
+          type: integer
+        last_ten_games:
+          type: string
+        season:
+          type: integer
+        clinch_indicator:
+          type: string
+        elimination_number:
+          type: integer
+        wild_card_elimination_number:
+          type: integer
+        league_rank:
+          type: integer
+        sport_rank:
+          type: integer
+        division_rank:
+          type: integer
+        league_games_back:
+          type: number
+        sport_games_back:
+          type: number
+        division_games_back:
+          type: number
+        conference_games_back:
+          type: number
+        division_leader:
+          type: boolean
+        division_champ:
+          type: boolean
+        runs_allowed:
+          type: integer
+        runs_scored:
+          type: integer
+        run_differential:
+          type: integer
+        home_wins:
+          type: integer
+        home_losses:
+          type: integer
+        away_wins:
+          type: integer
+        away_losses:
+          type: integer
+        last_updated:
+          type: string
+        records:
+          type: object
+        day_wins:
+          type: integer
+        day_losses:
+          type: integer
+        night_wins:
+          type: integer
+        night_losses:
+          type: integer
+        one_run_wins:
+          type: integer
+        one_run_losses:
+          type: integer
+        extra_inning_wins:
+          type: integer
+        extra_inning_losses:
+          type: integer
+    MLBStats:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/MLBPlayer"
+        game_id:
+          type: integer
+          description: The ID of the game this stat belongs to
+        team_name:
+          type: string
+        at_bats:
+          type: integer
+          nullable: true
+        runs:
+          type: integer
+          nullable: true
+        hits:
+          type: integer
+          nullable: true
+        rbi:
+          type: integer
+          nullable: true
+        hr:
+          type: integer
+          nullable: true
+        bb:
+          type: integer
+          nullable: true
+        k:
+          type: integer
+          nullable: true
+        avg:
+          type: number
+          nullable: true
+        obp:
+          type: number
+          nullable: true
+        slg:
+          type: number
+          nullable: true
+        doubles:
+          type: integer
+          nullable: true
+          description: Doubles (from detailed box score)
+        triples:
+          type: integer
+          nullable: true
+        intentional_walks:
+          type: integer
+          nullable: true
+        hit_by_pitch:
+          type: integer
+          nullable: true
+        stolen_bases:
+          type: integer
+          nullable: true
+        caught_stealing:
+          type: integer
+          nullable: true
+        plate_appearances:
+          type: integer
+          nullable: true
+        total_bases:
+          type: integer
+          nullable: true
+        left_on_base:
+          type: integer
+          nullable: true
+        fly_outs:
+          type: integer
+          nullable: true
+        ground_outs:
+          type: integer
+          nullable: true
+        line_outs:
+          type: integer
+          nullable: true
+        pop_outs:
+          type: integer
+          nullable: true
+        air_outs:
+          type: integer
+          nullable: true
+        gidp:
+          type: integer
+          nullable: true
+          description: Grounded into double play
+        sac_bunts:
+          type: integer
+          nullable: true
+        sac_flies:
+          type: integer
+          nullable: true
+        ip:
+          type: number
+          nullable: true
+          description: Innings pitched
+        p_hits:
+          type: integer
+          nullable: true
+          description: Hits allowed (pitching)
+        p_runs:
+          type: integer
+          nullable: true
+          description: Runs allowed (pitching)
+        er:
+          type: integer
+          nullable: true
+          description: Earned runs
+        p_bb:
+          type: integer
+          nullable: true
+          description: Walks allowed (pitching)
+        p_k:
+          type: integer
+          nullable: true
+          description: Strikeouts (pitching)
+        p_hr:
+          type: integer
+          nullable: true
+          description: Home runs allowed (pitching)
+        pitch_count:
+          type: integer
+          nullable: true
+        strikes:
+          type: integer
+          nullable: true
+        era:
+          type: number
+          nullable: true
+        batters_faced:
+          type: integer
+          nullable: true
+        pitching_outs:
+          type: integer
+          nullable: true
+        wins:
+          type: integer
+          nullable: true
+        losses:
+          type: integer
+          nullable: true
+        saves:
+          type: integer
+          nullable: true
+        holds:
+          type: integer
+          nullable: true
+        blown_saves:
+          type: integer
+          nullable: true
+        games_started:
+          type: integer
+          nullable: true
+        wild_pitches:
+          type: integer
+          nullable: true
+        balks:
+          type: integer
+          nullable: true
+        pitching_hbp:
+          type: integer
+          nullable: true
+          description: Hit batters (pitching)
+        inherited_runners:
+          type: integer
+          nullable: true
+        inherited_runners_scored:
+          type: integer
+          nullable: true
+        putouts:
+          type: integer
+          nullable: true
+        assists:
+          type: integer
+          nullable: true
+        errors:
+          type: integer
+          nullable: true
+        fielding_chances:
+          type: integer
+          nullable: true
+        fielding_pct:
+          type: number
+          nullable: true
+    MLBTeam:
+      type: object
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+        abbreviation:
+          type: string
+        display_name:
+          type: string
+        short_display_name:
+          type: string
+        name:
+          type: string
+        location:
+          type: string
+        league:
+          type: string
+          enum:
+            - American
+            - National
+        division:
+          type: string
+          enum:
+            - East
+            - Central
+            - West
+    MLBTeamSeasonStats:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/MLBTeam"
+        team_name:
+          type: string
+        postseason:
+          type: boolean
+        season_type:
+          type: string
+          enum:
+            - spring_training
+            - regular
+            - postseason
+        season:
+          type: integer
+        gp:
+          type: integer
+        batting_ab:
+          type: integer
+        batting_r:
+          type: integer
+        batting_h:
+          type: integer
+        batting_2b:
+          type: integer
+        batting_3b:
+          type: integer
+        batting_hr:
+          type: integer
+        batting_rbi:
+          type: integer
+        batting_tb:
+          type: integer
+        batting_bb:
+          type: integer
+        batting_so:
+          type: integer
+        batting_sb:
+          type: integer
+        batting_avg:
+          type: number
+        batting_obp:
+          type: number
+        batting_slg:
+          type: number
+        batting_ops:
+          type: number
+        pitching_w:
+          type: integer
+        pitching_l:
+          type: integer
+        pitching_era:
+          type: number
+        pitching_sv:
+          type: integer
+        pitching_cg:
+          type: integer
+        pitching_sho:
+          type: integer
+        pitching_qs:
+          type: integer
+        pitching_ip:
+          type: number
+        pitching_h:
+          type: integer
+        pitching_er:
+          type: integer
+        pitching_hr:
+          type: integer
+        pitching_bb:
+          type: integer
+        pitching_k:
+          type: integer
+        pitching_oba:
+          type: number
+        pitching_whip:
+          type: number
+        fielding_e:
+          type: integer
+        fielding_fp:
+          type: number
+        fielding_tc:
+          type: integer
+        fielding_po:
+          type: integer
+        fielding_a:
+          type: integer
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type: integer
+          description: Cursor for the next page of results
+        prev_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the previous page of results
+        per_page:
+          type: integer
+          description: Number of results per page
+    PlayerPropMeta:
+      type: object
+      description: Metadata for player prop responses (no pagination - all results returned in single response)
+      properties:
+        per_page:
+          type: integer
+          description: Total number of results returned
+  parameters:
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The cursor for pagination
+    DatesParam:
+      name: dates[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: date
+      style: form
+      explode: true
+      description: Filter by dates (YYYY-MM-DD)
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        maximum: 100
+        default: 25
+      description: Number of results per page
+    PlayerIdsParam:
+      name: player_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by player IDs
+    SeasonParam:
+      name: season
+      in: query
+      required: true
+      schema:
+        type: integer
+      description: The season year
+    TeamIdsParam:
+      name: team_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by team IDs
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequestError:
+      description: Bad Request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+security:
+  - ApiKeyAuth: []
+paths:
+  /mlb/v1/teams:
+    get:
+      summary: Get MLB teams
+      tags:
+        - MLB
+      parameters:
+        - name: division
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by division
+        - name: league
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by league
+      responses:
+        "200":
+          description: List of MLB teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBTeam"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/teams/{id}:
+    get:
+      summary: Get specific MLB team
+      tags:
+        - MLB
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      responses:
+        "200":
+          description: Team details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/MLBTeam"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/players:
+    get:
+      summary: Get MLB players
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+        - name: first_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by first name
+        - name: last_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by last name
+      responses:
+        "200":
+          description: List of MLB players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/players/{id}:
+    get:
+      summary: Get specific MLB player
+      tags:
+        - MLB
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Player ID
+      responses:
+        "200":
+          description: Player details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/MLBPlayer"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/player_injuries:
+    get:
+      summary: Get MLB player injuries
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+      responses:
+        "200":
+          description: List of MLB player injuries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        player:
+                          $ref: "#/components/schemas/MLBPlayer"
+                        date:
+                          type: string
+                          format: date-time
+                        return_date:
+                          type: string
+                          format: date-time
+                        type:
+                          type: string
+                        detail:
+                          type: string
+                        side:
+                          type: string
+                        status:
+                          type: string
+                        long_comment:
+                          type: string
+                        short_comment:
+                          type: string
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/players/active:
+    get:
+      summary: Get active MLB players
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+        - name: first_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by first name
+        - name: last_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by last name
+      responses:
+        "200":
+          description: List of active MLB players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/games:
+    get:
+      summary: Get MLB games
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/DatesParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter by postseason games
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - spring_training
+              - regular
+              - postseason
+          description: Filter by season type (spring_training, regular, or postseason). Takes precedence over postseason parameter.
+      responses:
+        "200":
+          description: List of MLB games
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBGame"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/games/{id}:
+    get:
+      summary: Get specific MLB game
+      tags:
+        - MLB
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Game ID
+      responses:
+        "200":
+          description: Game details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/MLBGame"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/stats:
+    get:
+      summary: Get MLB stats
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+      responses:
+        "200":
+          description: List of MLB stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/standings:
+    get:
+      summary: Get MLB team standings
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/SeasonParam"
+      responses:
+        "200":
+          description: Team standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBStandings"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/season_stats:
+    get:
+      summary: Get MLB season stats
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/SeasonParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by team ID
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Get postseason stats
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - spring_training
+              - regular
+              - postseason
+          description: Filter by season type. Takes precedence over postseason parameter.
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Attribute to sort by
+        - name: sort_order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          description: Sort order
+      responses:
+        "200":
+          description: MLB season stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBSeasonStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/teams/season_stats:
+    get:
+      summary: Get MLB team season stats
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/SeasonParam"
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by team ID
+        - name: postseason
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Get postseason stats
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - spring_training
+              - regular
+              - postseason
+          description: Filter by season type. Takes precedence over postseason parameter.
+      responses:
+        "200":
+          description: MLB team season stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBTeamSeasonStats"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/players/splits:
+    get:
+      summary: Get MLB player splits
+      description: Get player splits grouped by split_category (e.g., vs RHP/LHP, by month, by opponent, etc.)
+      tags:
+        - MLB
+      parameters:
+        - name: player_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Player ID
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year
+      responses:
+        "200":
+          description: Player splits grouped by split_category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    description: Splits grouped by split_category (e.g., "split", "byDayMonth", "byOpponent")
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          player:
+                            $ref: "#/components/schemas/MLBPlayer"
+                          season:
+                            type: integer
+                          category:
+                            type: string
+                            description: batting or pitching
+                          split_category:
+                            type: string
+                            description: Category of split (e.g., split, byDayMonth, byOpponent)
+                          split_name:
+                            type: string
+                            description: Name of the split (e.g., "vs RHP", "April")
+                          split_abbreviation:
+                            type: string
+                            nullable: true
+                          at_bats:
+                            type: integer
+                            nullable: true
+                          runs:
+                            type: integer
+                            nullable: true
+                          hits:
+                            type: integer
+                            nullable: true
+                          doubles:
+                            type: integer
+                            nullable: true
+                          triples:
+                            type: integer
+                            nullable: true
+                          home_runs:
+                            type: integer
+                            nullable: true
+                          rbis:
+                            type: integer
+                            nullable: true
+                          walks:
+                            type: integer
+                            nullable: true
+                          hit_by_pitch:
+                            type: integer
+                            nullable: true
+                          strikeouts:
+                            type: integer
+                            nullable: true
+                          stolen_bases:
+                            type: integer
+                            nullable: true
+                          caught_stealing:
+                            type: integer
+                            nullable: true
+                          avg:
+                            type: number
+                            format: float
+                            nullable: true
+                          obp:
+                            type: number
+                            format: float
+                            nullable: true
+                          slg:
+                            type: number
+                            format: float
+                            nullable: true
+                          ops:
+                            type: number
+                            format: float
+                            nullable: true
+                          era:
+                            type: number
+                            format: float
+                            nullable: true
+                          wins:
+                            type: integer
+                            nullable: true
+                          losses:
+                            type: integer
+                            nullable: true
+                          saves:
+                            type: integer
+                            nullable: true
+                          save_opportunities:
+                            type: integer
+                            nullable: true
+                          games_played:
+                            type: integer
+                            nullable: true
+                          games_started:
+                            type: integer
+                            nullable: true
+                          complete_games:
+                            type: integer
+                            nullable: true
+                          innings_pitched:
+                            type: number
+                            format: float
+                            nullable: true
+                          hits_allowed:
+                            type: integer
+                            nullable: true
+                          runs_allowed:
+                            type: integer
+                            nullable: true
+                          earned_runs:
+                            type: integer
+                            nullable: true
+                          home_runs_allowed:
+                            type: integer
+                            nullable: true
+                          walks_allowed:
+                            type: integer
+                            nullable: true
+                          strikeouts_pitched:
+                            type: integer
+                            nullable: true
+                          opponent_avg:
+                            type: number
+                            format: float
+                            nullable: true
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/players/versus:
+    get:
+      summary: Get MLB player vs player matchups
+      description: Get head-to-head batting statistics for batter against pitchers for a specific team, or pitcher against batters from a specific team
+      tags:
+        - MLB
+      parameters:
+        - name: player_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Player ID (batter or pitcher)
+        - name: opponent_team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Opponent team ID
+      responses:
+        "200":
+          description: List of player vs player matchups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        player:
+                          $ref: "#/components/schemas/MLBPlayer"
+                        opponent_player:
+                          $ref: "#/components/schemas/MLBPlayer"
+                        opponent_team:
+                          $ref: "#/components/schemas/MLBTeam"
+                        at_bats:
+                          type: integer
+                          nullable: true
+                        hits:
+                          type: integer
+                          nullable: true
+                        doubles:
+                          type: integer
+                          nullable: true
+                        triples:
+                          type: integer
+                          nullable: true
+                        home_runs:
+                          type: integer
+                          nullable: true
+                        rbi:
+                          type: integer
+                          nullable: true
+                        walks:
+                          type: integer
+                          nullable: true
+                        strikeouts:
+                          type: integer
+                          nullable: true
+                        avg:
+                          type: number
+                          format: float
+                          nullable: true
+                        obp:
+                          type: number
+                          format: float
+                          nullable: true
+                        slg:
+                          type: number
+                          format: float
+                          nullable: true
+                        ops:
+                          type: number
+                          format: float
+                          nullable: true
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/plays:
+    get:
+      summary: Get MLB play-by-play data
+      description: Returns play-by-play data for a specific game including game state, scoring plays, and batted ball details.
+      tags:
+        - MLB
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID (required)
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: MLB play-by-play data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPlay"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/plate_appearances:
+    get:
+      summary: Get MLB plate appearance data
+      description: Returns plate appearance data for a specific game. Each plate appearance includes the outcome and all individual pitches with detailed pitch-level metrics. All plate appearances for the game are returned in a single response (no pagination).
+      tags:
+        - MLB
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID (required)
+      responses:
+        "200":
+          description: MLB plate appearance data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPlateAppearance"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/odds:
+    get:
+      summary: Get MLB betting odds
+      description: Retrieve betting odds for MLB games. Either dates or game_ids is required.
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by specific dates (YYYY-MM-DD format)
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: MLB betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/odds/player_props:
+    get:
+      summary: Get MLB player prop betting odds
+      description: |
+        Retrieve live player prop betting data for MLB games. Player prop data is LIVE and updated in real-time.
+        We do not store historical data. As games near completion, many (or all) player props may be removed from sportsbooks.
+
+        **Note:** This endpoint returns all player props for the specified game in a single response. Pagination is not supported.
+
+        The API supports two market types:
+        - **over_under**: Traditional over/under markets where users can bet on whether a player will go over or under a specific line value
+        - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
+
+        Available vendors: draftkings, fanatics, fanduel, betmgm
+      tags:
+        - MLB
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID to retrieve player props for (required)
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter props for a specific player
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: "Filter by prop type. Supported types: hits, home_runs, total_bases, rbis, stolen_bases."
+        - name: vendors
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by specific sportsbook vendors (e.g., draftkings, fanduel). If not provided, returns props from all available vendors.
+      responses:
+        "200":
+          description: MLB player prop betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPlayerProp"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"

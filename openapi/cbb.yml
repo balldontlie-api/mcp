@@ -1,0 +1,1635 @@
+openapi: 3.1.0
+info:
+  title: BALLDONTLIE - CBB (College Baseball) API
+  version: 1.0.0
+  description: CBB (College Baseball) endpoints for the BallDontLie API.
+servers:
+  - url: https://api.balldontlie.io
+    description: Production server
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    CBBBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Betting odd ID
+        game_id:
+          type: integer
+          description: Game ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        spread_home_value:
+          type: string
+          nullable: true
+          description: Home team spread value
+        spread_home_odds:
+          type: integer
+          nullable: true
+          description: Home team spread odds
+        spread_away_value:
+          type: string
+          nullable: true
+          description: Away team spread value
+        spread_away_odds:
+          type: integer
+          nullable: true
+          description: Away team spread odds
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+          description: Home team moneyline odds
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+          description: Away team moneyline odds
+        total_value:
+          type: string
+          nullable: true
+          description: Total points line value
+        total_over_odds:
+          type: integer
+          nullable: true
+          description: Odds for over total
+        total_under_odds:
+          type: integer
+          nullable: true
+          description: Odds for under total
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+    CBBConference:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          type: string
+    CBBGame:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        season:
+          type: integer
+        status:
+          type: string
+          nullable: true
+        period_detail:
+          type: string
+          nullable: true
+        period:
+          type: integer
+          nullable: true
+        home_team:
+          $ref: "#/components/schemas/CBBTeam"
+        visitor_team:
+          $ref: "#/components/schemas/CBBTeam"
+        home_score:
+          type: integer
+          nullable: true
+        away_score:
+          type: integer
+          nullable: true
+        home_hits:
+          type: integer
+          nullable: true
+        away_hits:
+          type: integer
+          nullable: true
+        home_errors:
+          type: integer
+          nullable: true
+        away_errors:
+          type: integer
+          nullable: true
+        home_linescores:
+          type: array
+          items:
+            type: integer
+          nullable: true
+        away_linescores:
+          type: array
+          items:
+            type: integer
+          nullable: true
+    CBBPlay:
+      type: object
+      properties:
+        game_id:
+          type: integer
+        order:
+          type: integer
+          description: Play order number (starts at 1 and increments sequentially)
+        type:
+          type: string
+          nullable: true
+        text:
+          type: string
+        home_score:
+          type: integer
+          nullable: true
+        away_score:
+          type: integer
+          nullable: true
+        period:
+          type: integer
+          nullable: true
+        at_bat_id:
+          type: string
+          nullable: true
+        pitch_count:
+          type: string
+          nullable: true
+        outs:
+          type: integer
+          nullable: true
+        scoring_play:
+          type: boolean
+          nullable: true
+        score_value:
+          type: integer
+          nullable: true
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+          nullable: true
+    CBBPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        height:
+          type: string
+          nullable: true
+        weight:
+          type: string
+          nullable: true
+        bats:
+          type: string
+          nullable: true
+        throws:
+          type: string
+          nullable: true
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+    CBBPlayerBattingStat:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/CBBPlayer"
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+        game:
+          type: object
+          properties:
+            id:
+              type: integer
+            date:
+              type: string
+              format: date-time
+            season:
+              type: integer
+        starter:
+          type: boolean
+          nullable: true
+        bat_order:
+          type: integer
+          nullable: true
+        at_bats:
+          type: integer
+          nullable: true
+        runs:
+          type: integer
+          nullable: true
+        hits:
+          type: integer
+          nullable: true
+        rbi:
+          type: integer
+          nullable: true
+        home_runs:
+          type: integer
+          nullable: true
+        walks:
+          type: integer
+          nullable: true
+        strikeouts:
+          type: integer
+          nullable: true
+        pitches_seen:
+          type: integer
+          nullable: true
+        avg:
+          type: number
+          nullable: true
+        obp:
+          type: number
+          nullable: true
+        slg:
+          type: number
+          nullable: true
+    CBBPlayerPitchingStat:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/CBBPlayer"
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+        game:
+          type: object
+          properties:
+            id:
+              type: integer
+            date:
+              type: string
+              format: date-time
+            season:
+              type: integer
+        starter:
+          type: boolean
+          nullable: true
+        innings_pitched:
+          type: number
+          nullable: true
+        hits_allowed:
+          type: integer
+          nullable: true
+        runs_allowed:
+          type: integer
+          nullable: true
+        earned_runs:
+          type: integer
+          nullable: true
+        walks:
+          type: integer
+          nullable: true
+        strikeouts:
+          type: integer
+          nullable: true
+        home_runs_allowed:
+          type: integer
+          nullable: true
+        pitch_count:
+          type: integer
+          nullable: true
+        strikes:
+          type: integer
+          nullable: true
+        era:
+          type: number
+          nullable: true
+    CBBPlayerSeasonBattingStat:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/CBBPlayer"
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+        season:
+          type: integer
+        games_played:
+          type: integer
+          nullable: true
+        at_bats:
+          type: integer
+          nullable: true
+        runs:
+          type: integer
+          nullable: true
+        hits:
+          type: integer
+          nullable: true
+        home_runs:
+          type: integer
+          nullable: true
+        rbi:
+          type: integer
+          nullable: true
+        walks:
+          type: integer
+          nullable: true
+        strikeouts:
+          type: integer
+          nullable: true
+        avg:
+          type: number
+          nullable: true
+        obp:
+          type: number
+          nullable: true
+        slg:
+          type: number
+          nullable: true
+    CBBPlayerSeasonPitchingStat:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/CBBPlayer"
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+        season:
+          type: integer
+        games_played:
+          type: integer
+          nullable: true
+        innings_pitched:
+          type: number
+          nullable: true
+        hits_allowed:
+          type: integer
+          nullable: true
+        runs_allowed:
+          type: integer
+          nullable: true
+        earned_runs:
+          type: integer
+          nullable: true
+        walks:
+          type: integer
+          nullable: true
+        strikeouts:
+          type: integer
+          nullable: true
+        home_runs_allowed:
+          type: integer
+          nullable: true
+        pitch_count:
+          type: integer
+          nullable: true
+        strikes:
+          type: integer
+          nullable: true
+        era:
+          type: number
+          nullable: true
+        whip:
+          type: number
+          nullable: true
+    CBBRanking:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+        rank:
+          type: integer
+        trend:
+          type: string
+          nullable: true
+    CBBStanding:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+        conference:
+          $ref: "#/components/schemas/CBBConference"
+        season:
+          type: integer
+        wins:
+          type: integer
+        losses:
+          type: integer
+        ties:
+          type: integer
+          nullable: true
+        win_percentage:
+          type: number
+          nullable: true
+        runs_for:
+          type: integer
+          nullable: true
+        runs_against:
+          type: integer
+          nullable: true
+    CBBTeam:
+      type: object
+      properties:
+        id:
+          type: integer
+        conference_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        full_name:
+          type: string
+        college:
+          type: string
+          nullable: true
+        abbreviation:
+          type: string
+          nullable: true
+    CBBTeamBattingStat:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+        game:
+          type: object
+          properties:
+            id:
+              type: integer
+            date:
+              type: string
+              format: date-time
+            season:
+              type: integer
+        home_away:
+          type: string
+          nullable: true
+        at_bats:
+          type: integer
+          nullable: true
+        runs:
+          type: integer
+          nullable: true
+        hits:
+          type: integer
+          nullable: true
+        home_runs:
+          type: integer
+          nullable: true
+        rbi:
+          type: integer
+          nullable: true
+        walks:
+          type: integer
+          nullable: true
+        strikeouts:
+          type: integer
+          nullable: true
+        stolen_bases:
+          type: integer
+          nullable: true
+        caught_stealing:
+          type: integer
+          nullable: true
+        hit_by_pitch:
+          type: integer
+          nullable: true
+        sacrifice_flies:
+          type: integer
+          nullable: true
+        sacrifice_hits:
+          type: integer
+          nullable: true
+        left_on_base:
+          type: integer
+          nullable: true
+        doubles:
+          type: integer
+          nullable: true
+        triples:
+          type: integer
+          nullable: true
+        gidp:
+          type: integer
+          nullable: true
+        total_bases:
+          type: integer
+          nullable: true
+        extra_base_hits:
+          type: integer
+          nullable: true
+        pitches:
+          type: integer
+          nullable: true
+        avg:
+          type: number
+          nullable: true
+        obp:
+          type: number
+          nullable: true
+        slg:
+          type: number
+          nullable: true
+    CBBTeamFieldingStat:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+        game:
+          type: object
+          properties:
+            id:
+              type: integer
+            date:
+              type: string
+              format: date-time
+            season:
+              type: integer
+        home_away:
+          type: string
+          nullable: true
+        errors:
+          type: integer
+          nullable: true
+        putouts:
+          type: integer
+          nullable: true
+        assists:
+          type: integer
+          nullable: true
+        double_plays:
+          type: integer
+          nullable: true
+        passed_balls:
+          type: integer
+          nullable: true
+        outfield_assists:
+          type: integer
+          nullable: true
+    CBBTeamPitchingStat:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+        game:
+          type: object
+          properties:
+            id:
+              type: integer
+            date:
+              type: string
+              format: date-time
+            season:
+              type: integer
+        home_away:
+          type: string
+          nullable: true
+        innings_pitched:
+          type: number
+          nullable: true
+        hits_allowed:
+          type: integer
+          nullable: true
+        runs_allowed:
+          type: integer
+          nullable: true
+        earned_runs:
+          type: integer
+          nullable: true
+        walks:
+          type: integer
+          nullable: true
+        strikeouts:
+          type: integer
+          nullable: true
+        home_runs_allowed:
+          type: integer
+          nullable: true
+        stolen_bases_allowed:
+          type: integer
+          nullable: true
+        caught_stealing:
+          type: integer
+          nullable: true
+        sacrifice_flies:
+          type: integer
+          nullable: true
+        sacrifice_hits:
+          type: integer
+          nullable: true
+        doubles_allowed:
+          type: integer
+          nullable: true
+        triples_allowed:
+          type: integer
+          nullable: true
+        rbi:
+          type: integer
+          nullable: true
+        at_bats:
+          type: integer
+          nullable: true
+        saves:
+          type: integer
+          nullable: true
+        save_opportunities:
+          type: integer
+          nullable: true
+        pitch_count:
+          type: integer
+          nullable: true
+        strikes:
+          type: integer
+          nullable: true
+        era:
+          type: number
+          nullable: true
+        whip:
+          type: number
+          nullable: true
+        oba:
+          type: number
+          nullable: true
+    CBBTeamSeasonStat:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/CBBTeam"
+        season:
+          type: integer
+        games_played:
+          type: integer
+          nullable: true
+        batting_avg:
+          type: number
+          nullable: true
+        runs:
+          type: integer
+          nullable: true
+        hits:
+          type: integer
+          nullable: true
+        home_runs:
+          type: integer
+          nullable: true
+        rbi:
+          type: integer
+          nullable: true
+        walks:
+          type: integer
+          nullable: true
+        strikeouts:
+          type: integer
+          nullable: true
+        stolen_bases:
+          type: integer
+          nullable: true
+        obp:
+          type: number
+          nullable: true
+        slg:
+          type: number
+          nullable: true
+        era:
+          type: number
+          nullable: true
+        innings_pitched:
+          type: number
+          nullable: true
+        hits_allowed:
+          type: integer
+          nullable: true
+        runs_allowed:
+          type: integer
+          nullable: true
+        earned_runs:
+          type: integer
+          nullable: true
+        pitching_walks:
+          type: integer
+          nullable: true
+        pitching_strikeouts:
+          type: integer
+          nullable: true
+        pitching_home_runs:
+          type: integer
+          nullable: true
+        whip:
+          type: number
+          nullable: true
+        errors:
+          type: integer
+          nullable: true
+        double_plays:
+          type: integer
+          nullable: true
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type: integer
+          description: Cursor for the next page of results
+        prev_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the previous page of results
+        per_page:
+          type: integer
+          description: Number of results per page
+    PlayerPropMeta:
+      type: object
+      description: Metadata for player prop responses (no pagination - all results returned in single response)
+      properties:
+        per_page:
+          type: integer
+          description: Total number of results returned
+  parameters:
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The cursor for pagination
+    DatesParam:
+      name: dates[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: date
+      style: form
+      explode: true
+      description: Filter by dates (YYYY-MM-DD)
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        maximum: 100
+        default: 25
+      description: Number of results per page
+    PlayerIdsParam:
+      name: player_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by player IDs
+    TeamIdsParam:
+      name: team_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by team IDs
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequestError:
+      description: Bad Request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+security:
+  - ApiKeyAuth: []
+paths:
+  /cbb/v1/conferences:
+    get:
+      summary: Get CBB conferences
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: List of CBB conferences
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBConference"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/teams:
+    get:
+      summary: Get CBB teams
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: conference_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by conference ID
+      responses:
+        "200":
+          description: List of CBB teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBTeam"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/players:
+    get:
+      summary: Get CBB players
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+      responses:
+        "200":
+          description: List of CBB players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/standings:
+    get:
+      summary: Get CBB team standings
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Season year (required)
+        - name: conference_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by conference ID
+      responses:
+        "200":
+          description: CBB team standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBStanding"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/games:
+    get:
+      summary: Get CBB games
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/DatesParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter games after this date (YYYY-MM-DD)
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter games before this date (YYYY-MM-DD)
+      responses:
+        "200":
+          description: List of CBB games
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBGame"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/rankings:
+    get:
+      summary: Get CBB rankings
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: CBB rankings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBRanking"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/players/active:
+    get:
+      summary: Get active CBB players
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by player name
+      responses:
+        "200":
+          description: List of active CBB players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/plays:
+    get:
+      summary: Get CBB play-by-play data
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Game ID (REQUIRED)
+      responses:
+        "200":
+          description: Play-by-play data for the game
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBPlay"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/player_batting_stats:
+    get:
+      summary: Get CBB player batting statistics
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - $ref: "#/components/parameters/DatesParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats before this date
+      responses:
+        "200":
+          description: CBB player batting statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBPlayerBattingStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/player_pitching_stats:
+    get:
+      summary: Get CBB player pitching statistics
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - $ref: "#/components/parameters/DatesParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats before this date
+      responses:
+        "200":
+          description: CBB player pitching statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBPlayerPitchingStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/team_batting_stats:
+    get:
+      summary: Get CBB team batting statistics
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - $ref: "#/components/parameters/DatesParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats before this date
+      responses:
+        "200":
+          description: CBB team batting statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBTeamBattingStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/team_pitching_stats:
+    get:
+      summary: Get CBB team pitching statistics
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - $ref: "#/components/parameters/DatesParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats before this date
+      responses:
+        "200":
+          description: CBB team pitching statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBTeamPitchingStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/team_fielding_stats:
+    get:
+      summary: Get CBB team fielding statistics
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - $ref: "#/components/parameters/DatesParam"
+        - name: seasons[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by seasons
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats after this date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter stats before this date
+      responses:
+        "200":
+          description: CBB team fielding statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBTeamFieldingStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/player_season_batting_stats:
+    get:
+      summary: Get CBB player season batting statistics
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season
+      responses:
+        "200":
+          description: CBB player season batting statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBPlayerSeasonBattingStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/player_season_pitching_stats:
+    get:
+      summary: Get CBB player season pitching statistics
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season
+      responses:
+        "200":
+          description: CBB player season pitching statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBPlayerSeasonPitchingStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/team_season_stats:
+    get:
+      summary: Get CBB team season statistics
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season
+      responses:
+        "200":
+          description: CBB team season statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBTeamSeasonStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /cbb/v1/odds:
+    get:
+      summary: Get CBB betting odds
+      description: Retrieve betting odds for CBB games. Either dates or game_ids is required.
+      tags:
+        - College Baseball
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by game dates (YYYY-MM-DD format)
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: CBB betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"

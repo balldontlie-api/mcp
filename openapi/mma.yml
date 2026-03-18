@@ -1,0 +1,902 @@
+openapi: 3.1.0
+info:
+  title: BALLDONTLIE - MMA API
+  version: 1.0.0
+  description: MMA endpoints for the BallDontLie API.
+servers:
+  - url: https://api.balldontlie.io
+    description: Production server
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+    MMABettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+        fight_id:
+          type: integer
+        vendor:
+          type: string
+        fighter1:
+          $ref: "#/components/schemas/MMAFighter"
+        fighter2:
+          $ref: "#/components/schemas/MMAFighter"
+        fighter1_odds:
+          type: integer
+          nullable: true
+        fighter2_odds:
+          type: integer
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+    MMAEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+        date:
+          type: string
+          format: date
+        venue_name:
+          type: string
+          nullable: true
+        venue_city:
+          type: string
+          nullable: true
+        venue_state:
+          type: string
+          nullable: true
+        venue_country:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        main_card_start_time:
+          type: string
+          format: date-time
+          nullable: true
+        prelims_start_time:
+          type: string
+          format: date-time
+          nullable: true
+        early_prelims_start_time:
+          type: string
+          format: date-time
+          nullable: true
+        league:
+          $ref: "#/components/schemas/MMALeague"
+          nullable: true
+    MMAFight:
+      type: object
+      properties:
+        id:
+          type: integer
+        event:
+          $ref: "#/components/schemas/MMAEvent"
+          nullable: true
+        fighter1:
+          $ref: "#/components/schemas/MMAFighter"
+        fighter2:
+          $ref: "#/components/schemas/MMAFighter"
+        winner:
+          $ref: "#/components/schemas/MMAFighter"
+          nullable: true
+        weight_class:
+          $ref: "#/components/schemas/MMAWeightClass"
+          nullable: true
+        is_main_event:
+          type: boolean
+        is_title_fight:
+          type: boolean
+        card_segment:
+          type: string
+          nullable: true
+        fight_order:
+          type: integer
+          nullable: true
+        scheduled_rounds:
+          type: integer
+        result_method:
+          type: string
+          nullable: true
+        result_method_detail:
+          type: string
+          nullable: true
+        result_round:
+          type: integer
+          nullable: true
+        result_time:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+    MMAFightStat:
+      type: object
+      properties:
+        id:
+          type: integer
+        fight_id:
+          type: integer
+        fighter:
+          $ref: "#/components/schemas/MMAFighter"
+        is_winner:
+          type: boolean
+          nullable: true
+        knockdowns:
+          type: integer
+          nullable: true
+        significant_strikes_landed:
+          type: integer
+          nullable: true
+        significant_strikes_attempted:
+          type: integer
+          nullable: true
+        significant_strike_pct:
+          type: number
+          nullable: true
+        total_strikes_landed:
+          type: integer
+          nullable: true
+        total_strikes_attempted:
+          type: integer
+          nullable: true
+        head_strikes_landed:
+          type: integer
+          nullable: true
+        head_strikes_attempted:
+          type: integer
+          nullable: true
+        body_strikes_landed:
+          type: integer
+          nullable: true
+        body_strikes_attempted:
+          type: integer
+          nullable: true
+        leg_strikes_landed:
+          type: integer
+          nullable: true
+        leg_strikes_attempted:
+          type: integer
+          nullable: true
+        sig_distance_head_landed:
+          type: integer
+          nullable: true
+        sig_distance_head_attempted:
+          type: integer
+          nullable: true
+        sig_distance_body_landed:
+          type: integer
+          nullable: true
+        sig_distance_body_attempted:
+          type: integer
+          nullable: true
+        sig_distance_leg_landed:
+          type: integer
+          nullable: true
+        sig_distance_leg_attempted:
+          type: integer
+          nullable: true
+        sig_clinch_head_landed:
+          type: integer
+          nullable: true
+        sig_clinch_head_attempted:
+          type: integer
+          nullable: true
+        sig_clinch_body_landed:
+          type: integer
+          nullable: true
+        sig_clinch_body_attempted:
+          type: integer
+          nullable: true
+        sig_clinch_leg_landed:
+          type: integer
+          nullable: true
+        sig_clinch_leg_attempted:
+          type: integer
+          nullable: true
+        sig_ground_head_landed:
+          type: integer
+          nullable: true
+        sig_ground_head_attempted:
+          type: integer
+          nullable: true
+        sig_ground_body_landed:
+          type: integer
+          nullable: true
+        sig_ground_body_attempted:
+          type: integer
+          nullable: true
+        sig_ground_leg_landed:
+          type: integer
+          nullable: true
+        sig_ground_leg_attempted:
+          type: integer
+          nullable: true
+        target_head_pct:
+          type: number
+          nullable: true
+        target_body_pct:
+          type: number
+          nullable: true
+        target_leg_pct:
+          type: number
+          nullable: true
+        takedowns_landed:
+          type: integer
+          nullable: true
+        takedowns_attempted:
+          type: integer
+          nullable: true
+        takedown_pct:
+          type: number
+          nullable: true
+        takedown_slams:
+          type: integer
+          nullable: true
+        slam_rate:
+          type: number
+          nullable: true
+        reversals:
+          type: integer
+          nullable: true
+        submissions_attempted:
+          type: integer
+          nullable: true
+        control_time_seconds:
+          type: integer
+          nullable: true
+        advances:
+          type: integer
+          nullable: true
+        advance_to_back:
+          type: integer
+          nullable: true
+        advance_to_half_guard:
+          type: integer
+          nullable: true
+        advance_to_mount:
+          type: integer
+          nullable: true
+        advance_to_side:
+          type: integer
+          nullable: true
+    MMAFighter:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        nickname:
+          type: string
+          nullable: true
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        birth_place:
+          type: string
+          nullable: true
+        nationality:
+          type: string
+          nullable: true
+        height_inches:
+          type: integer
+          nullable: true
+        reach_inches:
+          type: integer
+          nullable: true
+        weight_lbs:
+          type: integer
+          nullable: true
+        stance:
+          type: string
+          nullable: true
+        record_wins:
+          type: integer
+          nullable: true
+        record_losses:
+          type: integer
+          nullable: true
+        record_draws:
+          type: integer
+          nullable: true
+        record_no_contests:
+          type: integer
+          nullable: true
+        active:
+          type: boolean
+        weight_class:
+          $ref: "#/components/schemas/MMAWeightClass"
+          nullable: true
+    MMAFighterRanking:
+      type: object
+      properties:
+        rank:
+          type: integer
+        is_champion:
+          type: boolean
+        is_interim_champion:
+          type: boolean
+        fighter:
+          $ref: "#/components/schemas/MMAFighter"
+    MMALeague:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        abbreviation:
+          type: string
+          nullable: true
+    MMAWeightClass:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        abbreviation:
+          type: string
+          nullable: true
+        weight_limit_lbs:
+          type: integer
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+    MMAWeightClassRanking:
+      type: object
+      properties:
+        weight_class:
+          $ref: "#/components/schemas/MMAWeightClass"
+        league:
+          $ref: "#/components/schemas/MMALeague"
+        rankings:
+          type: array
+          items:
+            $ref: "#/components/schemas/MMAFighterRanking"
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type: integer
+          description: Cursor for the next page of results
+        prev_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the previous page of results
+        per_page:
+          type: integer
+          description: Number of results per page
+    PlayerPropMeta:
+      type: object
+      description: Metadata for player prop responses (no pagination - all results returned in single response)
+      properties:
+        per_page:
+          type: integer
+          description: Total number of results returned
+  parameters:
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The cursor for pagination
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        maximum: 100
+        default: 25
+      description: Number of results per page
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequestError:
+      description: Bad Request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+security:
+  - ApiKeyAuth: []
+paths:
+  /mma/v1/leagues:
+    get:
+      summary: Get all MMA leagues
+      description: Retrieve a list of all MMA leagues (UFC, Bellator, etc.)
+      tags:
+        - MMA
+      responses:
+        "200":
+          description: List of MMA leagues
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MMALeague"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mma/v1/leagues/{id}:
+    get:
+      summary: Get specific MMA league
+      description: Retrieve details for a specific MMA league
+      tags:
+        - MMA
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: League ID
+      responses:
+        "200":
+          description: League details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/MMALeague"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mma/v1/events:
+    get:
+      summary: Get MMA events
+      description: Retrieve a list of MMA events with optional filtering
+      tags:
+        - MMA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter by event date (YYYY-MM-DD)
+        - name: year
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by event year
+      responses:
+        "200":
+          description: List of MMA events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MMAEvent"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mma/v1/events/{id}:
+    get:
+      summary: Get specific MMA event
+      description: Retrieve details for a specific MMA event
+      tags:
+        - MMA
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Event ID
+      responses:
+        "200":
+          description: Event details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/MMAEvent"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mma/v1/fighters:
+    get:
+      summary: Get MMA fighters
+      description: Retrieve a list of MMA fighters with optional search and filtering
+      tags:
+        - MMA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search fighters by name
+        - name: fighter_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by specific fighter IDs
+      responses:
+        "200":
+          description: List of MMA fighters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MMAFighter"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mma/v1/fighters/{id}:
+    get:
+      summary: Get specific MMA fighter
+      description: Retrieve details for a specific MMA fighter
+      tags:
+        - MMA
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Fighter ID
+      responses:
+        "200":
+          description: Fighter details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/MMAFighter"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mma/v1/fights:
+    get:
+      summary: Get MMA fights
+      description: Retrieve a list of MMA fights with optional filtering
+      tags:
+        - MMA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: fight_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by specific fight IDs
+        - name: fighter_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter fights involving specific fighters
+        - name: event_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter fights by event IDs
+      responses:
+        "200":
+          description: List of MMA fights
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MMAFight"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mma/v1/fights/{id}:
+    get:
+      summary: Get specific MMA fight
+      description: Retrieve details for a specific MMA fight
+      tags:
+        - MMA
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Fight ID
+      responses:
+        "200":
+          description: Fight details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/MMAFight"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mma/v1/rankings:
+    get:
+      summary: Get MMA rankings
+      description: Retrieve current fighter rankings by weight class and league
+      tags:
+        - MMA
+      responses:
+        "200":
+          description: Fighter rankings by weight class
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MMAWeightClassRanking"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mma/v1/fight_stats:
+    get:
+      summary: Get MMA fight statistics
+      description: Retrieve detailed fight statistics for fighters
+      tags:
+        - MMA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: fight_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by specific fight IDs
+        - name: fighter_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter statistics for specific fighters
+        - name: event_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter statistics by event IDs
+      responses:
+        "200":
+          description: List of fight statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MMAFightStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mma/v1/fight_stats/{id}:
+    get:
+      summary: Get specific fight statistics
+      description: Retrieve statistics for a specific fight performance
+      tags:
+        - MMA
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Fight stat ID
+      responses:
+        "200":
+          description: Fight statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/MMAFightStat"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mma/v1/odds:
+    get:
+      summary: Get MMA betting odds
+      description: Retrieve betting odds for MMA fights. Either event_id or fight_id is required.
+      tags:
+        - MMA
+      parameters:
+        - name: event_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter odds by event ID
+        - name: fight_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter odds by fight ID
+      responses:
+        "200":
+          description: MMA betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MMABettingOdd"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"

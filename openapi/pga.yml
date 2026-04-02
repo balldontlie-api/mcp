@@ -571,6 +571,69 @@ components:
         per_page:
           type: integer
           description: Number of results per page
+    PGAPlayerProp:
+      type: object
+      description: PGA player prop betting data
+      required:
+        - id
+        - game_id
+        - player_id
+        - vendor
+        - prop_type
+        - line_value
+        - market
+        - updated_at
+      properties:
+        id:
+          type: integer
+          description: Unique player prop ID
+        game_id:
+          type: integer
+          description: PGA tournament ID
+        player_id:
+          type: integer
+          description: PGA player ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+          enum:
+            - fanduel
+            - draftkings
+        prop_type:
+          type: string
+          description: Type of player prop
+          example: round_1_score
+        line_value:
+          type: string
+          description: The line value for the prop
+          example: "71.5"
+        market:
+          oneOf:
+            - type: object
+              description: Over/under market
+              properties:
+                type:
+                  type: string
+                  enum: [over_under]
+                over_odds:
+                  type: integer
+                  description: American odds for over
+                under_odds:
+                  type: integer
+                  description: American odds for under
+            - type: object
+              description: Milestone market (yes/no)
+              properties:
+                type:
+                  type: string
+                  enum: [milestone]
+                odds:
+                  type: integer
+                  description: American odds
+        updated_at:
+          type: string
+          format: date-time
+          description: When the prop was last updated
     PlayerPropMeta:
       type: object
       description: Metadata for player prop responses (no pagination - all results returned in single response)
@@ -1277,6 +1340,61 @@ paths:
                       $ref: "#/components/schemas/PGAFuturesOdd"
                   meta:
                     $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /pga/v1/odds/player_props:
+    get:
+      summary: Get PGA player props
+      description: Retrieve player prop betting odds for a PGA tournament (e.g., round scores, hole scores, birdies). Requires GOAT tier.
+      tags:
+        - PGA Tour
+      parameters:
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Tournament ID (required)
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by player ID
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by prop type (e.g., round_1_score, hole_5_par)
+        - name: vendors
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Filter by sportsbook vendors (e.g., fanduel, draftkings)
+      responses:
+        "200":
+          description: PGA player prop betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGAPlayerProp"
+                  meta:
+                    $ref: "#/components/schemas/PlayerPropMeta"
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":

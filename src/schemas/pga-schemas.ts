@@ -401,6 +401,31 @@ export const pgaTeeTimesSchema = {
   additionalProperties: false,
 };
 
+export const pgaPlayerPropsSchema = {
+  type: "object",
+  properties: {
+    tournament_id: {
+      type: "number",
+      description: "Tournament ID (required)",
+    },
+    player_id: {
+      type: "number",
+      description: "Filter by player ID",
+    },
+    prop_type: {
+      type: "string",
+      description: "Filter by prop type (e.g., round_1_score, hole_5_par)",
+    },
+    vendors: {
+      type: "array",
+      items: { type: "string" },
+      description: "Filter by sportsbook vendors (e.g., fanduel, draftkings)",
+    },
+  },
+  required: ["tournament_id"],
+  additionalProperties: false,
+};
+
 export const pgaFuturesSchema = {
   type: "object",
   properties: {

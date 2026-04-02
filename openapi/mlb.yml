@@ -408,6 +408,28 @@ components:
           type: string
           nullable: true
           description: Hit trajectory (F=fly, G=ground, L=line drive)
+    MLBGameLineup:
+      type: object
+      properties:
+        id:
+          type: integer
+        game_id:
+          type: integer
+        player:
+          $ref: "#/components/schemas/MLBPlayer"
+        team:
+          $ref: "#/components/schemas/MLBTeam"
+        batting_order:
+          type: integer
+          nullable: true
+          description: Batting order position (1-9), null for probable pitchers not in the batting lineup
+        position:
+          type: string
+          nullable: true
+          description: "Position abbreviation (SS, CF, DH, SP, etc.)"
+        is_probable_pitcher:
+          type: boolean
+          description: Whether this player is the probable starting pitcher
     MLBPlayer:
       type: object
       properties:
@@ -1921,7 +1943,7 @@ paths:
   /mlb/v1/plate_appearances:
     get:
       summary: Get MLB plate appearance data
-      description: Returns plate appearance data for a specific game. Each plate appearance includes the outcome and all individual pitches with detailed pitch-level metrics. All plate appearances for the game are returned in a single response (no pagination).
+      description: Returns plate appearance data for a specific game. Each plate appearance includes the outcome and all individual pitches with detailed Statcast metrics. All plate appearances for the game are returned in a single response (no pagination).
       tags:
         - MLB
       parameters:
@@ -2060,6 +2082,47 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/MLBPlayerProp"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/lineups:
+    get:
+      summary: Get MLB game lineups
+      description: Get pre-game batting lineups and probable pitchers for MLB games. Lineups typically appear 1-2 hours before first pitch. Lineup data is available starting from the 2026 season.
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: game_ids[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: List of game lineups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBGameLineup"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":

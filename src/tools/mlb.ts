@@ -202,6 +202,20 @@ export function createMLBTools(apiClient: APIClient): MCPTool[] {
     },
 
     {
+      name: "mlb_get_lineups",
+      description:
+        "Get MLB pre-game batting lineups and probable pitchers. Lineups typically appear 1-2 hours before first pitch. Available starting from the 2026 season.",
+      inputSchema: schemas.mlbLineupsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/mlb/v1/lineups",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
       name: "mlb_get_odds",
       description:
         "Get MLB betting odds. Either dates or game_ids is required.",

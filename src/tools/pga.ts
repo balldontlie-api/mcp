@@ -115,6 +115,20 @@ export function createPGATools(apiClient: APIClient): MCPTool[] {
     },
 
     {
+      name: "pga_get_player_props",
+      description:
+        "Get PGA player prop betting odds for a tournament (e.g., round scores, hole scores, birdies). Requires GOAT tier.",
+      inputSchema: schemas.pgaPlayerPropsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/pga/v1/odds/player_props",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
       name: "pga_get_futures",
       description:
         "Get PGA futures betting odds (e.g., tournament winner). Requires GOAT tier.",

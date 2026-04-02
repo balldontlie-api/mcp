@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: BALLDONTLIE - MMA API
   version: 1.0.0
-  description: MMA endpoints for the BallDontLie API.
+  description: "UFC/MMA endpoints for the BALLDONTLIE API. Note: UFC is the only league with comprehensive coverage."
 servers:
   - url: https://api.balldontlie.io
     description: Production server
@@ -456,7 +456,7 @@ paths:
   /mma/v1/leagues:
     get:
       summary: Get all MMA leagues
-      description: Retrieve a list of all MMA leagues (UFC, Bellator, etc.)
+      description: "Retrieve a list of all MMA leagues. Note: UFC is the only league with comprehensive coverage."
       tags:
         - MMA
       responses:

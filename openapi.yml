@@ -257,10 +257,6 @@ paths:
     $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1player_shot_locations
   /wnba/v1/team_shot_locations:
     $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1team_shot_locations
-  /wnba/v1/lineup_advanced_stats:
-    $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1lineup_advanced_stats
-  /wnba/v1/shot_chart_details:
-    $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1shot_chart_details
   /wnba/v1/standings:
     $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1standings
   /wnba/v1/player_injuries:

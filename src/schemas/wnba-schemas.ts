@@ -521,45 +521,6 @@ export const wnbaTeamShotLocationsSchema = {
   additionalProperties: false,
 };
 
-export const wnbaLineupAdvancedStatsSchema = {
-  type: "object",
-  properties: {
-    ...advancedSeasonProperties,
-    player_ids: {
-      type: "array",
-      items: { type: "number" },
-      description: "Filter to lineups containing these player IDs",
-    },
-  },
-  required: ["season"],
-  additionalProperties: false,
-};
-
-export const wnbaShotChartDetailsSchema = {
-  type: "object",
-  properties: {
-    ...gameAdvancedProperties,
-    player_ids: {
-      type: "array",
-      items: { type: "number" },
-      description: "Filter by player IDs",
-    },
-    event_type: {
-      type: "string",
-      description: "Filter by event type",
-    },
-    action_type: {
-      type: "string",
-      description: "Filter by shot action type",
-    },
-    shot_made: {
-      type: "boolean",
-      description: "Filter by shot result",
-    },
-  },
-  additionalProperties: false,
-};
-
 export const wnbaStandingsSchema = {
   type: "object",
   properties: {

@@ -22,7 +22,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           `/wnba/v1/teams/${id}`,
           undefined,
-          headers
+          headers,
         );
       },
     },
@@ -45,7 +45,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           `/wnba/v1/players/${id}`,
           undefined,
-          headers
+          headers,
         );
       },
     },
@@ -58,7 +58,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/players/active",
           params,
-          headers
+          headers,
         );
       },
     },
@@ -82,7 +82,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           `/wnba/v1/games/${id}`,
           undefined,
-          headers
+          headers,
         );
       },
     },
@@ -95,7 +95,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/player_stats",
           params,
-          headers
+          headers,
         );
       },
     },
@@ -108,7 +108,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/team_stats",
           params,
-          headers
+          headers,
         );
       },
     },
@@ -121,7 +121,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/player_season_stats",
           params,
-          headers
+          headers,
         );
       },
     },
@@ -134,7 +134,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/team_season_stats",
           params,
-          headers
+          headers,
         );
       },
     },
@@ -147,7 +147,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/player_game_advanced_stats",
           params,
-          headers
+          headers,
         );
       },
     },
@@ -160,7 +160,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/team_game_advanced_stats",
           params,
-          headers
+          headers,
         );
       },
     },
@@ -173,7 +173,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/player_season_advanced_stats",
           params,
-          headers
+          headers,
         );
       },
     },
@@ -186,7 +186,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/team_season_advanced_stats",
           params,
-          headers
+          headers,
         );
       },
     },
@@ -199,7 +199,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/player_shot_locations",
           params,
-          headers
+          headers,
         );
       },
     },
@@ -212,33 +212,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/team_shot_locations",
           params,
-          headers
-        );
-      },
-    },
-
-    {
-      name: "wnba_get_lineup_advanced_stats",
-      description: "Get WNBA lineup advanced statistics",
-      inputSchema: schemas.wnbaLineupAdvancedStatsSchema,
-      handler: async (params: any, headers?: Record<string, string>) => {
-        return await apiClient.makeRequest(
-          "/wnba/v1/lineup_advanced_stats",
-          params,
-          headers
-        );
-      },
-    },
-
-    {
-      name: "wnba_get_shot_chart_details",
-      description: "Get WNBA shot chart details",
-      inputSchema: schemas.wnbaShotChartDetailsSchema,
-      handler: async (params: any, headers?: Record<string, string>) => {
-        return await apiClient.makeRequest(
-          "/wnba/v1/shot_chart_details",
-          params,
-          headers
+          headers,
         );
       },
     },
@@ -251,7 +225,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/standings",
           params,
-          headers
+          headers,
         );
       },
     },
@@ -264,7 +238,7 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
         return await apiClient.makeRequest(
           "/wnba/v1/player_injuries",
           params,
-          headers
+          headers,
         );
       },
     },

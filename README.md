@@ -28,7 +28,7 @@ Sign up at [BALLDONTLIE](https://app.balldontlie.io) to get your free API key.
 
 #### Option A: Use Hosted Remote Server (Recommended)
 
-Add to your MCP client configuration (e.g., Claude Desktop) to use the hosted server:
+Add to your MCP client configuration (e.g., the agent Desktop) to use the hosted server:
 
 ```json
 {
@@ -216,7 +216,7 @@ The server will automatically provide all available tools. You can ask your AI a
 | `nhl_get_plays`                | Get play-by-play data                | `game_id` (required)                                                                |
 | `nhl_get_player_injuries`      | Get currently injured NHL players    | -                                                                                   |
 
-### WNBA (14 tools)
+### WNBA (22 tools)
 
 | Tool                            | Description                  | Parameters                                                                       |
 | ------------------------------- | ---------------------------- | -------------------------------------------------------------------------------- |
@@ -231,6 +231,14 @@ The server will automatically provide all available tools. You can ask your AI a
 | `wnba_get_team_stats`           | Get team game statistics     | `game_ids`, `dates`, `seasons`, `team_ids`, pagination                           |
 | `wnba_get_player_season_stats`  | Get player season stats      | `player_ids`, `team_ids`, `season`, `season_type`, pagination                    |
 | `wnba_get_team_season_stats`    | Get team season stats        | `team_ids`, `season`, `season_type`, pagination                                  |
+| `wnba_get_player_game_advanced_stats` | Get player game advanced stats | `game_ids`, `dates`, `season`, `seasons`, `player_ids`, `team_ids`, `season_type`, `postseason`, pagination |
+| `wnba_get_team_game_advanced_stats` | Get team game advanced stats | `game_ids`, `dates`, `season`, `seasons`, `team_ids`, `season_type`, `postseason`, pagination |
+| `wnba_get_player_season_advanced_stats` | Get player season advanced stats | `season` (required), `player_ids`, `team_ids`, `season_type`, `postseason`, `scope`, `measure_type`, `per_mode`, pagination |
+| `wnba_get_team_season_advanced_stats` | Get team season advanced stats | `season` (required), `team_ids`, `season_type`, `postseason`, `scope`, `measure_type`, `per_mode`, pagination |
+| `wnba_get_player_shot_locations` | Get player shot locations   | `season` (required), `player_ids`, `team_ids`, `season_type`, `postseason`, `distance_range`, `per_mode`, pagination |
+| `wnba_get_team_shot_locations` | Get team shot locations      | `season` (required), `team_ids`, `season_type`, `postseason`, `measure_type`, `distance_range`, `per_mode`, pagination |
+| `wnba_get_lineup_advanced_stats` | Get lineup advanced stats   | `season` (required), `team_ids`, `player_ids`, `season_type`, `postseason`, `measure_type`, `per_mode`, pagination |
+| `wnba_get_shot_chart_details`  | Get shot chart details       | `game_ids`, `dates`, `season`, `seasons`, `player_ids`, `team_ids`, `season_type`, `postseason`, `shot_made`, pagination |
 | `wnba_get_standings`            | Get WNBA standings           | `season`, `conference`                                                           |
 | `wnba_get_player_injuries`      | Get player injuries          | `player_ids`, `team_ids`, pagination                                             |
 | `wnba_get_plays`                | Get play-by-play data        | `game_id` (required)                                                             |

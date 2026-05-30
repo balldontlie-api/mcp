@@ -39,6 +39,57 @@ components:
         per_page:
           type: integer
           description: Total number of results returned
+    WNBABettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Betting odd ID
+        game_id:
+          type: integer
+          description: Game ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        spread_home_value:
+          type: string
+          nullable: true
+          description: Home team spread value
+        spread_home_odds:
+          type: integer
+          nullable: true
+          description: Home team spread odds
+        spread_away_value:
+          type: string
+          nullable: true
+          description: Away team spread value
+        spread_away_odds:
+          type: integer
+          nullable: true
+          description: Away team spread odds
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+          description: Home team moneyline odds
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+          description: Away team moneyline odds
+        total_value:
+          type: string
+          nullable: true
+          description: Total points line value
+        total_over_odds:
+          type: integer
+          nullable: true
+          description: Over total odds
+        total_under_odds:
+          type: integer
+          nullable: true
+          description: Under total odds
+        updated_at:
+          type: string
+          format: date-time
     WNBAGame:
       type: object
       properties:
@@ -158,6 +209,57 @@ components:
         comment:
           type: string
           description: Injury details
+    WNBAPlayerProp:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Player prop ID
+        game_id:
+          type: integer
+          description: Game ID
+        player_id:
+          type: integer
+          description: Player ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        prop_type:
+          type: string
+          description: Type of prop (e.g., points, rebounds, assists)
+        line_value:
+          type: string
+          description: Player prop line value
+        market:
+          oneOf:
+            - $ref: "#/components/schemas/WNBAPlayerPropMarketOverUnder"
+            - $ref: "#/components/schemas/WNBAPlayerPropMarketMilestone"
+        updated_at:
+          type: string
+          format: date-time
+    WNBAPlayerPropMarketMilestone:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - milestone
+        odds:
+          type: integer
+          description: Milestone odds
+    WNBAPlayerPropMarketOverUnder:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - over_under
+        over_odds:
+          type: integer
+          description: Over odds
+        under_odds:
+          type: integer
+          description: Under odds
     WNBAPlayerSeasonStat:
       type: object
       properties:
@@ -477,6 +579,291 @@ components:
         fouls:
           type: integer
           description: Team fouls
+    WNBAAdvancedGame:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Game ID
+        date:
+          type: string
+          format: date-time
+          description: Game date and time
+        season:
+          type: integer
+          description: Season year
+    WNBAAdvancedStats:
+      type: object
+      additionalProperties: true
+      description: Advanced metrics keyed by metric category
+    WNBAPlayerGameAdvancedStat:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Stat record ID
+        player:
+          $ref: "#/components/schemas/WNBAPlayer"
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+        game:
+          $ref: "#/components/schemas/WNBAAdvancedGame"
+        period:
+          type: integer
+          description: Period number; 0 represents full game
+        stats:
+          $ref: "#/components/schemas/WNBAAdvancedStats"
+    WNBATeamGameAdvancedStat:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Stat record ID
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+        game:
+          $ref: "#/components/schemas/WNBAAdvancedGame"
+        period:
+          type: integer
+          description: Period number; 0 represents full game
+        stats:
+          $ref: "#/components/schemas/WNBAAdvancedStats"
+    WNBAPlayerSeasonAdvancedStat:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Stat record ID
+        player:
+          $ref: "#/components/schemas/WNBAPlayer"
+        team:
+          nullable: true
+          $ref: "#/components/schemas/WNBATeam"
+        season:
+          type: integer
+          description: Season year
+        season_type:
+          type: string
+          enum:
+            - regular
+            - playoffs
+        scope:
+          type: string
+          enum:
+            - general
+            - clutch
+        measure_type:
+          type: string
+          enum:
+            - advanced
+            - misc
+            - scoring
+            - usage
+            - defense
+            - four_factors
+            - opponent
+            - base
+        per_mode:
+          type: string
+          enum:
+            - totals
+            - per_game
+        stats:
+          $ref: "#/components/schemas/WNBAAdvancedStats"
+    WNBATeamSeasonAdvancedStat:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Stat record ID
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+        season:
+          type: integer
+          description: Season year
+        season_type:
+          type: string
+          enum:
+            - regular
+            - playoffs
+        scope:
+          type: string
+          enum:
+            - general
+            - clutch
+        measure_type:
+          type: string
+          enum:
+            - advanced
+            - misc
+            - scoring
+            - usage
+            - defense
+            - four_factors
+            - opponent
+            - base
+        per_mode:
+          type: string
+          enum:
+            - totals
+            - per_game
+        stats:
+          $ref: "#/components/schemas/WNBAAdvancedStats"
+    WNBAPlayerShotLocation:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Stat record ID
+        player:
+          $ref: "#/components/schemas/WNBAPlayer"
+        team:
+          nullable: true
+          $ref: "#/components/schemas/WNBATeam"
+        season:
+          type: integer
+          description: Season year
+        season_type:
+          type: string
+          enum:
+            - regular
+            - playoffs
+        distance_range:
+          type: string
+          enum:
+            - by_zone
+            - 5ft_range
+        per_mode:
+          type: string
+          enum:
+            - totals
+            - per_game
+        stats:
+          $ref: "#/components/schemas/WNBAAdvancedStats"
+    WNBATeamShotLocation:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Stat record ID
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+        season:
+          type: integer
+          description: Season year
+        season_type:
+          type: string
+          enum:
+            - regular
+            - playoffs
+        measure_type:
+          type: string
+          enum:
+            - base
+            - opponent
+        distance_range:
+          type: string
+          enum:
+            - by_zone
+            - 5ft_range
+        per_mode:
+          type: string
+          enum:
+            - totals
+            - per_game
+        stats:
+          $ref: "#/components/schemas/WNBAAdvancedStats"
+    WNBALineupAdvancedStat:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Stat record ID
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+        players:
+          type: array
+          items:
+            $ref: "#/components/schemas/WNBAPlayer"
+        season:
+          type: integer
+          description: Season year
+        season_type:
+          type: string
+          enum:
+            - regular
+            - playoffs
+        measure_type:
+          type: string
+          enum:
+            - advanced
+            - misc
+            - scoring
+            - usage
+            - defense
+            - four_factors
+            - opponent
+            - base
+        per_mode:
+          type: string
+          enum:
+            - totals
+            - per_game
+        stats:
+          $ref: "#/components/schemas/WNBAAdvancedStats"
+    WNBAShotChartDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Shot record ID
+        game:
+          $ref: "#/components/schemas/WNBAAdvancedGame"
+        player:
+          $ref: "#/components/schemas/WNBAPlayer"
+        team:
+          $ref: "#/components/schemas/WNBATeam"
+        period:
+          type: integer
+          nullable: true
+        minutes_remaining:
+          type: integer
+          nullable: true
+        seconds_remaining:
+          type: integer
+          nullable: true
+        event_type:
+          type: string
+          nullable: true
+        action_type:
+          type: string
+          nullable: true
+        shot_type:
+          type: string
+          nullable: true
+        shot_zone_basic:
+          type: string
+          nullable: true
+        shot_zone_area:
+          type: string
+          nullable: true
+        shot_zone_range:
+          type: string
+          nullable: true
+        shot_distance:
+          type: integer
+          nullable: true
+        loc_x:
+          type: integer
+          nullable: true
+        loc_y:
+          type: integer
+          nullable: true
+        shot_made:
+          type: boolean
+          nullable: true
+        stats:
+          $ref: "#/components/schemas/WNBAAdvancedStats"
   parameters:
     CursorParam:
       name: cursor
@@ -497,6 +884,17 @@ components:
       style: form
       explode: true
       description: Filter by dates (YYYY-MM-DD)
+    GameIdsParam:
+      name: game_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by game IDs
     PerPageParam:
       name: per_page
       in: query
@@ -517,6 +915,120 @@ components:
       style: form
       explode: true
       description: Filter by player IDs
+    SeasonsParam:
+      name: seasons[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by seasons
+    SeasonParam:
+      name: season
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: Filter by season
+    RequiredSeasonParam:
+      name: season
+      in: query
+      required: true
+      schema:
+        type: integer
+      description: Season year
+    SeasonTypeParam:
+      name: season_type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - regular
+          - playoffs
+      description: Filter by season type
+    PostseasonParam:
+      name: postseason
+      in: query
+      required: false
+      schema:
+        type: boolean
+      description: Filter by postseason status
+    StartDateParam:
+      name: start_date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+      description: Filter by games on or after this date
+    EndDateParam:
+      name: end_date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+      description: Filter by games on or before this date
+    PeriodParam:
+      name: period
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: Filter by period; 0 represents full game
+    AdvancedScopeParam:
+      name: scope
+      in: query
+      required: false
+      schema:
+        type: string
+        default: general
+        enum:
+          - general
+          - clutch
+      description: Filter by stat scope
+    AdvancedMeasureTypeParam:
+      name: measure_type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - advanced
+          - misc
+          - scoring
+          - usage
+          - defense
+          - four_factors
+          - opponent
+          - base
+      description: Filter by stat category
+    AdvancedPerModeParam:
+      name: per_mode
+      in: query
+      required: false
+      schema:
+        type: string
+        default: totals
+        enum:
+          - totals
+          - per_game
+      description: Filter by stat aggregation mode
+    DistanceRangeParam:
+      name: distance_range
+      in: query
+      required: false
+      schema:
+        type: string
+        default: by_zone
+        enum:
+          - by_zone
+          - 5ft_range
+      description: Filter shot locations by distance grouping
     TeamIdsParam:
       name: team_ids[]
       in: query
@@ -1069,6 +1581,333 @@ paths:
           $ref: "#/components/responses/RateLimitError"
         "500":
           $ref: "#/components/responses/ServerError"
+  /wnba/v1/player_game_advanced_stats:
+    get:
+      summary: Get WNBA player game advanced statistics
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/GameIdsParam"
+        - $ref: "#/components/parameters/DatesParam"
+        - $ref: "#/components/parameters/SeasonParam"
+        - $ref: "#/components/parameters/SeasonsParam"
+        - $ref: "#/components/parameters/SeasonTypeParam"
+        - $ref: "#/components/parameters/PostseasonParam"
+        - $ref: "#/components/parameters/StartDateParam"
+        - $ref: "#/components/parameters/EndDateParam"
+        - $ref: "#/components/parameters/PeriodParam"
+      responses:
+        "200":
+          description: List of WNBA player game advanced stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAPlayerGameAdvancedStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/team_game_advanced_stats:
+    get:
+      summary: Get WNBA team game advanced statistics
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/GameIdsParam"
+        - $ref: "#/components/parameters/DatesParam"
+        - $ref: "#/components/parameters/SeasonParam"
+        - $ref: "#/components/parameters/SeasonsParam"
+        - $ref: "#/components/parameters/SeasonTypeParam"
+        - $ref: "#/components/parameters/PostseasonParam"
+        - $ref: "#/components/parameters/StartDateParam"
+        - $ref: "#/components/parameters/EndDateParam"
+        - $ref: "#/components/parameters/PeriodParam"
+      responses:
+        "200":
+          description: List of WNBA team game advanced stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBATeamGameAdvancedStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/player_season_advanced_stats:
+    get:
+      summary: Get WNBA player season advanced statistics
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/RequiredSeasonParam"
+        - $ref: "#/components/parameters/SeasonTypeParam"
+        - $ref: "#/components/parameters/PostseasonParam"
+        - $ref: "#/components/parameters/AdvancedScopeParam"
+        - $ref: "#/components/parameters/AdvancedMeasureTypeParam"
+        - $ref: "#/components/parameters/AdvancedPerModeParam"
+      responses:
+        "200":
+          description: List of WNBA player season advanced stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAPlayerSeasonAdvancedStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/team_season_advanced_stats:
+    get:
+      summary: Get WNBA team season advanced statistics
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/RequiredSeasonParam"
+        - $ref: "#/components/parameters/SeasonTypeParam"
+        - $ref: "#/components/parameters/PostseasonParam"
+        - $ref: "#/components/parameters/AdvancedScopeParam"
+        - $ref: "#/components/parameters/AdvancedMeasureTypeParam"
+        - $ref: "#/components/parameters/AdvancedPerModeParam"
+      responses:
+        "200":
+          description: List of WNBA team season advanced stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBATeamSeasonAdvancedStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/player_shot_locations:
+    get:
+      summary: Get WNBA player shot location statistics
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/RequiredSeasonParam"
+        - $ref: "#/components/parameters/SeasonTypeParam"
+        - $ref: "#/components/parameters/PostseasonParam"
+        - $ref: "#/components/parameters/DistanceRangeParam"
+        - $ref: "#/components/parameters/AdvancedPerModeParam"
+      responses:
+        "200":
+          description: List of WNBA player shot location stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAPlayerShotLocation"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/team_shot_locations:
+    get:
+      summary: Get WNBA team shot location statistics
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/RequiredSeasonParam"
+        - $ref: "#/components/parameters/SeasonTypeParam"
+        - $ref: "#/components/parameters/PostseasonParam"
+        - $ref: "#/components/parameters/AdvancedMeasureTypeParam"
+        - $ref: "#/components/parameters/DistanceRangeParam"
+        - $ref: "#/components/parameters/AdvancedPerModeParam"
+      responses:
+        "200":
+          description: List of WNBA team shot location stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBATeamShotLocation"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/lineup_advanced_stats:
+    get:
+      summary: Get WNBA lineup advanced statistics
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/RequiredSeasonParam"
+        - $ref: "#/components/parameters/SeasonTypeParam"
+        - $ref: "#/components/parameters/PostseasonParam"
+        - $ref: "#/components/parameters/AdvancedMeasureTypeParam"
+        - $ref: "#/components/parameters/AdvancedPerModeParam"
+      responses:
+        "200":
+          description: List of WNBA lineup advanced stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBALineupAdvancedStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/shot_chart_details:
+    get:
+      summary: Get WNBA shot chart details
+      description: Requires at least one of game_ids, dates, player_ids, team_ids, start_date, or end_date.
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/GameIdsParam"
+        - $ref: "#/components/parameters/DatesParam"
+        - $ref: "#/components/parameters/SeasonParam"
+        - $ref: "#/components/parameters/SeasonsParam"
+        - $ref: "#/components/parameters/SeasonTypeParam"
+        - $ref: "#/components/parameters/PostseasonParam"
+        - $ref: "#/components/parameters/StartDateParam"
+        - $ref: "#/components/parameters/EndDateParam"
+        - $ref: "#/components/parameters/PeriodParam"
+        - name: event_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by event type
+        - name: action_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by shot action type
+        - name: shot_made
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter by shot result
+      responses:
+        "200":
+          description: List of WNBA shot chart details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAShotChartDetail"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
   /wnba/v1/standings:
     get:
       summary: Get WNBA standings
@@ -1134,6 +1973,123 @@ paths:
                       $ref: "#/components/schemas/WNBAPlayerInjury"
                   meta:
                     $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/odds:
+    get:
+      summary: Get WNBA betting odds
+      description: Retrieve betting odds for WNBA games. Either dates or game_ids is required.
+      tags:
+        - WNBA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by specific dates (YYYY-MM-DD format)
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: WNBA betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBABettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wnba/v1/odds/player_props:
+    get:
+      summary: Get WNBA player prop betting odds
+      description: |
+        Retrieve live player prop betting data for WNBA games. Player prop data is LIVE and updated in real-time.
+        We do not store historical data. As games near completion, many (or all) player props may be removed from sportsbooks.
+
+        **Note:** This endpoint returns all player props for the specified game in a single response. Pagination is not supported.
+
+        The API supports two market types:
+        - **over_under**: Traditional over/under markets where users can bet on whether a player will go over or under a specific line value
+        - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
+      tags:
+        - WNBA
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID to retrieve player props for (required)
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter props for a specific player
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by prop type
+        - name: vendors
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by specific sportsbook vendors. If not provided, returns props from all available vendors.
+      responses:
+        "200":
+          description: WNBA player prop betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WNBAPlayerProp"
+                  meta:
+                    $ref: "#/components/schemas/PlayerPropMeta"
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":

@@ -297,6 +297,269 @@ export const wnbaTeamSeasonStatsSchema = {
   additionalProperties: false,
 };
 
+const paginationProperties = {
+  cursor: {
+    type: "number",
+    description: "Pagination cursor",
+  },
+  per_page: {
+    type: "number",
+    minimum: 1,
+    maximum: 100,
+    description: "Number of results per page (max 100)",
+  },
+};
+
+const gameAdvancedProperties = {
+  game_ids: {
+    type: "array",
+    items: { type: "number" },
+    description: "Filter by game IDs",
+  },
+  dates: {
+    type: "array",
+    items: { type: "string", format: "date" },
+    description: "Filter by specific game dates",
+  },
+  seasons: {
+    type: "array",
+    items: { type: "number" },
+    description: "Filter by seasons",
+  },
+  season: {
+    type: "number",
+    description: "Filter by season",
+  },
+  team_ids: {
+    type: "array",
+    items: { type: "number" },
+    description: "Filter by team IDs",
+  },
+  season_type: {
+    type: "string",
+    enum: ["regular", "playoffs"],
+    description: "Filter by season type",
+  },
+  postseason: {
+    type: "boolean",
+    description: "Filter by postseason status",
+  },
+  start_date: {
+    type: "string",
+    format: "date",
+    description: "Start date for date range filter",
+  },
+  end_date: {
+    type: "string",
+    format: "date",
+    description: "End date for date range filter",
+  },
+  period: {
+    type: "number",
+    description: "Filter by period; 0 represents full game",
+  },
+  ...paginationProperties,
+};
+
+const advancedSeasonProperties = {
+  team_ids: {
+    type: "array",
+    items: { type: "number" },
+    description: "Filter by team IDs",
+  },
+  season: {
+    type: "number",
+    description: "Season year",
+  },
+  season_type: {
+    type: "string",
+    enum: ["regular", "playoffs"],
+    description: "Filter by season type",
+  },
+  postseason: {
+    type: "boolean",
+    description: "Filter by postseason status",
+  },
+  scope: {
+    type: "string",
+    enum: ["general", "clutch"],
+    description: "Filter by stat scope",
+  },
+  measure_type: {
+    type: "string",
+    enum: [
+      "advanced",
+      "misc",
+      "scoring",
+      "usage",
+      "defense",
+      "four_factors",
+      "opponent",
+      "base",
+    ],
+    description: "Filter by stat category",
+  },
+  per_mode: {
+    type: "string",
+    enum: ["totals", "per_game"],
+    description: "Filter by aggregation mode",
+  },
+  ...paginationProperties,
+};
+
+const shotLocationProperties = {
+  season: {
+    type: "number",
+    description: "Season year",
+  },
+  season_type: {
+    type: "string",
+    enum: ["regular", "playoffs"],
+    description: "Filter by season type",
+  },
+  postseason: {
+    type: "boolean",
+    description: "Filter by postseason status",
+  },
+  distance_range: {
+    type: "string",
+    enum: ["by_zone", "5ft_range"],
+    description: "Filter by distance grouping",
+  },
+  per_mode: {
+    type: "string",
+    enum: ["totals", "per_game"],
+    description: "Filter by aggregation mode",
+  },
+  ...paginationProperties,
+};
+
+export const wnbaPlayerGameAdvancedStatsSchema = {
+  type: "object",
+  properties: {
+    ...gameAdvancedProperties,
+    player_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by player IDs",
+    },
+  },
+  additionalProperties: false,
+};
+
+export const wnbaTeamGameAdvancedStatsSchema = {
+  type: "object",
+  properties: gameAdvancedProperties,
+  additionalProperties: false,
+};
+
+export const wnbaPlayerSeasonAdvancedStatsSchema = {
+  type: "object",
+  properties: {
+    ...advancedSeasonProperties,
+    player_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by player IDs",
+    },
+  },
+  required: ["season"],
+  additionalProperties: false,
+};
+
+export const wnbaTeamSeasonAdvancedStatsSchema = {
+  type: "object",
+  properties: advancedSeasonProperties,
+  required: ["season"],
+  additionalProperties: false,
+};
+
+export const wnbaPlayerShotLocationsSchema = {
+  type: "object",
+  properties: {
+    ...shotLocationProperties,
+    player_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by player IDs",
+    },
+    team_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by team IDs",
+    },
+  },
+  required: ["season"],
+  additionalProperties: false,
+};
+
+export const wnbaTeamShotLocationsSchema = {
+  type: "object",
+  properties: {
+    ...shotLocationProperties,
+    team_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by team IDs",
+    },
+    measure_type: {
+      type: "string",
+      enum: [
+        "advanced",
+        "misc",
+        "scoring",
+        "usage",
+        "defense",
+        "four_factors",
+        "opponent",
+        "base",
+      ],
+      description: "Filter by stat category",
+    },
+  },
+  required: ["season"],
+  additionalProperties: false,
+};
+
+export const wnbaLineupAdvancedStatsSchema = {
+  type: "object",
+  properties: {
+    ...advancedSeasonProperties,
+    player_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter to lineups containing these player IDs",
+    },
+  },
+  required: ["season"],
+  additionalProperties: false,
+};
+
+export const wnbaShotChartDetailsSchema = {
+  type: "object",
+  properties: {
+    ...gameAdvancedProperties,
+    player_ids: {
+      type: "array",
+      items: { type: "number" },
+      description: "Filter by player IDs",
+    },
+    event_type: {
+      type: "string",
+      description: "Filter by event type",
+    },
+    action_type: {
+      type: "string",
+      description: "Filter by shot action type",
+    },
+    shot_made: {
+      type: "boolean",
+      description: "Filter by shot result",
+    },
+  },
+  additionalProperties: false,
+};
+
 export const wnbaStandingsSchema = {
   type: "object",
   properties: {

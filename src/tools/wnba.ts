@@ -140,6 +140,110 @@ export function createWNBATools(apiClient: APIClient): MCPTool[] {
     },
 
     {
+      name: "wnba_get_player_game_advanced_stats",
+      description: "Get WNBA player game advanced statistics",
+      inputSchema: schemas.wnbaPlayerGameAdvancedStatsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/wnba/v1/player_game_advanced_stats",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
+      name: "wnba_get_team_game_advanced_stats",
+      description: "Get WNBA team game advanced statistics",
+      inputSchema: schemas.wnbaTeamGameAdvancedStatsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/wnba/v1/team_game_advanced_stats",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
+      name: "wnba_get_player_season_advanced_stats",
+      description: "Get WNBA player season advanced statistics",
+      inputSchema: schemas.wnbaPlayerSeasonAdvancedStatsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/wnba/v1/player_season_advanced_stats",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
+      name: "wnba_get_team_season_advanced_stats",
+      description: "Get WNBA team season advanced statistics",
+      inputSchema: schemas.wnbaTeamSeasonAdvancedStatsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/wnba/v1/team_season_advanced_stats",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
+      name: "wnba_get_player_shot_locations",
+      description: "Get WNBA player shot location statistics",
+      inputSchema: schemas.wnbaPlayerShotLocationsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/wnba/v1/player_shot_locations",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
+      name: "wnba_get_team_shot_locations",
+      description: "Get WNBA team shot location statistics",
+      inputSchema: schemas.wnbaTeamShotLocationsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/wnba/v1/team_shot_locations",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
+      name: "wnba_get_lineup_advanced_stats",
+      description: "Get WNBA lineup advanced statistics",
+      inputSchema: schemas.wnbaLineupAdvancedStatsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/wnba/v1/lineup_advanced_stats",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
+      name: "wnba_get_shot_chart_details",
+      description: "Get WNBA shot chart details",
+      inputSchema: schemas.wnbaShotChartDetailsSchema,
+      handler: async (params: any, headers?: Record<string, string>) => {
+        return await apiClient.makeRequest(
+          "/wnba/v1/shot_chart_details",
+          params,
+          headers
+        );
+      },
+    },
+
+    {
       name: "wnba_get_standings",
       description: "Get WNBA team standings by season or conference",
       inputSchema: schemas.wnbaStandingsSchema,

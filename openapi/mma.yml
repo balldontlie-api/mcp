@@ -41,6 +41,28 @@ components:
         updated_at:
           type: string
           format: date-time
+    MMAOpeningBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+        fight_id:
+          type: integer
+        vendor:
+          type: string
+        fighter1:
+          $ref: "#/components/schemas/MMAFighter"
+        fighter2:
+          $ref: "#/components/schemas/MMAFighter"
+        fighter1_odds:
+          type: integer
+          nullable: true
+        fighter2_odds:
+          type: integer
+          nullable: true
+        opened_at:
+          type: string
+          format: date-time
     MMAEvent:
       type: object
       properties:
@@ -892,6 +914,50 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/MMABettingOdd"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /mma/v1/odds/opening:
+    get:
+      summary: Get MMA opening betting odds
+      description: Retrieve historical opening betting odds. Coverage is limited to the most recently completed season and ongoing seasons where available. Requires GOAT tier.
+      tags:
+        - MMA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: event_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by event ID
+        - name: fight_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by fight ID
+      responses:
+        "200":
+          description: Opening odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MMAOpeningBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":

@@ -65,6 +65,58 @@ components:
           type: string
           format: date-time
           description: Last update timestamp
+    CBBOpeningBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Betting odd ID
+        game_id:
+          type: integer
+          description: Game ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        spread_home_value:
+          type: string
+          nullable: true
+          description: Home team spread value
+        spread_home_odds:
+          type: integer
+          nullable: true
+          description: Home team spread odds
+        spread_away_value:
+          type: string
+          nullable: true
+          description: Away team spread value
+        spread_away_odds:
+          type: integer
+          nullable: true
+          description: Away team spread odds
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+          description: Home team moneyline odds
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+          description: Away team moneyline odds
+        total_value:
+          type: string
+          nullable: true
+          description: Total points line value
+        total_over_odds:
+          type: integer
+          nullable: true
+          description: Odds for over total
+        total_under_odds:
+          type: integer
+          nullable: true
+          description: Odds for under total
+        opened_at:
+          type: string
+          format: date-time
+          description: Opening odds timestamp
     CBBConference:
       type: object
       properties:
@@ -1623,6 +1675,59 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/CBBBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /cbb/v1/odds/opening:
+    get:
+      summary: Get CBB opening betting odds
+      description: Retrieve historical opening betting odds. Coverage is limited to the most recently completed season and ongoing seasons where available. Requires GOAT tier.
+      tags:
+        - CBB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by game dates
+      responses:
+        "200":
+          description: Opening odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CBBOpeningBettingOdd"
                   meta:
                     $ref: "#/components/schemas/Pagination"
         "400":

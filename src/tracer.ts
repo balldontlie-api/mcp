@@ -1,4 +1,5 @@
 import tracer from "dd-trace";
+import { SERVER_VERSION } from "./version.js";
 
 // Only initialize tracer if DD_AGENT_HOST is configured
 const DD_AGENT_HOST = process.env.DD_AGENT_HOST;
@@ -11,24 +12,23 @@ if (DD_AGENT_HOST && ENABLE_TRACING) {
     hostname: DD_AGENT_HOST,
     profiling: process.env.DD_PROFILING_ENABLED === "true",
     logInjection: true,
-    version: process.env.SERVICE_VERSION || "1.0.0",
+    version: process.env.SERVICE_VERSION || SERVER_VERSION,
+    // Never permit ambient header-tag configuration to capture Authorization.
+    headerTags: [],
   });
 
-  tracer.use("express", {
-    // hook will be executed right before the request span is finished
-    hooks: {
-      request: (span, req, res) => {
-        // Don't log sensitive authorization headers
-        span?.setTag("has_auth", !!req?.headers.authorization);
-        span?.setTag("client", req?.headers["x-bdl-client"]);
-        span?.setTag("mcp_method", (req as any)?.body?.method);
-        span?.setTag("mcp_tool", (req as any)?.body?.params?.name);
-        if ((res as any)?.error) {
-          span?.setTag("error", (res as any).error);
-        }
-      },
-    },
+  // Keep only inbound HTTP spans. Outbound spans can otherwise retain raw
+  // transport errors or be configured to capture Authorization headers.
+  tracer.use("http", {
+    filter: (urlOrPath) => urlOrPath.startsWith("/"),
+    headers: [],
+    queryStringObfuscation: true,
   });
+
+  // Express instrumentation receives raw middleware errors (including JSON
+  // parser errors). HTTP spans plus server-resolved tags provide the useful
+  // telemetry without handing those objects to the tracer.
+  tracer.use("express", { enabled: false });
 }
 
 export default tracer;

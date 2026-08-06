@@ -67,6 +67,95 @@ components:
           type: string
           format: date-time
           description: Last update timestamp
+    SoccerOpeningPlayerProp:
+      type: object
+      description: Soccer player prop betting data
+      required:
+        - id
+        - match_id
+        - player_id
+        - vendor
+        - prop_type
+        - line_value
+        - market
+        - updated_at
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique player prop ID
+        match_id:
+          type: integer
+          description: Match ID
+        player_id:
+          type: integer
+          description: Player ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+          enum:
+            - draftkings
+            - fanduel
+            - caesars
+        prop_type:
+          type: string
+          description: Type of player prop
+          enum:
+            - anytime_goal
+            - assists
+            - first_goal
+            - first_half_goal
+            - goals_assists
+            - header_goal
+            - last_goal
+            - outside_box_goal
+            - saves
+            - second_half_goal
+            - shots
+            - shots_on_target
+            - tackles
+          example: anytime_goal
+        line_value:
+          type: string
+          description: The line value for the prop
+          example: "0.5"
+        market:
+          oneOf:
+            - $ref: "#/components/schemas/SoccerPlayerPropMarketOverUnder"
+            - $ref: "#/components/schemas/SoccerPlayerPropMarketMilestone"
+          description: Market information - either over_under or milestone type
+        opened_at:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of when this prop was last updated
+    SoccerOpeningBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Betting odd ID
+        match_id:
+          type: integer
+          description: Match ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+          description: Home team moneyline odds
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+          description: Away team moneyline odds
+        moneyline_draw_odds:
+          type: integer
+          nullable: true
+          description: Draw moneyline odds
+        opened_at:
+          type: string
+          format: date-time
+          description: Opening odds timestamp
     SoccerMatch:
       type: object
       properties:
@@ -108,6 +197,51 @@ components:
           type: string
           nullable: true
         attendance:
+          type: integer
+          nullable: true
+        referee_name:
+          type: string
+          nullable: true
+        referee_country:
+          type: string
+          nullable: true
+        round_number:
+          type: integer
+          nullable: true
+        venue_latitude:
+          type: number
+          nullable: true
+        venue_longitude:
+          type: number
+          nullable: true
+        venue_capacity:
+          type: integer
+          nullable: true
+        venue_stadium_name:
+          type: string
+          nullable: true
+        home_formation:
+          type: string
+          nullable: true
+        away_formation:
+          type: string
+          nullable: true
+        home_manager_name:
+          type: string
+          nullable: true
+        away_manager_name:
+          type: string
+          nullable: true
+        first_half_home_score:
+          type: integer
+          nullable: true
+        first_half_away_score:
+          type: integer
+          nullable: true
+        second_half_home_score:
+          type: integer
+          nullable: true
+        second_half_away_score:
           type: integer
           nullable: true
     SoccerMatchEvent:
@@ -203,6 +337,36 @@ components:
           nullable: true
           items:
             type: integer
+        preferred_foot:
+          type: string
+          nullable: true
+          description: Preferred kicking foot (left/right/both)
+    SoccerPlayerInjury:
+      type: object
+      description: Current soccer player injury report
+      properties:
+        id:
+          type: integer
+          description: Injury report ID
+        player:
+          $ref: "#/components/schemas/SoccerPlayer"
+        team:
+          $ref: "#/components/schemas/SoccerTeam"
+        position:
+          type: string
+          nullable: true
+          description: Player position from the injury source
+        injury_type:
+          type: string
+          nullable: true
+          description: Injury or absence type
+        status:
+          type: string
+          description: Injury status, such as OUT, GTD, or SUS
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the current injury snapshot was refreshed
     SoccerPlayerMatchStats:
       type: object
       properties:
@@ -242,6 +406,130 @@ components:
           type: integer
         own_goals:
           type: integer
+        rating:
+          type: number
+          nullable: true
+          description: Match rating on a 0-10 scale
+        minutes_played:
+          type: integer
+          nullable: true
+        expected_goals:
+          type: number
+          nullable: true
+        expected_assists:
+          type: number
+          nullable: true
+        key_passes:
+          type: integer
+          nullable: true
+        passes_total:
+          type: integer
+          nullable: true
+        passes_accurate:
+          type: integer
+          nullable: true
+        long_balls_total:
+          type: integer
+          nullable: true
+        long_balls_accurate:
+          type: integer
+          nullable: true
+        crosses_total:
+          type: integer
+          nullable: true
+        crosses_accurate:
+          type: integer
+          nullable: true
+        dribbles_attempted:
+          type: integer
+          nullable: true
+        dribbles_completed:
+          type: integer
+          nullable: true
+        duels_won:
+          type: integer
+          nullable: true
+        duels_lost:
+          type: integer
+          nullable: true
+        aerial_duels_won:
+          type: integer
+          nullable: true
+        aerial_duels_lost:
+          type: integer
+          nullable: true
+        tackles:
+          type: integer
+          nullable: true
+        tackles_won:
+          type: integer
+          nullable: true
+        interceptions:
+          type: integer
+          nullable: true
+        clearances:
+          type: integer
+          nullable: true
+        ball_recoveries:
+          type: integer
+          nullable: true
+        touches:
+          type: integer
+          nullable: true
+        possession_lost:
+          type: integer
+          nullable: true
+        was_fouled:
+          type: integer
+          nullable: true
+        big_chances_created:
+          type: integer
+          nullable: true
+        big_chances_missed:
+          type: integer
+          nullable: true
+        blocked_shots:
+          type: integer
+          nullable: true
+        hit_woodwork:
+          type: integer
+          nullable: true
+        total_progression:
+          type: number
+          nullable: true
+        ball_carries_count:
+          type: integer
+          nullable: true
+        ball_carries_distance:
+          type: number
+          nullable: true
+        goalkeeper_saves:
+          type: integer
+          nullable: true
+        saves_inside_box:
+          type: integer
+          nullable: true
+        penalty_saves:
+          type: integer
+          nullable: true
+        punches:
+          type: integer
+          nullable: true
+        keeper_sweeper_total:
+          type: integer
+          nullable: true
+        keeper_sweeper_accurate:
+          type: integer
+          nullable: true
+        shirt_number:
+          type: integer
+          nullable: true
+        lineup_position:
+          type: string
+          nullable: true
+        was_substitute:
+          type: boolean
+          nullable: true
     SoccerPlayerProp:
       type: object
       description: Soccer player prop betting data
@@ -444,6 +732,242 @@ components:
         pass_accuracy_pct:
           type: number
           nullable: true
+        expected_goals:
+          type: number
+          nullable: true
+        big_chances:
+          type: integer
+          nullable: true
+        big_chances_missed:
+          type: integer
+          nullable: true
+        shots_off_target:
+          type: integer
+          nullable: true
+        shots_blocked:
+          type: integer
+          nullable: true
+        shots_inside_box:
+          type: integer
+          nullable: true
+        shots_outside_box:
+          type: integer
+          nullable: true
+        hit_woodwork:
+          type: integer
+          nullable: true
+        offsides:
+          type: integer
+          nullable: true
+        throw_ins:
+          type: integer
+          nullable: true
+        goal_kicks:
+          type: integer
+          nullable: true
+        free_kicks:
+          type: integer
+          nullable: true
+        long_balls_total:
+          type: integer
+          nullable: true
+        long_balls_accurate:
+          type: integer
+          nullable: true
+        crosses_total:
+          type: integer
+          nullable: true
+        crosses_accurate:
+          type: integer
+          nullable: true
+        ground_duels_won:
+          type: integer
+          nullable: true
+        ground_duels_total:
+          type: integer
+          nullable: true
+        aerial_duels_won:
+          type: integer
+          nullable: true
+        aerial_duels_total:
+          type: integer
+          nullable: true
+        dribbles_completed:
+          type: integer
+          nullable: true
+        dribbles_total:
+          type: integer
+          nullable: true
+        tackles:
+          type: integer
+          nullable: true
+        interceptions:
+          type: integer
+          nullable: true
+        clearances:
+          type: integer
+          nullable: true
+        saves:
+          type: integer
+          nullable: true
+        big_saves:
+          type: integer
+          nullable: true
+    SoccerMatchShot:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        player_id:
+          type: integer
+        team_id:
+          type: integer
+        is_home:
+          type: boolean
+        shot_type:
+          type: string
+          description: One of goal, save, miss, block, post
+        situation:
+          type: string
+          nullable: true
+        body_part:
+          type: string
+          nullable: true
+        goal_type:
+          type: string
+          nullable: true
+        xg:
+          type: number
+          nullable: true
+        xgot:
+          type: number
+          nullable: true
+        player_x:
+          type: number
+          nullable: true
+        player_y:
+          type: number
+          nullable: true
+        goal_mouth_x:
+          type: number
+          nullable: true
+        goal_mouth_y:
+          type: number
+          nullable: true
+        block_x:
+          type: number
+          nullable: true
+        block_y:
+          type: number
+          nullable: true
+        time_minute:
+          type: integer
+        added_time:
+          type: integer
+          nullable: true
+        time_seconds:
+          type: integer
+          nullable: true
+    SoccerMatchMomentumPoint:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        minute:
+          type: number
+        value:
+          type: number
+    SoccerMatchBestPlayer:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        player_id:
+          type: integer
+        team_id:
+          type: integer
+        is_home:
+          type: boolean
+        side_rank:
+          type: integer
+        is_man_of_match:
+          type: boolean
+        rating:
+          type: number
+          nullable: true
+    SoccerMatchAvgPosition:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        player_id:
+          type: integer
+        team_id:
+          type: integer
+        is_home:
+          type: boolean
+        avg_x:
+          type: number
+        avg_y:
+          type: number
+    SoccerMatchHeatmap:
+      type: object
+      description: |
+        Per-player heatmap dots for a match. Heatmap data is published only after a
+        match concludes; in-progress matches return zero heatmap rows.
+      properties:
+        match_id:
+          type: integer
+        player_id:
+          type: integer
+        team_id:
+          type: integer
+          nullable: true
+        dots:
+          type: array
+          items:
+            type: object
+            properties:
+              x:
+                type: integer
+              y:
+                type: integer
+        dot_count:
+          type: integer
+    SoccerMatchPregameForm:
+      type: object
+      description: Pre-match team-form summary
+      properties:
+        match_id:
+          type: integer
+        team_id:
+          type: integer
+        is_home:
+          type: boolean
+        avg_rating:
+          type: number
+          nullable: true
+        position:
+          type: integer
+          nullable: true
+        value:
+          type: string
+          nullable: true
+          description: Recent-points summary string
+        form:
+          type: array
+          nullable: true
+          minItems: 0
+          maxItems: 5
+          items:
+            type: string
+            enum:
+              - W
+              - D
+              - L
+          description: Up to 5 of the team's most-recent results (newest first)
   parameters:
     CursorParam:
       name: cursor
@@ -604,6 +1128,67 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/SoccerPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /seriea/v1/player_injuries:
+    get:
+      summary: Get Serie A player injuries
+      description: Retrieve the current Serie A player injury snapshot. Supports filtering by player IDs, team IDs, or injury status. Requires GOAT tier access.
+      tags:
+        - Serie A
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: player_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by player IDs
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by team IDs
+        - name: statuses
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by injury statuses, such as OUT, GTD, or SUS
+      responses:
+        "200":
+          description: List of Serie A player injuries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerPlayerInjury"
                   meta:
                     $ref: "#/components/schemas/Pagination"
         "400":
@@ -941,6 +1526,59 @@ paths:
           $ref: "#/components/responses/RateLimitError"
         "500":
           $ref: "#/components/responses/ServerError"
+  /seriea/v1/odds/opening:
+    get:
+      summary: Get Serie A opening betting odds
+      description: Retrieve historical opening betting odds. Coverage is limited to the most recently completed season and ongoing seasons where available. Requires GOAT tier.
+      tags:
+        - Serie A
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by match dates
+      responses:
+        "200":
+          description: Opening odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerOpeningBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
   /seriea/v1/odds/player_props:
     get:
       summary: Get Serie A player prop betting odds
@@ -976,6 +1614,351 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/SoccerPlayerProp"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /seriea/v1/odds/player_props/opening:
+    get:
+      summary: Get Serie A opening player prop odds
+      description: Retrieve historical opening player prop betting odds. Coverage is limited to the most recently completed season and ongoing seasons where available. Requires GOAT tier.
+      tags:
+        - Serie A
+      parameters:
+        - name: match_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The match ID to retrieve opening player props for
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter props for a specific player
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by prop type
+        - name: vendors
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by sportsbook vendors
+      responses:
+        "200":
+          description: Opening odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerOpeningPlayerProp"
+                  meta:
+                    $ref: "#/components/schemas/PlayerPropMeta"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /seriea/v1/match_shots:
+    get:
+      summary: Get Serie A match shots
+      description: |
+        Retrieve shot-map entries with expected goals (xG / xGoT) and pitch
+        coordinates. Available for matches in the current and future seasons
+        only; older matches return empty results. Requires GOAT tier.
+      tags:
+        - Serie A
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+        - name: player_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+      responses:
+        "200":
+          description: Match shot entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerMatchShot"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /seriea/v1/match_momentum:
+    get:
+      summary: Get Serie A match attack momentum
+      description: |
+        Retrieve per-minute attack momentum values. Positive values favor the
+        home side, negative values favor the away side. Available for matches
+        in the current and future seasons only. Requires GOAT tier.
+      tags:
+        - Serie A
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+      responses:
+        "200":
+          description: Per-minute momentum points
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerMatchMomentumPoint"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /seriea/v1/match_best_players:
+    get:
+      summary: Get Serie A match top performers
+      description: |
+        Retrieve the top-rated players for each match (best XI per side and
+        the man of the match). Available for matches in the current and
+        future seasons only. Requires GOAT tier.
+      tags:
+        - Serie A
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+      responses:
+        "200":
+          description: Match best player entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerMatchBestPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /seriea/v1/match_avg_positions:
+    get:
+      summary: Get Serie A player average positions
+      description: |
+        Retrieve each player's average pitch position (heatmap centroid) for
+        a match. Coordinates are normalized 0-100. Available for matches in
+        the current and future seasons only. Requires GOAT tier.
+      tags:
+        - Serie A
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+        - name: team_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+      responses:
+        "200":
+          description: Player average position entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerMatchAvgPosition"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /seriea/v1/match_heatmaps:
+    get:
+      summary: Get Serie A player heatmaps
+      description: |
+        Retrieve per-player heatmap dots for a match. Heatmap data is
+        published only after a match concludes; in-progress matches return
+        zero heatmap rows, with data landing within ~20 minutes of full-time.
+        Requires GOAT tier.
+      tags:
+        - Serie A
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+        - name: player_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+      responses:
+        "200":
+          description: Per-player heatmap entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerMatchHeatmap"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /seriea/v1/match_pregame_forms:
+    get:
+      summary: Get Serie A pre-match team form
+      description: |
+        Retrieve a pre-match team-form summary for each side - recent
+        average rating, league position entering the match, and a list of
+        the team's most-recent results. Available for matches in the current
+        and future seasons only. Requires GOAT tier.
+      tags:
+        - Serie A
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+      responses:
+        "200":
+          description: Pre-match team form entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SoccerMatchPregameForm"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":

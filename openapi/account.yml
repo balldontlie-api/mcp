@@ -1,0 +1,453 @@
+openapi: 3.1.0
+info:
+  title: BALLDONTLIE - Account Management API
+  version: 1.0.0
+  description: |-
+    Machine-accessible account management endpoints for the BALLDONTLIE API.
+
+    These endpoints allow AI agents and programmatic workflows to manage accounts,
+    view subscriptions, and handle billing — all via API key authentication.
+
+    ## Authentication
+
+    Most endpoints require an API key via the `Authorization` header:
+    ```
+    Authorization: Bearer YOUR_API_KEY
+    ```
+
+    The `/signup` and `/plans` endpoints do not require authentication.
+
+    ## Payment Handling
+
+    When creating or upgrading a subscription, if no payment method is on file,
+    the API returns a `402` status with a `payment_url` that a human must visit
+    to enter payment details on Stripe's hosted checkout page. Once payment is
+    complete, the subscription activates automatically via webhooks.
+
+    BALLDONTLIE all-access includes every BALLDONTLIE sport, Lab, Webhooks, and
+    all StoryStats products. Users with active all-access do not need separate
+    StoryStats subscriptions.
+servers:
+  - url: https://api.balldontlie.io
+    description: Production server
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    AccountError:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+              enum:
+                - invalid_api_key
+                - payment_method_required
+                - payment_failed
+                - invalid_sport
+                - invalid_tier
+                - legacy_plan_unavailable
+                - missing_fields
+                - subscription_not_found
+                - email_taken
+                - all_access_includes_storystats
+            message:
+              type: string
+              description: Human-readable error description
+            payment_url:
+              type: string
+              nullable: true
+              description: Stripe Checkout URL (only when code is payment_method_required)
+            portal_url:
+              type: string
+              nullable: true
+              description: Stripe Billing Portal URL (only when code is payment_failed)
+    AccountUser:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        api_key:
+          type: string
+          format: uuid
+        tier:
+          type: string
+          enum: [free, paid, paid_plus]
+        subscriptions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AccountSubscriptionSummary"
+    AccountSubscriptionSummary:
+      type: object
+      properties:
+        sport:
+          type: string
+          description: Product identifier, such as nba, valorant, stories_wnba, or stories_nfl.
+        tier:
+          type: string
+          enum: [free, paid, paid_plus]
+    AccountSubscription:
+      type: object
+      properties:
+        sport:
+          type: string
+        tier:
+          type: string
+          enum: [free, paid, paid_plus]
+        status:
+          type: string
+          nullable: true
+          description: Stripe subscription status (active, past_due, canceled, etc.)
+        current_period_end:
+          type: string
+          format: date-time
+          nullable: true
+        cancel_at_period_end:
+          type: boolean
+    PlanTier:
+      type: object
+      properties:
+        price:
+          type: number
+        currency:
+          type: string
+        billing_period:
+          type: string
+        rate_limit:
+          type: integer
+          description: Requests per rate_limit_window_seconds
+        rate_limit_window_seconds:
+          type: integer
+        description:
+          type: string
+          nullable: true
+    Plan:
+      type: object
+      properties:
+        sport:
+          type: string
+          description: Product identifier, such as nba, valorant, stories_wnba, or stories_nfl.
+        display_name:
+          type: string
+        spec_url:
+          type: string
+          nullable: true
+          description: URL to the OpenAPI spec for this sport's endpoints
+        tiers:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/PlanTier"
+security:
+  - ApiKeyAuth: []
+paths:
+  /account/v1/signup:
+    post:
+      summary: Create a new account
+      description: Creates a new user account and returns the API key immediately. No authentication required.
+      security: []
+      tags: [Account]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 1
+      responses:
+        "200":
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountUser"
+        "400":
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountError"
+        "409":
+          description: Email already taken
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountError"
+  /account/v1/me:
+    get:
+      summary: Get current user profile
+      description: Returns the authenticated user's profile including email, API key, tier, and subscriptions.
+      tags: [Account]
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountUser"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountError"
+  /account/v1/api-key/rotate:
+    post:
+      summary: Rotate API key
+      description: |-
+        Generates a new API key and invalidates the old one immediately.
+        The response includes the new key. All subsequent requests must use the new key.
+      tags: [Account]
+      responses:
+        "200":
+          description: New API key generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountUser"
+        "401":
+          description: Invalid or missing API key
+  /account/v1/subscriptions:
+    get:
+      summary: List subscriptions
+      description: Returns all subscriptions for the authenticated user, enriched with Stripe status when available.
+      tags: [Subscriptions]
+      responses:
+        "200":
+          description: List of subscriptions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AccountSubscription"
+        "401":
+          description: Invalid or missing API key
+    post:
+      summary: Create or change subscription
+      description: |-
+        Subscribe to a sport, upgrade, or downgrade your plan.
+
+        If no payment method is on file, returns `402` with a `payment_url` for
+        Stripe hosted checkout (human must visit to enter card details).
+
+        If a payment method exists, the subscription change is processed immediately
+        and the response indicates `processing`. Poll `GET /account/v1/subscriptions`
+        to check when the change is reflected.
+      tags: [Subscriptions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sport, tier]
+              properties:
+                sport:
+                  type: string
+                  description: Sport identifier (e.g., nba, nfl, all_access_v3)
+                tier:
+                  type: string
+                  enum: [paid, paid_plus]
+                  description: Target subscription tier
+      responses:
+        "200":
+          description: Subscription change initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [processing, reactivated, no_change]
+                  message:
+                    type: string
+        "400":
+          description: Invalid sport, tier, or legacy plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountError"
+        "402":
+          description: Payment required — visit payment_url or portal_url
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountError"
+        "409":
+          description: Active BALLDONTLIE all-access already includes the requested StoryStats product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountError"
+  /account/v1/subscriptions/{type}:
+    delete:
+      summary: Cancel subscription
+      description: |-
+        Cancel a subscription for a specific sport. Active subscriptions are
+        scheduled for cancellation at the end of the billing period (access
+        continues until then). Incomplete/unpaid subscriptions are canceled immediately.
+      tags: [Subscriptions]
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Sport identifier (e.g., nba, nfl)
+      responses:
+        "200":
+          description: Subscription canceled or scheduled for cancellation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [cancel_scheduled, canceled, processing]
+                  cancel_at:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  message:
+                    type: string
+        "400":
+          description: Invalid sport
+        "404":
+          description: No subscription found for this sport
+  /account/v1/plans:
+    get:
+      summary: List all available plans
+      description: Returns all available subscription plans with pricing, rate limits, and links to per-sport OpenAPI specs. Includes paid-only StoryStats plans such as stories_wnba and stories_nfl. BALLDONTLIE all-access includes every sport, Lab, Webhooks, and StoryStats. No authentication required.
+      security: []
+      tags: [Plans]
+      responses:
+        "200":
+          description: List of available plans
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Plan"
+  /account/v1/plans/{sport}:
+    get:
+      summary: Get plan for a specific sport
+      description: Returns plan details for a single sport. No authentication required.
+      security: []
+      tags: [Plans]
+      parameters:
+        - name: sport
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Sport or product identifier (e.g., nba, nfl, stories_wnba, stories_nfl, all_access_v3)
+      responses:
+        "200":
+          description: Plan details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Plan"
+              example:
+                data:
+                  sport: stories_nfl
+                  display_name: StoryStats NFL
+                  tiers:
+                    paid:
+                      price: 30
+                      currency: usd
+                      billing_period: monthly
+                      rate_limit: 120
+                      rate_limit_window_seconds: 60
+                      description: Pregame, live, and postgame NFL narratives
+        "404":
+          description: Unknown sport
+  /account/v1/billing/checkout:
+    post:
+      summary: Generate checkout URL
+      description: |-
+        Creates a Stripe hosted checkout session for a specific plan and returns
+        the URL. A human must visit this URL to enter payment details.
+
+        Use this when you want to proactively generate a payment link (e.g., for
+        an onboarding flow). Unlike POST /subscriptions, this endpoint always
+        generates a checkout URL regardless of whether a payment method exists.
+      tags: [Billing]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sport, tier]
+              properties:
+                sport:
+                  type: string
+                tier:
+                  type: string
+                  enum: [paid, paid_plus]
+      responses:
+        "200":
+          description: Checkout URL generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  checkout_url:
+                    type: string
+                    format: uri
+        "400":
+          description: Invalid sport or tier
+        "409":
+          description: Active BALLDONTLIE all-access already includes the requested StoryStats product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountError"
+  /account/v1/billing/portal:
+    get:
+      summary: Get billing portal URL
+      description: |-
+        Generates a Stripe billing portal URL where a human can update payment
+        methods, view invoices, and manage billing details.
+      tags: [Billing]
+      responses:
+        "200":
+          description: Portal URL generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  portal_url:
+                    type: string
+                    format: uri
+        "400":
+          description: No billing account found (subscribe to a plan first)

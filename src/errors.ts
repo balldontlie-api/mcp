@@ -1,27 +1,58 @@
-export class MCPSportsError extends Error {
-  public code: string;
-  public details?: any;
-  public statusCode?: number;
+export type SafeErrorCategory =
+  | "authorization"
+  | "rate_limit"
+  | "business"
+  | "availability";
+
+export interface SafeErrorPayload {
+  code: string;
+  message: string;
+  status?: number;
+  details?: Record<string, string>;
+}
+
+/**
+ * An error that is safe to return to an MCP caller. It deliberately never
+ * retains an Axios error, request configuration, headers, body, or raw API
+ * response.
+ */
+export class SafeAPIError extends Error {
+  readonly category: SafeErrorCategory;
+  readonly statusCode?: number;
+  readonly publicCode: string;
+  readonly safeDetails?: Record<string, string>;
 
   constructor(
-    code: string,
+    category: SafeErrorCategory,
+    publicCode: string,
     message: string,
-    details?: any,
-    statusCode?: number
+    statusCode?: number,
+    safeDetails?: Record<string, string>,
   ) {
     super(message);
-    this.name = "MCPSportsError";
-    this.code = code;
-    this.details = details;
+    this.name = "SafeAPIError";
+    this.category = category;
+    this.publicCode = publicCode;
     this.statusCode = statusCode;
+    this.safeDetails = safeDetails;
   }
 
-  toJSON() {
+  toPublicPayload(): SafeErrorPayload {
     return {
-      code: this.code,
+      code: this.publicCode,
       message: this.message,
-      details: this.details,
-      statusCode: this.statusCode,
+      ...(this.statusCode === undefined ? {} : { status: this.statusCode }),
+      ...(this.safeDetails ? { details: this.safeDetails } : {}),
     };
   }
+}
+
+export function toSafeAPIError(error: unknown): SafeAPIError {
+  if (error instanceof SafeAPIError) return error;
+  return new SafeAPIError(
+    "availability",
+    "api_unavailable",
+    "The BALLDONTLIE API is temporarily unavailable.",
+    503,
+  );
 }

@@ -69,6 +69,36 @@ components:
           type: string
           format: date-time
           description: Last update timestamp
+    WTAOpeningBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Odds ID
+        match_id:
+          type: integer
+          description: Match ID
+        vendor:
+          type: string
+          description: Sportsbook vendor (draftkings, fanduel, caesars)
+        player1:
+          $ref: "#/components/schemas/WTAPlayer"
+          nullable: true
+        player2:
+          $ref: "#/components/schemas/WTAPlayer"
+          nullable: true
+        player1_odds:
+          type: integer
+          nullable: true
+          description: Player 1 moneyline odds (American format)
+        player2_odds:
+          type: integer
+          nullable: true
+          description: Player 2 moneyline odds (American format)
+        opened_at:
+          type: string
+          format: date-time
+          description: Opening odds timestamp
     WTAHeadToHead:
       type: object
       properties:
@@ -1060,6 +1090,74 @@ paths:
           $ref: "#/components/responses/RateLimitError"
         "500":
           $ref: "#/components/responses/ServerError"
+  /wta/v1/odds/opening:
+    get:
+      summary: Get WTA opening betting odds
+      description: Retrieve historical opening betting odds. Coverage is limited to the most recently completed season and ongoing seasons where available. Requires GOAT tier.
+      tags:
+        - WTA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
+        - name: tournament_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by tournament IDs
+        - name: player_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by player IDs
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season
+      responses:
+        "200":
+          description: Opening odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WTAOpeningBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
   /wta/v1/match_stats:
     get:
       summary: Get WTA match statistics

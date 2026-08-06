@@ -1,5 +1,6 @@
 node_modules
 dist
+dist-test
 .env
 .env.local
 npm-debug.log
@@ -9,4 +10,5 @@ README.md
 .git
 .gitignore
 examples
+test
 *.md

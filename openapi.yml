@@ -3,7 +3,7 @@ info:
   title: BALLDONTLIE
   version: 1.0.0
   description: |-
-    API for accessing sports data across 25 sports.
+    API for accessing sports data across 26 sports.
 
     This is an index spec. For detailed schemas and endpoint documentation,
     use the per-sport specs linked below. Each is a self-contained OpenAPI 3.1 document.
@@ -19,7 +19,7 @@ info:
     | Dota 2 | [openapi/dota.yml](https://www.balldontlie.io/openapi/dota.yml) |
     | EPL (English Premier League) | [openapi/epl.yml](https://www.balldontlie.io/openapi/epl.yml) |
     | Formula 1 | [openapi/f1.yml](https://www.balldontlie.io/openapi/f1.yml) |
-    | FIFA World Cup 2026 | [openapi/fifa.yml](https://www.balldontlie.io/openapi/fifa.yml) |
+    | FIFA World Cup | [openapi/fifa.yml](https://www.balldontlie.io/openapi/fifa.yml) |
     | La Liga | [openapi/laliga.yml](https://www.balldontlie.io/openapi/laliga.yml) |
     | Ligue 1 | [openapi/ligue1.yml](https://www.balldontlie.io/openapi/ligue1.yml) |
     | League of Legends | [openapi/lol.yml](https://www.balldontlie.io/openapi/lol.yml) |
@@ -35,8 +35,15 @@ info:
     | PGA Tour | [openapi/pga.yml](https://www.balldontlie.io/openapi/pga.yml) |
     | Serie A | [openapi/seriea.yml](https://www.balldontlie.io/openapi/seriea.yml) |
     | UEFA Champions League | [openapi/ucl.yml](https://www.balldontlie.io/openapi/ucl.yml) |
+    | Valorant | [openapi/valorant.yml](https://www.balldontlie.io/openapi/valorant.yml) |
     | WNBA | [openapi/wnba.yml](https://www.balldontlie.io/openapi/wnba.yml) |
     | WTA Tennis | [openapi/wta.yml](https://www.balldontlie.io/openapi/wta.yml) |
+
+    ## Account Management API
+
+    | Feature | Spec |
+    |---------|------|
+    | Account Management | [openapi/account.yml](https://www.balldontlie.io/openapi/account.yml) |
 servers:
   - url: https://api.balldontlie.io
     description: Production server
@@ -85,8 +92,12 @@ paths:
     $ref: openapi/nba.yml#/paths/~1nba~1v1~1leaders
   /nba/v2/odds:
     $ref: openapi/nba.yml#/paths/~1nba~1v2~1odds
+  /nba/v2/odds/opening:
+    $ref: openapi/nba.yml#/paths/~1nba~1v2~1odds~1opening
   /nba/v2/odds/player_props:
     $ref: openapi/nba.yml#/paths/~1nba~1v2~1odds~1player_props
+  /nba/v2/odds/player_props/opening:
+    $ref: openapi/nba.yml#/paths/~1nba~1v2~1odds~1player_props~1opening
   /nba/v2/stats/advanced:
     $ref: openapi/nba.yml#/paths/~1nba~1v2~1stats~1advanced
   /nba/v1/contracts/teams:
@@ -129,8 +140,12 @@ paths:
     $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1advanced_stats~1receiving
   /nfl/v1/odds:
     $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1odds
+  /nfl/v1/odds/opening:
+    $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1odds~1opening
   /nfl/v1/odds/player_props:
     $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1odds~1player_props
+  /nfl/v1/odds/player_props/opening:
+    $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1odds~1player_props~1opening
   /nfl/v1/team_season_stats:
     $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1team_season_stats
   /nfl/v1/team_stats:
@@ -169,10 +184,24 @@ paths:
     $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1plays
   /mlb/v1/plate_appearances:
     $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1plate_appearances
+  /mlb/v1/pitcher_pitch_type_game_stats:
+    $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1pitcher_pitch_type_game_stats
+  /mlb/v1/hitter_pitch_type_game_stats:
+    $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1hitter_pitch_type_game_stats
+  /mlb/v1/pitcher_pitch_type_season_stats:
+    $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1pitcher_pitch_type_season_stats
+  /mlb/v1/hitter_pitch_type_season_stats:
+    $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1hitter_pitch_type_season_stats
   /mlb/v1/odds:
     $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1odds
+  /mlb/v1/odds/markets:
+    $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1odds~1markets
+  /mlb/v1/odds/opening:
+    $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1odds~1opening
   /mlb/v1/odds/player_props:
     $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1odds~1player_props
+  /mlb/v1/odds/player_props/opening:
+    $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1odds~1player_props~1opening
   /nhl/v1/teams:
     $ref: openapi/nhl.yml#/paths/~1nhl~1v1~1teams
   /nhl/v1/teams/{id}:
@@ -199,14 +228,20 @@ paths:
     $ref: openapi/nhl.yml#/paths/~1nhl~1v1~1team_stats~1leaders
   /nhl/v1/odds:
     $ref: openapi/nhl.yml#/paths/~1nhl~1v1~1odds
+  /nhl/v1/odds/opening:
+    $ref: openapi/nhl.yml#/paths/~1nhl~1v1~1odds~1opening
   /nhl/v1/odds/player_props:
     $ref: openapi/nhl.yml#/paths/~1nhl~1v1~1odds~1player_props
+  /nhl/v1/odds/player_props/opening:
+    $ref: openapi/nhl.yml#/paths/~1nhl~1v1~1odds~1player_props~1opening
   /epl/v2/teams:
     $ref: openapi/epl.yml#/paths/~1epl~1v2~1teams
   /epl/v2/rosters:
     $ref: openapi/epl.yml#/paths/~1epl~1v2~1rosters
   /epl/v2/players:
     $ref: openapi/epl.yml#/paths/~1epl~1v2~1players
+  /epl/v2/player_injuries:
+    $ref: openapi/epl.yml#/paths/~1epl~1v2~1player_injuries
   /epl/v2/standings:
     $ref: openapi/epl.yml#/paths/~1epl~1v2~1standings
   /epl/v2/matches:
@@ -221,8 +256,12 @@ paths:
     $ref: openapi/epl.yml#/paths/~1epl~1v2~1team_match_stats
   /epl/v2/odds:
     $ref: openapi/epl.yml#/paths/~1epl~1v2~1odds
+  /epl/v2/odds/opening:
+    $ref: openapi/epl.yml#/paths/~1epl~1v2~1odds~1opening
   /epl/v2/odds/player_props:
     $ref: openapi/epl.yml#/paths/~1epl~1v2~1odds~1player_props
+  /epl/v2/odds/player_props/opening:
+    $ref: openapi/epl.yml#/paths/~1epl~1v2~1odds~1player_props~1opening
   /wnba/v1/teams:
     $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1teams
   /wnba/v1/teams/{id}:
@@ -261,6 +300,14 @@ paths:
     $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1standings
   /wnba/v1/player_injuries:
     $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1player_injuries
+  /wnba/v1/odds:
+    $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1odds
+  /wnba/v1/odds/opening:
+    $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1odds~1opening
+  /wnba/v1/odds/player_props:
+    $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1odds~1player_props
+  /wnba/v1/odds/player_props/opening:
+    $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1odds~1player_props~1opening
   /wnba/v1/plays:
     $ref: openapi/wnba.yml#/paths/~1wnba~1v1~1plays
   /ncaaf/v1/conferences:
@@ -297,6 +344,10 @@ paths:
     $ref: openapi/ncaaf.yml#/paths/~1ncaaf~1v1~1team_season_stats
   /ncaaf/v1/odds:
     $ref: openapi/ncaaf.yml#/paths/~1ncaaf~1v1~1odds
+  /ncaaf/v1/odds/opening:
+    $ref: openapi/ncaaf.yml#/paths/~1ncaaf~1v1~1odds~1opening
+  /ncaaf/v1/odds/player_props/opening:
+    $ref: openapi/ncaaf.yml#/paths/~1ncaaf~1v1~1odds~1player_props~1opening
   /ncaab/v1/conferences:
     $ref: openapi/ncaab.yml#/paths/~1ncaab~1v1~1conferences
   /ncaab/v1/conferences/{id}:
@@ -333,6 +384,8 @@ paths:
     $ref: openapi/ncaab.yml#/paths/~1ncaab~1v1~1bracket
   /ncaab/v1/odds:
     $ref: openapi/ncaab.yml#/paths/~1ncaab~1v1~1odds
+  /ncaab/v1/odds/opening:
+    $ref: openapi/ncaab.yml#/paths/~1ncaab~1v1~1odds~1opening
   /cbb/v1/conferences:
     $ref: openapi/cbb.yml#/paths/~1cbb~1v1~1conferences
   /cbb/v1/teams:
@@ -367,6 +420,8 @@ paths:
     $ref: openapi/cbb.yml#/paths/~1cbb~1v1~1team_season_stats
   /cbb/v1/odds:
     $ref: openapi/cbb.yml#/paths/~1cbb~1v1~1odds
+  /cbb/v1/odds/opening:
+    $ref: openapi/cbb.yml#/paths/~1cbb~1v1~1odds~1opening
   /ncaaw/v1/conferences:
     $ref: openapi/ncaaw.yml#/paths/~1ncaaw~1v1~1conferences
   /ncaaw/v1/conferences/{id}:
@@ -403,6 +458,8 @@ paths:
     $ref: openapi/ncaaw.yml#/paths/~1ncaaw~1v1~1bracket
   /ncaaw/v1/odds:
     $ref: openapi/ncaaw.yml#/paths/~1ncaaw~1v1~1odds
+  /ncaaw/v1/odds/opening:
+    $ref: openapi/ncaaw.yml#/paths/~1ncaaw~1v1~1odds~1opening
   /mma/v1/leagues:
     $ref: openapi/mma.yml#/paths/~1mma~1v1~1leagues
   /mma/v1/leagues/{id}:
@@ -427,6 +484,8 @@ paths:
     $ref: openapi/mma.yml#/paths/~1mma~1v1~1fight_stats~1{id}
   /mma/v1/odds:
     $ref: openapi/mma.yml#/paths/~1mma~1v1~1odds
+  /mma/v1/odds/opening:
+    $ref: openapi/mma.yml#/paths/~1mma~1v1~1odds~1opening
   /cs/v1/teams:
     $ref: openapi/cs.yml#/paths/~1cs~1v1~1teams
   /cs/v1/teams/{id}:
@@ -459,6 +518,60 @@ paths:
     $ref: openapi/cs.yml#/paths/~1cs~1v1~1player_match_map_stats
   /cs/v1/player_accuracy_stats:
     $ref: openapi/cs.yml#/paths/~1cs~1v1~1player_accuracy_stats
+  /valorant/v1/regions:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1regions
+  /valorant/v1/countries:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1countries
+  /valorant/v1/series:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1series
+  /valorant/v1/maps:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1maps
+  /valorant/v1/agents:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1agents
+  /valorant/v1/weapons:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1weapons
+  /valorant/v1/teams:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1teams
+  /valorant/v1/players:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1players
+  /valorant/v1/player_profiles:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1player_profiles
+  /valorant/v1/player_crosshairs:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1player_crosshairs
+  /valorant/v1/agent_stats:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1agent_stats
+  /valorant/v1/player_transfers:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1player_transfers
+  /valorant/v1/tournaments:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1tournaments
+  /valorant/v1/tournament_stages:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1tournament_stages
+  /valorant/v1/tournament_teams:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1tournament_teams
+  /valorant/v1/tournament_prizes:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1tournament_prizes
+  /valorant/v1/tournament_roster:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1tournament_roster
+  /valorant/v1/matches:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1matches
+  /valorant/v1/match_maps:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1match_maps
+  /valorant/v1/live_matches:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1live_matches
+  /valorant/v1/player_overall_stats:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1player_overall_stats
+  /valorant/v1/player_match_stats:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1player_match_stats
+  /valorant/v1/player_match_map_stats:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1player_match_map_stats
+  /valorant/v1/rounds:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1rounds
+  /valorant/v1/player_round_stats:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1player_round_stats
+  /valorant/v1/team_round_stats:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1team_round_stats
+  /valorant/v1/player_match_weapon_stats:
+    $ref: openapi/valorant.yml#/paths/~1valorant~1v1~1player_match_weapon_stats
   /lol/v1/teams:
     $ref: openapi/lol.yml#/paths/~1lol~1v1~1teams
   /lol/v1/players:
@@ -529,8 +642,38 @@ paths:
     $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1matches
   /fifa/worldcup/v1/odds:
     $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1odds
+  /fifa/worldcup/v1/odds/opening:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1odds~1opening
   /fifa/worldcup/v1/odds/futures:
     $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1odds~1futures
+  /fifa/worldcup/v1/odds/player_props:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1odds~1player_props
+  /fifa/worldcup/v1/odds/player_props/opening:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1odds~1player_props~1opening
+  /fifa/worldcup/v1/players:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1players
+  /fifa/worldcup/v1/player_injuries:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1player_injuries
+  /fifa/worldcup/v1/rosters:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1rosters
+  /fifa/worldcup/v1/match_lineups:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1match_lineups
+  /fifa/worldcup/v1/match_events:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1match_events
+  /fifa/worldcup/v1/player_match_stats:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1player_match_stats
+  /fifa/worldcup/v1/team_match_stats:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1team_match_stats
+  /fifa/worldcup/v1/match_shots:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1match_shots
+  /fifa/worldcup/v1/match_momentum:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1match_momentum
+  /fifa/worldcup/v1/match_best_players:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1match_best_players
+  /fifa/worldcup/v1/match_avg_positions:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1match_avg_positions
+  /fifa/worldcup/v1/match_team_form:
+    $ref: openapi/fifa.yml#/paths/~1fifa~1worldcup~1v1~1match_team_form
   /f1/v1/drivers:
     $ref: openapi/f1.yml#/paths/~1f1~1v1~1drivers
   /f1/v1/teams:
@@ -575,6 +718,8 @@ paths:
     $ref: openapi/laliga.yml#/paths/~1laliga~1v1~1rosters
   /laliga/v1/players:
     $ref: openapi/laliga.yml#/paths/~1laliga~1v1~1players
+  /laliga/v1/player_injuries:
+    $ref: openapi/laliga.yml#/paths/~1laliga~1v1~1player_injuries
   /laliga/v1/standings:
     $ref: openapi/laliga.yml#/paths/~1laliga~1v1~1standings
   /laliga/v1/matches:
@@ -589,14 +734,20 @@ paths:
     $ref: openapi/laliga.yml#/paths/~1laliga~1v1~1team_match_stats
   /laliga/v1/odds:
     $ref: openapi/laliga.yml#/paths/~1laliga~1v1~1odds
+  /laliga/v1/odds/opening:
+    $ref: openapi/laliga.yml#/paths/~1laliga~1v1~1odds~1opening
   /laliga/v1/odds/player_props:
     $ref: openapi/laliga.yml#/paths/~1laliga~1v1~1odds~1player_props
+  /laliga/v1/odds/player_props/opening:
+    $ref: openapi/laliga.yml#/paths/~1laliga~1v1~1odds~1player_props~1opening
   /seriea/v1/teams:
     $ref: openapi/seriea.yml#/paths/~1seriea~1v1~1teams
   /seriea/v1/rosters:
     $ref: openapi/seriea.yml#/paths/~1seriea~1v1~1rosters
   /seriea/v1/players:
     $ref: openapi/seriea.yml#/paths/~1seriea~1v1~1players
+  /seriea/v1/player_injuries:
+    $ref: openapi/seriea.yml#/paths/~1seriea~1v1~1player_injuries
   /seriea/v1/standings:
     $ref: openapi/seriea.yml#/paths/~1seriea~1v1~1standings
   /seriea/v1/matches:
@@ -611,14 +762,20 @@ paths:
     $ref: openapi/seriea.yml#/paths/~1seriea~1v1~1team_match_stats
   /seriea/v1/odds:
     $ref: openapi/seriea.yml#/paths/~1seriea~1v1~1odds
+  /seriea/v1/odds/opening:
+    $ref: openapi/seriea.yml#/paths/~1seriea~1v1~1odds~1opening
   /seriea/v1/odds/player_props:
     $ref: openapi/seriea.yml#/paths/~1seriea~1v1~1odds~1player_props
+  /seriea/v1/odds/player_props/opening:
+    $ref: openapi/seriea.yml#/paths/~1seriea~1v1~1odds~1player_props~1opening
   /ucl/v1/teams:
     $ref: openapi/ucl.yml#/paths/~1ucl~1v1~1teams
   /ucl/v1/rosters:
     $ref: openapi/ucl.yml#/paths/~1ucl~1v1~1rosters
   /ucl/v1/players:
     $ref: openapi/ucl.yml#/paths/~1ucl~1v1~1players
+  /ucl/v1/player_injuries:
+    $ref: openapi/ucl.yml#/paths/~1ucl~1v1~1player_injuries
   /ucl/v1/standings:
     $ref: openapi/ucl.yml#/paths/~1ucl~1v1~1standings
   /ucl/v1/matches:
@@ -633,8 +790,12 @@ paths:
     $ref: openapi/ucl.yml#/paths/~1ucl~1v1~1team_match_stats
   /ucl/v1/odds:
     $ref: openapi/ucl.yml#/paths/~1ucl~1v1~1odds
+  /ucl/v1/odds/opening:
+    $ref: openapi/ucl.yml#/paths/~1ucl~1v1~1odds~1opening
   /ucl/v1/odds/player_props:
     $ref: openapi/ucl.yml#/paths/~1ucl~1v1~1odds~1player_props
+  /ucl/v1/odds/player_props/opening:
+    $ref: openapi/ucl.yml#/paths/~1ucl~1v1~1odds~1player_props~1opening
   /ucl/v1/odds/futures:
     $ref: openapi/ucl.yml#/paths/~1ucl~1v1~1odds~1futures
   /bundesliga/v1/teams:
@@ -643,6 +804,8 @@ paths:
     $ref: openapi/bundesliga.yml#/paths/~1bundesliga~1v1~1rosters
   /bundesliga/v1/players:
     $ref: openapi/bundesliga.yml#/paths/~1bundesliga~1v1~1players
+  /bundesliga/v1/player_injuries:
+    $ref: openapi/bundesliga.yml#/paths/~1bundesliga~1v1~1player_injuries
   /bundesliga/v1/standings:
     $ref: openapi/bundesliga.yml#/paths/~1bundesliga~1v1~1standings
   /bundesliga/v1/matches:
@@ -657,14 +820,20 @@ paths:
     $ref: openapi/bundesliga.yml#/paths/~1bundesliga~1v1~1team_match_stats
   /bundesliga/v1/odds:
     $ref: openapi/bundesliga.yml#/paths/~1bundesliga~1v1~1odds
+  /bundesliga/v1/odds/opening:
+    $ref: openapi/bundesliga.yml#/paths/~1bundesliga~1v1~1odds~1opening
   /bundesliga/v1/odds/player_props:
     $ref: openapi/bundesliga.yml#/paths/~1bundesliga~1v1~1odds~1player_props
+  /bundesliga/v1/odds/player_props/opening:
+    $ref: openapi/bundesliga.yml#/paths/~1bundesliga~1v1~1odds~1player_props~1opening
   /ligue1/v1/teams:
     $ref: openapi/ligue1.yml#/paths/~1ligue1~1v1~1teams
   /ligue1/v1/rosters:
     $ref: openapi/ligue1.yml#/paths/~1ligue1~1v1~1rosters
   /ligue1/v1/players:
     $ref: openapi/ligue1.yml#/paths/~1ligue1~1v1~1players
+  /ligue1/v1/player_injuries:
+    $ref: openapi/ligue1.yml#/paths/~1ligue1~1v1~1player_injuries
   /ligue1/v1/standings:
     $ref: openapi/ligue1.yml#/paths/~1ligue1~1v1~1standings
   /ligue1/v1/matches:
@@ -679,14 +848,20 @@ paths:
     $ref: openapi/ligue1.yml#/paths/~1ligue1~1v1~1team_match_stats
   /ligue1/v1/odds:
     $ref: openapi/ligue1.yml#/paths/~1ligue1~1v1~1odds
+  /ligue1/v1/odds/opening:
+    $ref: openapi/ligue1.yml#/paths/~1ligue1~1v1~1odds~1opening
   /ligue1/v1/odds/player_props:
     $ref: openapi/ligue1.yml#/paths/~1ligue1~1v1~1odds~1player_props
+  /ligue1/v1/odds/player_props/opening:
+    $ref: openapi/ligue1.yml#/paths/~1ligue1~1v1~1odds~1player_props~1opening
   /mls/v1/teams:
     $ref: openapi/mls.yml#/paths/~1mls~1v1~1teams
   /mls/v1/rosters:
     $ref: openapi/mls.yml#/paths/~1mls~1v1~1rosters
   /mls/v1/players:
     $ref: openapi/mls.yml#/paths/~1mls~1v1~1players
+  /mls/v1/player_injuries:
+    $ref: openapi/mls.yml#/paths/~1mls~1v1~1player_injuries
   /mls/v1/standings:
     $ref: openapi/mls.yml#/paths/~1mls~1v1~1standings
   /mls/v1/matches:
@@ -701,12 +876,16 @@ paths:
     $ref: openapi/mls.yml#/paths/~1mls~1v1~1team_match_stats
   /mls/v1/odds:
     $ref: openapi/mls.yml#/paths/~1mls~1v1~1odds
+  /mls/v1/odds/opening:
+    $ref: openapi/mls.yml#/paths/~1mls~1v1~1odds~1opening
   /mls/v1/odds/player_props:
     $ref: openapi/mls.yml#/paths/~1mls~1v1~1odds~1player_props
+  /mls/v1/odds/player_props/opening:
+    $ref: openapi/mls.yml#/paths/~1mls~1v1~1odds~1player_props~1opening
   /pga/v1/players:
     $ref: openapi/pga.yml#/paths/~1pga~1v1~1players
-  /pga/v1/tournaments:
-    $ref: openapi/pga.yml#/paths/~1pga~1v1~1tournaments
+  /pga/v2/tournaments:
+    $ref: openapi/pga.yml#/paths/~1pga~1v2~1tournaments
   /pga/v1/courses:
     $ref: openapi/pga.yml#/paths/~1pga~1v1~1courses
   /pga/v1/tournament_results:
@@ -729,6 +908,10 @@ paths:
     $ref: openapi/pga.yml#/paths/~1pga~1v1~1player_scorecards
   /pga/v1/futures:
     $ref: openapi/pga.yml#/paths/~1pga~1v1~1futures
+  /pga/v1/odds/player_props:
+    $ref: openapi/pga.yml#/paths/~1pga~1v1~1odds~1player_props
+  /pga/v1/odds/player_props/opening:
+    $ref: openapi/pga.yml#/paths/~1pga~1v1~1odds~1player_props~1opening
   /atp/v1/players:
     $ref: openapi/atp.yml#/paths/~1atp~1v1~1players
   /atp/v1/players/{id}:
@@ -753,6 +936,8 @@ paths:
     $ref: openapi/atp.yml#/paths/~1atp~1v1~1head_to_head
   /atp/v1/odds:
     $ref: openapi/atp.yml#/paths/~1atp~1v1~1odds
+  /atp/v1/odds/opening:
+    $ref: openapi/atp.yml#/paths/~1atp~1v1~1odds~1opening
   /wta/v1/players:
     $ref: openapi/wta.yml#/paths/~1wta~1v1~1players
   /wta/v1/players/{id}:
@@ -771,5 +956,26 @@ paths:
     $ref: openapi/wta.yml#/paths/~1wta~1v1~1head_to_head
   /wta/v1/odds:
     $ref: openapi/wta.yml#/paths/~1wta~1v1~1odds
+  /wta/v1/odds/opening:
+    $ref: openapi/wta.yml#/paths/~1wta~1v1~1odds~1opening
   /wta/v1/match_stats:
     $ref: openapi/wta.yml#/paths/~1wta~1v1~1match_stats
+  # Account Management
+  /account/v1/signup:
+    $ref: openapi/account.yml#/paths/~1account~1v1~1signup
+  /account/v1/me:
+    $ref: openapi/account.yml#/paths/~1account~1v1~1me
+  /account/v1/api-key/rotate:
+    $ref: openapi/account.yml#/paths/~1account~1v1~1api-key~1rotate
+  /account/v1/subscriptions:
+    $ref: openapi/account.yml#/paths/~1account~1v1~1subscriptions
+  /account/v1/subscriptions/{type}:
+    $ref: openapi/account.yml#/paths/~1account~1v1~1subscriptions~1{type}
+  /account/v1/plans:
+    $ref: openapi/account.yml#/paths/~1account~1v1~1plans
+  /account/v1/plans/{sport}:
+    $ref: openapi/account.yml#/paths/~1account~1v1~1plans~1{sport}
+  /account/v1/billing/checkout:
+    $ref: openapi/account.yml#/paths/~1account~1v1~1billing~1checkout
+  /account/v1/billing/portal:
+    $ref: openapi/account.yml#/paths/~1account~1v1~1billing~1portal

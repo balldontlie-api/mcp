@@ -1514,6 +1514,8 @@ paths:
           schema:
             type: string
           description: Filter by market type (e.g., driver_championship, constructor_championship)
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
       responses:
         "200":
           description: F1 futures betting odds
@@ -1526,6 +1528,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/F1FuturesOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "429":

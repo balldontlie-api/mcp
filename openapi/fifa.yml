@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
-  title: BALLDONTLIE - FIFA World Cup 2026 API
+  title: BALLDONTLIE - FIFA World Cup API
   version: 1.0.0
-  description: FIFA World Cup 2026 endpoints for the BallDontLie API.
+  description: FIFA World Cup endpoints for the BallDontLie API. Covers the 2018, 2022, and 2026 tournaments. Endpoints that filter by season accept a `seasons[]` query parameter; when omitted they default to the current edition (2026).
 servers:
   - url: https://api.balldontlie.io
     description: Production server
@@ -12,6 +12,76 @@ components:
       type: apiKey
       in: header
       name: Authorization
+  parameters:
+    SeasonsParam:
+      name: seasons[]
+      in: query
+      required: false
+      description: "Filter to specific World Cup edition years. Allowed values: 2018, 2022, 2026. Default is the current edition (2026)."
+      schema:
+        type: array
+        items:
+          type: integer
+          enum: [2018, 2022, 2026]
+    MatchIdsParam:
+      name: match_ids[]
+      in: query
+      required: false
+      description: Filter to specific match IDs.
+      schema:
+        type: array
+        items:
+          type: integer
+    TeamIdsParam:
+      name: team_ids[]
+      in: query
+      required: false
+      description: Filter to specific team IDs.
+      schema:
+        type: array
+        items:
+          type: integer
+    PlayerIdsParam:
+      name: player_ids[]
+      in: query
+      required: false
+      description: Filter to specific player IDs.
+      schema:
+        type: array
+        items:
+          type: integer
+    InjuryStatusesParam:
+      name: statuses[]
+      in: query
+      required: false
+      description: Filter to specific injury statuses, such as OUT or GTD.
+      schema:
+        type: array
+        items:
+          type: string
+    SearchParam:
+      name: search
+      in: query
+      required: false
+      description: Case-insensitive substring match on player name.
+      schema:
+        type: string
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      description: Page size, max 100.
+      schema:
+        type: integer
+        default: 25
+        maximum: 100
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      description: Cursor for the next page.
+      schema:
+        type: integer
   schemas:
     Error:
       type: object
@@ -19,6 +89,14 @@ components:
         error:
           type: string
           description: Error message
+    FIFASeason:
+      type: object
+      properties:
+        id:
+          type: integer
+        year:
+          type: integer
+          enum: [2018, 2022, 2026]
     FIFABettingOdd:
       type: object
       properties:
@@ -35,6 +113,238 @@ components:
           type: integer
           nullable: true
         moneyline_draw_odds:
+          type: integer
+          nullable: true
+        spread_home_value:
+          type: string
+          nullable: true
+          description: Home spread line value.
+        spread_home_odds:
+          type: integer
+          nullable: true
+        spread_away_value:
+          type: string
+          nullable: true
+          description: Away spread line value.
+        spread_away_odds:
+          type: integer
+          nullable: true
+        total_value:
+          type: string
+          nullable: true
+          description: Total goals line value.
+        total_over_odds:
+          type: integer
+          nullable: true
+        total_under_odds:
+          type: integer
+          nullable: true
+        markets:
+          type: array
+          description: Additional match markets for this vendor and match. Top-level moneyline, spread, and total fields remain the canonical summary line; expanded markets such as correct score, team totals, double chance, alternate spreads, and period markets are returned here.
+          items:
+            $ref: "#/components/schemas/FIFABettingMarket"
+        updated_at:
+          type: string
+          format: date-time
+    FIFAOpeningPlayerProp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        match_id:
+          type: integer
+        player_id:
+          type: integer
+        vendor:
+          type: string
+          enum:
+            - betmgm
+            - betrivers
+            - caesars
+            - draftkings
+            - fanatics
+            - fanduel
+        prop_type:
+          type: string
+          description: Type of FIFA World Cup player prop
+          enum:
+            - anytime_goal
+            - assists
+            - card
+            - first_goal
+            - goal_or_assist
+            - last_goal
+            - red_card
+            - saves
+            - shot_each_half
+            - shot_on_target_each_half
+            - shots
+            - shots_on_target
+            - tackles
+        line_value:
+          type: string
+          description: The line value for the prop.
+        market:
+          oneOf:
+            - $ref: "#/components/schemas/FIFAPlayerPropMarketMilestone"
+            - $ref: "#/components/schemas/FIFAPlayerPropMarketOverUnder"
+        opened_at:
+          type: string
+          format: date-time
+    FIFAOpeningBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        vendor:
+          type: string
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+        moneyline_draw_odds:
+          type: integer
+          nullable: true
+        spread_home_value:
+          type: string
+          nullable: true
+          description: Home spread line value.
+        spread_home_odds:
+          type: integer
+          nullable: true
+        spread_away_value:
+          type: string
+          nullable: true
+          description: Away spread line value.
+        spread_away_odds:
+          type: integer
+          nullable: true
+        total_value:
+          type: string
+          nullable: true
+          description: Total goals line value.
+        total_over_odds:
+          type: integer
+          nullable: true
+        total_under_odds:
+          type: integer
+          nullable: true
+        opened_at:
+          type: string
+          format: date-time
+    FIFABettingMarket:
+      type: object
+      properties:
+        id:
+          type: integer
+        key:
+          type: string
+          description: Stable normalized market key for this vendor, match, and market. Useful for grouping the same market across refreshes; use `name` for display.
+        name:
+          type: string
+          description: Sportsbook market display name, such as `Correct Score`, `Mexico Team Total Goals`, `Double Chance`, or `2 Way Spread Away Team -1.5 Goals`. Names can vary by vendor.
+        type:
+          type: string
+          description: Normalized market category.
+          enum:
+            - moneyline
+            - spread
+            - total
+            - team_total
+            - correct_score
+            - double_chance
+            - draw_no_bet
+            - both_teams_to_score
+            - result_combo
+            - margin
+            - timing
+            - other
+        period:
+          type: string
+          description: Match period the market applies to.
+          enum:
+            - match
+            - first_half
+            - second_half
+            - other
+        scope:
+          type: string
+          description: Entity scope for the market.
+          enum:
+            - match
+            - home_team
+            - away_team
+            - both_teams
+            - other
+        team_side:
+          type: string
+          nullable: true
+          description: Team side when the market is scoped to one team.
+          enum:
+            - home
+            - away
+        line_value:
+          type: string
+          nullable: true
+          description: Market-level line value when a single line applies to the market. Some markets carry line values on each outcome instead.
+        updated_at:
+          type: string
+          format: date-time
+        outcomes:
+          type: array
+          items:
+            $ref: "#/components/schemas/FIFABettingMarketOutcome"
+    FIFABettingMarketOutcome:
+      type: object
+      properties:
+        id:
+          type: integer
+        key:
+          type: string
+          description: Stable normalized outcome key for this market outcome. Useful for grouping the same outcome across refreshes; use `name` for display.
+        name:
+          type: string
+          description: Sportsbook outcome display name, such as `Over`, `Under`, `Mexico +1.5 Goals`, `1-0`, `Yes`, or `Mexico or Tie`.
+        type:
+          type: string
+          description: Normalized outcome category.
+          enum:
+            - home
+            - away
+            - draw
+            - over
+            - under
+            - yes
+            - no
+            - score
+            - margin
+            - double_chance
+            - other
+        side:
+          type: string
+          nullable: true
+          description: Home or away side when the outcome maps directly to a team.
+          enum:
+            - home
+            - away
+        line_value:
+          type: string
+          nullable: true
+          description: Outcome-level line value when applicable.
+        handicap:
+          type: string
+          nullable: true
+          description: Handicap value for spread-style outcomes when applicable.
+        american_odds:
+          type: integer
+          nullable: true
+        decimal_odds:
           type: number
           nullable: true
         updated_at:
@@ -66,6 +376,81 @@ components:
           type: string
           format: date-time
           nullable: true
+    FIFAPlayerProp:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        player_id:
+          type: integer
+        vendor:
+          type: string
+          enum:
+            - betmgm
+            - betrivers
+            - caesars
+            - draftkings
+            - fanatics
+            - fanduel
+        prop_type:
+          type: string
+          description: Type of FIFA World Cup player prop
+          enum:
+            - anytime_goal
+            - assists
+            - card
+            - first_goal
+            - goal_or_assist
+            - last_goal
+            - red_card
+            - saves
+            - shot_each_half
+            - shot_on_target_each_half
+            - shots
+            - shots_on_target
+            - tackles
+        line_value:
+          type: string
+          description: The line value for the prop.
+        market:
+          oneOf:
+            - $ref: "#/components/schemas/FIFAPlayerPropMarketMilestone"
+            - $ref: "#/components/schemas/FIFAPlayerPropMarketOverUnder"
+        updated_at:
+          type: string
+          format: date-time
+    FIFAPlayerPropMarketMilestone:
+      type: object
+      required:
+        - type
+        - odds
+      properties:
+        type:
+          type: string
+          enum:
+            - milestone
+        odds:
+          type: integer
+          description: American odds for milestone bet.
+    FIFAPlayerPropMarketOverUnder:
+      type: object
+      required:
+        - type
+        - over_odds
+        - under_odds
+      properties:
+        type:
+          type: string
+          enum:
+            - over_under
+        over_odds:
+          type: integer
+          description: American odds for over bet.
+        under_odds:
+          type: integer
+          description: American odds for under bet.
     FIFAGroup:
       type: object
       properties:
@@ -74,6 +459,86 @@ components:
         name:
           type: string
           description: Group name (e.g., "A", "B")
+    FIFAReferee:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        country_code:
+          type: string
+          nullable: true
+        country_name:
+          type: string
+          nullable: true
+    FIFAManager:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+    FIFAPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+        position:
+          type: string
+          nullable: true
+        date_of_birth:
+          type: string
+          format: date-time
+          nullable: true
+        country_code:
+          type: string
+          nullable: true
+        country_name:
+          type: string
+          nullable: true
+        height_cm:
+          type: integer
+          nullable: true
+        jersey_number:
+          type: string
+          nullable: true
+    FIFAPlayerInjury:
+      type: object
+      description: Current FIFA World Cup player injury report
+      properties:
+        id:
+          type: integer
+          description: Injury report ID
+        season:
+          $ref: "#/components/schemas/FIFASeason"
+        player:
+          $ref: "#/components/schemas/FIFAPlayer"
+        team:
+          $ref: "#/components/schemas/FIFATeam"
+        position:
+          type: string
+          nullable: true
+          description: Player position
+        injury_type:
+          type: string
+          nullable: true
+          description: Injury or absence type
+        status:
+          type: string
+          description: Injury status, such as OUT or GTD
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the current injury snapshot was refreshed
     FIFAMatch:
       type: object
       properties:
@@ -89,6 +554,16 @@ components:
         status:
           type: string
           description: Match status (scheduled, in_progress, completed, postponed, cancelled)
+        clock_display:
+          type: string
+          nullable: true
+          description: Current live match clock for display with seconds granularity, such as 47:15 or 90+02:30 (null outside live matches)
+        clock_seconds:
+          type: integer
+          nullable: true
+          description: Raw elapsed match seconds for the live clock (null outside live matches)
+        season:
+          $ref: "#/components/schemas/FIFASeason"
         stage:
           $ref: "#/components/schemas/FIFAStage"
         group:
@@ -124,6 +599,51 @@ components:
           nullable: true
         away_score_penalties:
           type: integer
+          nullable: true
+        first_half_home_score:
+          type: integer
+          nullable: true
+        first_half_away_score:
+          type: integer
+          nullable: true
+        second_half_home_score:
+          type: integer
+          nullable: true
+        second_half_away_score:
+          type: integer
+          nullable: true
+        extra_time_home_score:
+          type: integer
+          nullable: true
+        extra_time_away_score:
+          type: integer
+          nullable: true
+        has_extra_time:
+          type: boolean
+          nullable: true
+        has_penalty_shootout:
+          type: boolean
+          nullable: true
+        round_number:
+          type: integer
+          nullable: true
+        round_name:
+          type: string
+          nullable: true
+        home_formation:
+          type: string
+          nullable: true
+        away_formation:
+          type: string
+          nullable: true
+        referee:
+          $ref: "#/components/schemas/FIFAReferee"
+          nullable: true
+        home_manager:
+          $ref: "#/components/schemas/FIFAManager"
+          nullable: true
+        away_manager:
+          $ref: "#/components/schemas/FIFAManager"
           nullable: true
     FIFAMatchTeamSource:
       type: object
@@ -166,6 +686,16 @@ components:
           type: string
           nullable: true
           description: Country code
+        capacity:
+          type: integer
+          nullable: true
+          description: Seating capacity
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
     FIFAStage:
       type: object
       properties:
@@ -180,6 +710,8 @@ components:
     FIFAStanding:
       type: object
       properties:
+        season:
+          $ref: "#/components/schemas/FIFASeason"
         team:
           $ref: "#/components/schemas/FIFATeam"
         group:
@@ -223,6 +755,471 @@ components:
           type: string
           nullable: true
           description: FIFA confederation (UEFA, CONMEBOL, CONCACAF, CAF, AFC, OFC)
+    FIFARoster:
+      type: object
+      description: Per-tournament squad entry (one row per player per team per edition)
+      properties:
+        season:
+          $ref: "#/components/schemas/FIFASeason"
+        team_id:
+          type: integer
+        player:
+          $ref: "#/components/schemas/FIFAPlayer"
+        position:
+          type: string
+          nullable: true
+        appearances:
+          type: integer
+        starts:
+          type: integer
+        minutes_played:
+          type: integer
+        goals:
+          type: integer
+        assists:
+          type: integer
+        yellow_cards:
+          type: integer
+        red_cards:
+          type: integer
+        avg_rating:
+          type: number
+          nullable: true
+    FIFAMatchLineup:
+      type: object
+      description: Registered match-day squad entry (starter or substitute)
+      properties:
+        match_id:
+          type: integer
+        team_id:
+          type: integer
+        player:
+          $ref: "#/components/schemas/FIFAPlayer"
+        is_starter:
+          type: boolean
+        is_substitute:
+          type: boolean
+        shirt_number:
+          type: integer
+          nullable: true
+        position:
+          type: string
+          nullable: true
+        formation:
+          type: string
+          nullable: true
+    FIFAMatchEvent:
+      type: object
+      description: Time-ordered match incident (goal, card, substitution, period marker, shootout kick)
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        incident_type:
+          type: string
+          description: One of goal, card, substitution, period, injuryTime, penaltyShootout
+        incident_class:
+          type: string
+          nullable: true
+        time_minute:
+          type: integer
+          nullable: true
+        added_time:
+          type: integer
+          nullable: true
+        period:
+          type: string
+          nullable: true
+        is_home:
+          type: boolean
+          nullable: true
+        player:
+          $ref: "#/components/schemas/FIFAPlayer"
+          nullable: true
+        assist_player:
+          $ref: "#/components/schemas/FIFAPlayer"
+          nullable: true
+        player_in:
+          $ref: "#/components/schemas/FIFAPlayer"
+          nullable: true
+        player_out:
+          $ref: "#/components/schemas/FIFAPlayer"
+          nullable: true
+        home_score:
+          type: integer
+          nullable: true
+        away_score:
+          type: integer
+          nullable: true
+        shootout_sequence:
+          type: integer
+          nullable: true
+        shootout_description:
+          type: string
+          nullable: true
+        rescinded:
+          type: boolean
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+    FIFAPlayerMatchStats:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        player_id:
+          type: integer
+        team_id:
+          type: integer
+        is_home:
+          type: boolean
+        rating:
+          type: number
+          nullable: true
+        minutes_played:
+          type: integer
+          nullable: true
+        expected_goals:
+          type: number
+          nullable: true
+        expected_assists:
+          type: number
+          nullable: true
+        goals:
+          type: integer
+          nullable: true
+        assists:
+          type: integer
+          nullable: true
+        shots_on_target:
+          type: integer
+          nullable: true
+        passes_total:
+          type: integer
+          nullable: true
+        passes_accurate:
+          type: integer
+          nullable: true
+        key_passes:
+          type: integer
+          nullable: true
+        long_balls_total:
+          type: integer
+          nullable: true
+        long_balls_accurate:
+          type: integer
+          nullable: true
+        crosses_total:
+          type: integer
+          nullable: true
+        crosses_accurate:
+          type: integer
+          nullable: true
+        dribbles_attempted:
+          type: integer
+          nullable: true
+        dribbles_completed:
+          type: integer
+          nullable: true
+        tackles:
+          type: integer
+          nullable: true
+        tackles_won:
+          type: integer
+          nullable: true
+        interceptions:
+          type: integer
+          nullable: true
+        clearances:
+          type: integer
+          nullable: true
+        blocked_shots:
+          type: integer
+          nullable: true
+        duels_won:
+          type: integer
+          nullable: true
+        duels_lost:
+          type: integer
+          nullable: true
+        aerial_duels_won:
+          type: integer
+          nullable: true
+        aerial_duels_lost:
+          type: integer
+          nullable: true
+        fouls_committed:
+          type: integer
+          nullable: true
+        was_fouled:
+          type: integer
+          nullable: true
+        touches:
+          type: integer
+          nullable: true
+        possession_lost:
+          type: integer
+          nullable: true
+        ball_recoveries:
+          type: integer
+          nullable: true
+        big_chances_created:
+          type: integer
+          nullable: true
+        big_chances_missed:
+          type: integer
+          nullable: true
+        saves:
+          type: integer
+          nullable: true
+        saves_inside_box:
+          type: integer
+          nullable: true
+        punches:
+          type: integer
+          nullable: true
+        high_claims:
+          type: integer
+          nullable: true
+    FIFATeamMatchStats:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        team_id:
+          type: integer
+        is_home:
+          type: boolean
+        possession_pct:
+          type: integer
+          nullable: true
+          description: Possession percentage (0-100)
+        expected_goals:
+          type: number
+          nullable: true
+        big_chances:
+          type: integer
+          nullable: true
+        big_chances_missed:
+          type: integer
+          nullable: true
+        shots_total:
+          type: integer
+          nullable: true
+        shots_on_target:
+          type: integer
+          nullable: true
+        shots_off_target:
+          type: integer
+          nullable: true
+        shots_blocked:
+          type: integer
+          nullable: true
+        shots_inside_box:
+          type: integer
+          nullable: true
+        shots_outside_box:
+          type: integer
+          nullable: true
+        hit_woodwork:
+          type: integer
+          nullable: true
+        corners:
+          type: integer
+          nullable: true
+        offsides:
+          type: integer
+          nullable: true
+        fouls:
+          type: integer
+          nullable: true
+        yellow_cards:
+          type: integer
+          nullable: true
+        passes_total:
+          type: integer
+          nullable: true
+        passes_accurate:
+          type: integer
+          nullable: true
+        passes_final_third:
+          type: integer
+          nullable: true
+        long_balls_total:
+          type: integer
+          nullable: true
+        long_balls_accurate:
+          type: integer
+          nullable: true
+        crosses_total:
+          type: integer
+          nullable: true
+        crosses_accurate:
+          type: integer
+          nullable: true
+        tackles:
+          type: integer
+          nullable: true
+        interceptions:
+          type: integer
+          nullable: true
+        clearances:
+          type: integer
+          nullable: true
+        saves:
+          type: integer
+          nullable: true
+        ground_duels_won:
+          type: integer
+          nullable: true
+        ground_duels_total:
+          type: integer
+          nullable: true
+        aerial_duels_won:
+          type: integer
+          nullable: true
+        aerial_duels_total:
+          type: integer
+          nullable: true
+        dribbles_completed:
+          type: integer
+          nullable: true
+        dribbles_total:
+          type: integer
+          nullable: true
+        throw_ins:
+          type: integer
+          nullable: true
+        goal_kicks:
+          type: integer
+          nullable: true
+        free_kicks:
+          type: integer
+          nullable: true
+    FIFAMatchShot:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        player_id:
+          type: integer
+        team_id:
+          type: integer
+        is_home:
+          type: boolean
+        shot_type:
+          type: string
+          description: One of goal, save, miss, block, post
+        situation:
+          type: string
+          nullable: true
+        body_part:
+          type: string
+          nullable: true
+        goal_type:
+          type: string
+          nullable: true
+        xg:
+          type: number
+          nullable: true
+        xgot:
+          type: number
+          nullable: true
+        player_x:
+          type: number
+          nullable: true
+        player_y:
+          type: number
+          nullable: true
+        goal_mouth_x:
+          type: number
+          nullable: true
+        goal_mouth_y:
+          type: number
+          nullable: true
+        block_x:
+          type: number
+          nullable: true
+        block_y:
+          type: number
+          nullable: true
+        time_minute:
+          type: integer
+        added_time:
+          type: integer
+          nullable: true
+        time_seconds:
+          type: integer
+          nullable: true
+    FIFAMatchMomentumPoint:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        minute:
+          type: number
+        value:
+          type: number
+    FIFAMatchBestPlayer:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        player_id:
+          type: integer
+        team_id:
+          type: integer
+        is_home:
+          type: boolean
+        side_rank:
+          type: integer
+        is_man_of_match:
+          type: boolean
+        rating:
+          type: number
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+    FIFAMatchAvgPosition:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        player_id:
+          type: integer
+        team_id:
+          type: integer
+        is_home:
+          type: boolean
+        avg_x:
+          type: number
+        avg_y:
+          type: number
+    FIFAMatchTeamForm:
+      type: object
+      description: Pre-match team form summary
+      properties:
+        match_id:
+          type: integer
+        team_id:
+          type: integer
+        is_home:
+          type: boolean
+        avg_rating:
+          type: number
+          nullable: true
+        position:
+          type: integer
+          nullable: true
+        value:
+          type: string
+          nullable: true
+          description: Form summary value (typically recent-match points as a single-digit string, e.g. "3")
     Pagination:
       type: object
       properties:
@@ -238,11 +1235,11 @@ components:
           description: Number of results per page
     PlayerPropMeta:
       type: object
-      description: Metadata for player prop responses (no pagination - all results returned in single response)
+      description: Metadata for player prop responses. Player props return all results for a match in a single response and do not use cursor pagination.
       properties:
         per_page:
           type: integer
-          description: Total number of results returned
+          description: Total number of results returned.
   responses:
     UnauthorizedError:
       description: Unauthorized - Missing or invalid API key
@@ -279,13 +1276,15 @@ security:
 paths:
   /fifa/worldcup/v1/teams:
     get:
-      summary: Get World Cup 2026 teams
-      description: Retrieve all FIFA World Cup 2026 participating nations
+      summary: Get FIFA World Cup teams
+      description: Retrieve participating nations for the requested World Cup edition(s). Defaults to 2026 when seasons[] is omitted.
       tags:
         - FIFA
+      parameters:
+        - $ref: "#/components/parameters/SeasonsParam"
       responses:
         "200":
-          description: List of World Cup 2026 teams
+          description: List of World Cup teams
           content:
             application/json:
               schema:
@@ -295,6 +1294,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/FIFATeam"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "429":
@@ -303,13 +1304,15 @@ paths:
           $ref: "#/components/responses/ServerError"
   /fifa/worldcup/v1/stadiums:
     get:
-      summary: Get World Cup 2026 stadiums
-      description: Retrieve all FIFA World Cup 2026 host stadiums
+      summary: Get FIFA World Cup stadiums
+      description: Retrieve host stadiums used by the requested World Cup edition(s). Defaults to 2026 when seasons[] is omitted.
       tags:
         - FIFA
+      parameters:
+        - $ref: "#/components/parameters/SeasonsParam"
       responses:
         "200":
-          description: List of World Cup 2026 stadiums
+          description: List of World Cup stadiums
           content:
             application/json:
               schema:
@@ -319,6 +1322,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/FIFAStadium"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "429":
@@ -327,13 +1332,15 @@ paths:
           $ref: "#/components/responses/ServerError"
   /fifa/worldcup/v1/group_standings:
     get:
-      summary: Get World Cup 2026 group standings
-      description: Retrieve group stage standings for FIFA World Cup 2026. Requires ALL-STAR tier or higher.
+      summary: Get FIFA World Cup group standings
+      description: Retrieve group stage standings for the requested World Cup edition(s). Defaults to 2026 when seasons[] is omitted. Requires ALL-STAR tier or higher.
       tags:
         - FIFA
+      parameters:
+        - $ref: "#/components/parameters/SeasonsParam"
       responses:
         "200":
-          description: World Cup 2026 group standings
+          description: World Cup group standings
           content:
             application/json:
               schema:
@@ -343,6 +1350,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/FIFAStanding"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "429":
@@ -351,13 +1360,19 @@ paths:
           $ref: "#/components/responses/ServerError"
   /fifa/worldcup/v1/matches:
     get:
-      summary: Get World Cup 2026 matches
-      description: Retrieve all FIFA World Cup 2026 matches including group stage and knockout rounds. Requires GOAT tier.
+      summary: Get FIFA World Cup matches
+      description: Retrieve matches for the requested World Cup edition(s). Cursor-paginated. Requires GOAT tier.
       tags:
         - FIFA
+      parameters:
+        - $ref: "#/components/parameters/SeasonsParam"
+        - $ref: "#/components/parameters/MatchIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
       responses:
         "200":
-          description: List of World Cup 2026 matches
+          description: List of World Cup matches
           content:
             application/json:
               schema:
@@ -367,6 +1382,10 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/FIFAMatch"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "429":
@@ -375,13 +1394,18 @@ paths:
           $ref: "#/components/responses/ServerError"
   /fifa/worldcup/v1/odds:
     get:
-      summary: Get World Cup 2026 betting odds
-      description: Retrieve betting odds for FIFA World Cup 2026 matches. Requires GOAT tier.
+      summary: Get FIFA World Cup betting odds
+      description: Retrieve moneyline, spread, total, and additional match betting markets for World Cup matches. Cursor-paginated. Requires GOAT tier.
       tags:
         - FIFA
+      parameters:
+        - $ref: "#/components/parameters/SeasonsParam"
+        - $ref: "#/components/parameters/MatchIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
       responses:
         "200":
-          description: World Cup 2026 match betting odds
+          description: World Cup match betting odds
           content:
             application/json:
               schema:
@@ -391,21 +1415,79 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/FIFABettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "429":
           $ref: "#/components/responses/RateLimitError"
         "500":
           $ref: "#/components/responses/ServerError"
-  /fifa/worldcup/v1/odds/futures:
+  /fifa/worldcup/v1/odds/opening:
     get:
-      summary: Get World Cup 2026 futures odds
-      description: Retrieve futures betting odds for FIFA World Cup 2026 (e.g., tournament winner). Requires GOAT tier.
+      summary: Get FIFA opening betting odds
+      description: Retrieve historical opening betting odds. Coverage is limited to the most recently completed season and ongoing seasons where available. Requires GOAT tier.
       tags:
         - FIFA
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: seasons
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by World Cup season years
+        - name: match_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by match IDs
       responses:
         "200":
-          description: World Cup 2026 futures betting odds
+          description: Opening odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAOpeningBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /fifa/worldcup/v1/odds/futures:
+    get:
+      summary: Get FIFA World Cup futures odds
+      description: Retrieve futures betting odds for the FIFA World Cup. Defaults to 2026 when seasons[] is omitted. Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/SeasonsParam"
+      responses:
+        "200":
+          description: World Cup futures betting odds
           content:
             application/json:
               schema:
@@ -415,6 +1497,551 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/FIFAFuturesOdd"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/odds/player_props:
+    get:
+      summary: Get FIFA World Cup player prop betting odds
+      description: |
+        Retrieve live player prop betting data for FIFA World Cup matches. Player prop data is live and updated in real time.
+
+        This endpoint returns all player props for the specified match in a single response. Cursor pagination is not supported.
+
+        The API supports two market types:
+        - **over_under**: Traditional over/under markets where users can bet on whether a player will go over or under a specific line value
+        - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
+
+        Available vendors: betmgm, betrivers, caesars, draftkings, fanatics, fanduel
+      tags:
+        - FIFA
+      parameters:
+        - name: match_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The match ID to retrieve player props for.
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter props for a specific player.
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - anytime_goal
+              - assists
+              - card
+              - first_goal
+              - goal_or_assist
+              - last_goal
+              - red_card
+              - saves
+              - shot_each_half
+              - shot_on_target_each_half
+              - shots
+              - shots_on_target
+              - tackles
+          description: Filter by prop type.
+        - name: vendors[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - betmgm
+                - betrivers
+                - caesars
+                - draftkings
+                - fanatics
+                - fanduel
+          style: form
+          explode: true
+          description: Filter by specific sportsbook vendors. Use bracket notation, for example `?vendors[]=draftkings&vendors[]=fanduel`.
+      responses:
+        "200":
+          description: FIFA World Cup player prop betting odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAPlayerProp"
+                  meta:
+                    $ref: "#/components/schemas/PlayerPropMeta"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/odds/player_props/opening:
+    get:
+      summary: Get FIFA opening player prop odds
+      description: Retrieve historical opening player prop betting odds. Coverage is limited to the most recently completed season and ongoing seasons where available. Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - name: match_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The match ID to retrieve opening player props for
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter props for a specific player
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by prop type
+        - name: vendors
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by sportsbook vendors
+      responses:
+        "200":
+          description: Opening odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAOpeningPlayerProp"
+                  meta:
+                    $ref: "#/components/schemas/PlayerPropMeta"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /fifa/worldcup/v1/players:
+    get:
+      summary: Get FIFA World Cup players
+      description: Retrieve biographical data for players who have appeared in any World Cup squad. When `seasons[]`, `team_ids[]`, and `player_ids[]` are omitted, returns all players across every ingested edition. Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/SeasonsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/SearchParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: List of players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/player_injuries:
+    get:
+      summary: Get FIFA World Cup player injuries
+      description: Retrieve the current FIFA World Cup player injury snapshot. Supports filtering by World Cup edition, player IDs, team IDs, or injury status. Defaults to the current edition when `seasons[]` is omitted. Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/SeasonsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/InjuryStatusesParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: List of FIFA World Cup player injuries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAPlayerInjury"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/rosters:
+    get:
+      summary: Get FIFA World Cup tournament rosters
+      description: Retrieve per-tournament squad entries with cumulative tournament stats. When `seasons[]` is omitted, returns rosters across every ingested edition. Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/SeasonsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: List of tournament roster entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFARoster"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/match_lineups:
+    get:
+      summary: Get FIFA World Cup match lineups
+      description: Retrieve registered match-day squads (starters + substitutes). Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/MatchIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: List of match lineup entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAMatchLineup"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/match_events:
+    get:
+      summary: Get FIFA World Cup match events
+      description: Retrieve time-ordered match incidents (goals, cards, substitutions, period markers, shootout kicks). Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/MatchIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: List of match events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAMatchEvent"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/player_match_stats:
+    get:
+      summary: Get FIFA World Cup player match stats
+      description: Retrieve per-player per-match performance stats. Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/MatchIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: Player match stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAPlayerMatchStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/team_match_stats:
+    get:
+      summary: Get FIFA World Cup team match stats
+      description: Retrieve per-team per-match aggregates. Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/MatchIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: Team match stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFATeamMatchStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/match_shots:
+    get:
+      summary: Get FIFA World Cup match shots
+      description: Retrieve shot-map entries with xG / xGoT and pitch coordinates. Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/MatchIdsParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: Match shot entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAMatchShot"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/match_momentum:
+    get:
+      summary: Get FIFA World Cup match attack momentum
+      description: Retrieve per-minute attack momentum values. Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/MatchIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: Per-minute momentum points
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAMatchMomentumPoint"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/match_best_players:
+    get:
+      summary: Get FIFA World Cup match top performers
+      description: Retrieve the top-rated players for each match (best XI per side and the man of the match). Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/MatchIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: Match best player entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAMatchBestPlayer"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/match_avg_positions:
+    get:
+      summary: Get FIFA World Cup player average positions
+      description: Retrieve each player's average pitch position (heatmap centroid) for a match. Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/MatchIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: Player average position entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAMatchAvgPosition"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /fifa/worldcup/v1/match_team_form:
+    get:
+      summary: Get FIFA World Cup pre-match team form
+      description: Retrieve a pre-match team form summary (recent average rating, position, and a five-character form string per side). Requires GOAT tier.
+      tags:
+        - FIFA
+      parameters:
+        - $ref: "#/components/parameters/MatchIdsParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: Pre-match team form entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FIFAMatchTeamForm"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "429":

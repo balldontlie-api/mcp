@@ -188,6 +188,134 @@ components:
           type: string
           format: date-time
           description: Last update timestamp
+    NFLOpeningPlayerProp:
+      type: object
+      description: NFL player prop betting data
+      required:
+        - id
+        - game_id
+        - player_id
+        - vendor
+        - prop_type
+        - line_value
+        - market
+        - updated_at
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique player prop ID
+        game_id:
+          type: integer
+          description: NFL game ID
+        player_id:
+          type: integer
+          description: NFL player ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+          enum:
+            - draftkings
+            - fanduel
+            - caesars
+            - betmgm
+            - fanatics
+            - betrivers
+        prop_type:
+          type: string
+          description: Type of player prop
+          enum:
+            - anytime_td
+            - anytime_td_1h
+            - anytime_td_1q
+            - anytime_td_2h
+            - fg_made
+            - fg_made_1h
+            - first_td
+            - interceptions
+            - kicking_points
+            - longest_pass
+            - longest_reception
+            - longest_rush
+            - passing_attempts
+            - passing_completions
+            - passing_tds
+            - passing_tds_1h
+            - passing_yards
+            - passing_yards_1h
+            - receiving_yards
+            - receiving_yards_1h
+            - receptions
+            - rushing_attempts
+            - rushing_receiving_yards
+            - rushing_yards
+            - rushing_yards_1h
+          example: rushing_yards
+        line_value:
+          type: string
+          description: The line value for the prop
+          example: "275.5"
+        market:
+          oneOf:
+            - $ref: "#/components/schemas/NFLPlayerPropMarketOverUnder"
+            - $ref: "#/components/schemas/NFLPlayerPropMarketMilestone"
+          description: Market information - either over_under or milestone type
+        opened_at:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of when this prop was last updated
+    NFLOpeningBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Betting odd ID
+        game_id:
+          type: integer
+          description: Game ID
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        spread_home_value:
+          type: string
+          nullable: true
+          description: Home team spread value
+        spread_home_odds:
+          type: integer
+          nullable: true
+          description: Home team spread odds
+        spread_away_value:
+          type: string
+          nullable: true
+          description: Away team spread value
+        spread_away_odds:
+          type: integer
+          nullable: true
+          description: Away team spread odds
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+          description: Home team moneyline odds
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+          description: Away team moneyline odds
+        total_value:
+          type: string
+          nullable: true
+          description: Total points line value
+        total_over_odds:
+          type: integer
+          nullable: true
+          description: Over total odds
+        total_under_odds:
+          type: integer
+          nullable: true
+          description: Under total odds
+        opened_at:
+          type: string
+          format: date-time
+          description: Opening odds timestamp
     NFLGame:
       type: object
       properties:
@@ -369,10 +497,11 @@ components:
           description: Sportsbook vendor name
           enum:
             - draftkings
-            - betway
+            - fanduel
+            - caesars
+            - betmgm
+            - fanatics
             - betrivers
-            - ballybet
-            - betparx
         prop_type:
           type: string
           description: Type of player prop
@@ -789,7 +918,7 @@ components:
           type: integer
         season_type:
           type: integer
-          description: Season type (2 = regular season, 3 = postseason)
+          description: Season type (1 = preseason, 2 = regular season, 3 = postseason). Preseason data is not currently available for this resource.
         games_played:
           type: number
           nullable: true
@@ -983,6 +1112,48 @@ components:
       schema:
         type: integer
       description: The season year
+    GameSeasonTypesParam:
+      name: season_type
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+          enum:
+            - 1
+            - 2
+            - 3
+        default:
+          - 2
+          - 3
+      style: form
+      explode: true
+      description: "Filter by season types: 1 = preseason, 2 = regular season, 3 = postseason. Defaults to regular season and postseason (2 and 3)."
+    SeasonTypeParam:
+      name: season_type
+      in: query
+      required: false
+      schema:
+        type: integer
+        enum:
+          - 1
+          - 2
+          - 3
+        default: 2
+      description: "Filter by season type: 1 = preseason, 2 = regular season, 3 = postseason. Defaults to 2."
+    SeasonTypeWithoutPreseasonParam:
+      name: season_type
+      in: query
+      required: false
+      schema:
+        type: integer
+        enum:
+          - 1
+          - 2
+          - 3
+        default: 2
+      description: "Filter by season type: 1 = preseason, 2 = regular season, 3 = postseason. Defaults to 2. Preseason data is not available for this endpoint."
     TeamIdsParam:
       name: team_ids[]
       in: query
@@ -1345,12 +1516,7 @@ paths:
           style: form
           explode: true
           description: Filter by seasons
-        - name: postseason
-          in: query
-          required: false
-          schema:
-            type: boolean
-          description: Filter by postseason games
+        - $ref: "#/components/parameters/GameSeasonTypesParam"
         - name: weeks[]
           in: query
           required: false
@@ -1442,6 +1608,7 @@ paths:
           style: form
           explode: true
           description: Filter by seasons
+        - $ref: "#/components/parameters/SeasonTypeParam"
       responses:
         "200":
           description: List of NFL stats
@@ -1537,12 +1704,7 @@ paths:
           schema:
             type: integer
           description: Filter by team ID
-        - name: postseason
-          in: query
-          required: false
-          schema:
-            type: boolean
-          description: Get postseason stats
+        - $ref: "#/components/parameters/SeasonTypeWithoutPreseasonParam"
         - name: sort_by
           in: query
           required: false
@@ -1601,12 +1763,7 @@ paths:
           schema:
             type: integer
           description: Filter by week (0 for full season)
-        - name: postseason
-          in: query
-          required: false
-          schema:
-            type: boolean
-          description: Filter for postseason stats
+        - $ref: "#/components/parameters/SeasonTypeWithoutPreseasonParam"
       responses:
         "200":
           description: NFL advanced rushing stats
@@ -1650,12 +1807,7 @@ paths:
           schema:
             type: integer
           description: Filter by week (0 for full season)
-        - name: postseason
-          in: query
-          required: false
-          schema:
-            type: boolean
-          description: Filter for postseason stats
+        - $ref: "#/components/parameters/SeasonTypeWithoutPreseasonParam"
       responses:
         "200":
           description: NFL advanced passing stats
@@ -1699,12 +1851,7 @@ paths:
           schema:
             type: integer
           description: Filter by week (0 for full season)
-        - name: postseason
-          in: query
-          required: false
-          schema:
-            type: boolean
-          description: Filter for postseason stats
+        - $ref: "#/components/parameters/SeasonTypeWithoutPreseasonParam"
       responses:
         "200":
           description: NFL advanced receiving stats
@@ -1730,7 +1877,7 @@ paths:
   /nfl/v1/odds:
     get:
       summary: Get NFL betting odds
-      description: Retrieve betting odds for NFL games. Either (season and week) or game_ids is required. Available starting from 2025 season, week 8 onwards.
+      description: Retrieve betting odds for NFL games, including preseason. Either (season and week) or game_ids is required. Week queries default to regular season and postseason; use season_type=1 for preseason. A preseason game_id can be queried directly without season_type.
       tags:
         - NFL
       parameters:
@@ -1748,6 +1895,13 @@ paths:
           schema:
             type: integer
           description: Filter by week (must be provided with season)
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: integer
+            enum: [1, 2, 3]
+          description: "Filter week queries by season type: 1 = preseason, 2 = regular season, 3 = postseason. Defaults to regular season and postseason."
         - name: game_ids
           in: query
           required: false
@@ -1780,6 +1934,67 @@ paths:
           $ref: "#/components/responses/RateLimitError"
         "500":
           $ref: "#/components/responses/ServerError"
+  /nfl/v1/odds/opening:
+    get:
+      summary: Get NFL opening betting odds
+      description: Retrieve historical opening betting odds, including preseason when available. Week queries default to regular season and postseason; use season_type=1 for preseason. Requires GOAT tier.
+      tags:
+        - NFL
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season
+        - name: week
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by week
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: integer
+            enum: [1, 2, 3]
+          description: "Filter week queries by season type: 1 = preseason, 2 = regular season, 3 = postseason. Defaults to regular season and postseason."
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+      responses:
+        "200":
+          description: Opening odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLOpeningBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
   /nfl/v1/odds/player_props:
     get:
       summary: Get NFL player prop betting odds
@@ -1793,7 +2008,7 @@ paths:
         - **over_under**: Traditional over/under markets where users can bet on whether a player will go over or under a specific line value
         - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
 
-        Available vendors: draftkings, betway, betrivers, ballybet, betparx (more coming soon!)
+        Sportsbook availability varies by game and market. Use the vendor values returned by the endpoint.
       tags:
         - NFL
       parameters:
@@ -1850,7 +2065,7 @@ paths:
               type: string
           style: form
           explode: true
-          description: Filter by specific sportsbook vendors (e.g., draftkings, betrivers). If not provided, returns props from all available vendors.
+          description: Filter by specific sportsbook vendors (e.g., draftkings, fanduel). If not provided, returns props from all available vendors.
       responses:
         "200":
           description: NFL player prop betting odds
@@ -1870,7 +2085,7 @@ paths:
                   - id: 111967700
                     game_id: 424129
                     player_id: 490
-                    vendor: betway
+                    vendor: fanduel
                     prop_type: rushing_yards
                     line_value: "85.5"
                     market:
@@ -1899,6 +2114,64 @@ paths:
           $ref: "#/components/responses/RateLimitError"
         "500":
           $ref: "#/components/responses/ServerError"
+  /nfl/v1/odds/player_props/opening:
+    get:
+      summary: Get NFL opening player prop odds
+      description: Retrieve historical opening player prop betting odds. Coverage is limited to the most recently completed season and ongoing seasons where available. Requires GOAT tier.
+      tags:
+        - NFL
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID to retrieve opening player props for
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter props for a specific player
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by prop type
+        - name: vendors
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by sportsbook vendors
+      responses:
+        "200":
+          description: Opening odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NFLOpeningPlayerProp"
+                  meta:
+                    $ref: "#/components/schemas/PlayerPropMeta"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
   /nfl/v1/team_season_stats:
     get:
       summary: Get NFL team season stats
@@ -1924,12 +2197,7 @@ paths:
           schema:
             type: integer
           description: Filter by season (required)
-        - name: postseason
-          in: query
-          required: false
-          schema:
-            type: boolean
-          description: Filter for postseason stats (true) or regular season (false)
+        - $ref: "#/components/parameters/SeasonTypeWithoutPreseasonParam"
       responses:
         "200":
           description: NFL team season stats
@@ -1991,6 +2259,7 @@ paths:
           style: form
           explode: true
           description: Filter by game IDs
+        - $ref: "#/components/parameters/SeasonTypeParam"
       responses:
         "200":
           description: NFL team game stats
@@ -2028,6 +2297,7 @@ paths:
           schema:
             type: integer
           description: Filter by game ID (required)
+        - $ref: "#/components/parameters/SeasonTypeParam"
       responses:
         "200":
           description: NFL play-by-play data

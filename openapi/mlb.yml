@@ -59,6 +59,191 @@ components:
         updated_at:
           type: string
           format: date-time
+    MLBMarketStatus:
+      type: string
+      enum:
+        - open
+        - locked
+        - suspended
+        - closed
+        - unknown
+    MLBMarketParticipant:
+      type: object
+      required:
+        - type
+        - id
+        - name
+      properties:
+        type:
+          type: string
+          enum:
+            - player
+            - team
+            - other
+        id:
+          type: integer
+          nullable: true
+          description: BALLDONTLIE entity ID when a participant is matched
+        name:
+          type: string
+    MLBBettingMarketOutcome:
+      type: object
+      properties:
+        id:
+          type: integer
+        key:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        side:
+          type: string
+          nullable: true
+        line_value:
+          type: string
+          nullable: true
+        handicap:
+          type: string
+          nullable: true
+        american_odds:
+          type: integer
+          nullable: true
+        decimal_odds:
+          type: string
+          nullable: true
+        status:
+          $ref: "#/components/schemas/MLBMarketStatus"
+        participants:
+          type: array
+          items:
+            $ref: "#/components/schemas/MLBMarketParticipant"
+        updated_at:
+          type: string
+          format: date-time
+    MLBBettingMarket:
+      type: object
+      properties:
+        id:
+          type: integer
+        game_id:
+          type: integer
+        vendor:
+          type: string
+        key:
+          type: string
+          description: Open-ended normalized market key
+        name:
+          type: string
+          description: Sportsbook market display name
+        type:
+          type: string
+        period:
+          type: string
+        scope:
+          type: string
+        team_side:
+          type: string
+          nullable: true
+        line_value:
+          type: string
+          nullable: true
+        status:
+          $ref: "#/components/schemas/MLBMarketStatus"
+        is_live:
+          type: boolean
+        updated_at:
+          type: string
+          format: date-time
+        outcomes:
+          type: array
+          items:
+            $ref: "#/components/schemas/MLBBettingMarketOutcome"
+    MLBOpeningPlayerProp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        game_id:
+          type: integer
+        player_id:
+          type: integer
+        vendor:
+          type: string
+          enum:
+            - betmgm
+            - betrivers
+            - caesars
+            - draftkings
+            - fanatics
+            - fanduel
+        prop_type:
+          type: string
+          description: Open-ended MLB player prop type. Common examples include hits, home_runs, total_bases, runs_scored, hits_runs_rbis, and pitcher_strikeouts.
+        line_value:
+          type: string
+        market:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - over_under
+                - milestone
+            over_odds:
+              type: integer
+              nullable: true
+            under_odds:
+              type: integer
+              nullable: true
+            odds:
+              type: integer
+              nullable: true
+              description: Used for milestone market type
+        opened_at:
+          type: string
+          format: date-time
+    MLBOpeningBettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+        game_id:
+          type: integer
+        vendor:
+          type: string
+          description: Sportsbook vendor name
+        spread_home_value:
+          type: string
+          nullable: true
+        spread_home_odds:
+          type: integer
+          nullable: true
+        spread_away_value:
+          type: string
+          nullable: true
+        spread_away_odds:
+          type: integer
+          nullable: true
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+        total_value:
+          type: string
+          nullable: true
+        total_over_odds:
+          type: integer
+          nullable: true
+        total_under_odds:
+          type: integer
+          nullable: true
+        opened_at:
+          type: string
+          format: date-time
     MLBGame:
       type: object
       properties:
@@ -162,6 +347,18 @@ components:
           type: string
           nullable: true
           description: Umpire call (B=ball, S=strike, X=in play)
+        description:
+          type: string
+          nullable: true
+          description: Detailed pitch outcome label
+        pitch_call_code:
+          type: string
+          nullable: true
+          description: Raw pitch call code from the data source
+        call_name:
+          type: string
+          nullable: true
+          description: Human-readable pitch call name
         pitch_type_code:
           type: string
           nullable: true
@@ -285,6 +482,46 @@ components:
           type: number
           nullable: true
           description: Vertical hit coordinate on the field spray chart. Only populated for balls in play.
+        is_in_zone:
+          type: boolean
+          nullable: true
+          description: Whether the pitch crossed the strike zone
+        is_swing:
+          type: boolean
+          nullable: true
+          description: Whether the batter swung at the pitch
+        is_whiff:
+          type: boolean
+          nullable: true
+          description: Whether the swing missed the pitch
+        is_contact:
+          type: boolean
+          nullable: true
+          description: Whether the swing made contact
+        is_chase:
+          type: boolean
+          nullable: true
+          description: Whether the batter chased a pitch outside the zone
+        is_command:
+          type: boolean
+          nullable: true
+          description: Whether the pitch counted as a commanded pitch
+        expected_woba:
+          type: number
+          nullable: true
+          description: Expected weighted on-base value for the pitch outcome
+        woba_value:
+          type: number
+          nullable: true
+          description: Weighted on-base value for the pitch outcome
+        woba_denom:
+          type: number
+          nullable: true
+          description: Weighted on-base denominator for the pitch outcome
+        expected_slugging:
+          type: number
+          nullable: true
+          description: Expected slugging value for the pitch outcome
         game_pitch_count:
           type: integer
           nullable: true
@@ -480,9 +717,16 @@ components:
           type: integer
         vendor:
           type: string
+          enum:
+            - betmgm
+            - betrivers
+            - caesars
+            - draftkings
+            - fanatics
+            - fanduel
         prop_type:
           type: string
-          description: Type of prop (e.g., hits, home_runs, pitcher_strikeouts)
+          description: Open-ended MLB player prop type. Common examples include hits, home_runs, total_bases, runs_scored, hits_runs_rbis, and pitcher_strikeouts.
         line_value:
           type: string
         market:
@@ -1008,6 +1252,129 @@ components:
           type: integer
         fielding_a:
           type: integer
+    MLBPitchTypeStatsBase:
+      type: object
+      properties:
+        id:
+          type: integer
+        player_id:
+          type: integer
+        pitch_type:
+          type: string
+          description: Short pitch type code
+        pitch_name:
+          type: string
+          nullable: true
+          description: Full pitch type name
+        pitch_count:
+          type: integer
+        pitch_usage_percent:
+          type: number
+          nullable: true
+        zone_count:
+          type: integer
+        zone_percent:
+          type: number
+          nullable: true
+        chase_count:
+          type: integer
+        chase_percent:
+          type: number
+          nullable: true
+        command_count:
+          type: integer
+        command_percent:
+          type: number
+          nullable: true
+        swing_count:
+          type: integer
+        whiff_count:
+          type: integer
+        whiff_percent:
+          type: number
+          nullable: true
+        contact_count:
+          type: integer
+        contact_percent:
+          type: number
+          nullable: true
+        called_strike_count:
+          type: integer
+        called_ball_count:
+          type: integer
+        pa_count:
+          type: integer
+        at_bat_count:
+          type: integer
+        hit_count:
+          type: integer
+        single_count:
+          type: integer
+        double_count:
+          type: integer
+        triple_count:
+          type: integer
+        home_run_count:
+          type: integer
+        walk_count:
+          type: integer
+        strikeout_count:
+          type: integer
+        total_bases:
+          type: integer
+        damage_count:
+          type: integer
+        ba:
+          type: number
+          nullable: true
+        slg:
+          type: number
+          nullable: true
+        woba:
+          type: number
+          nullable: true
+        xwoba:
+          type: number
+          nullable: true
+        walk_zone_count:
+          type: integer
+        walk_chase_count:
+          type: integer
+        walk_command_count:
+          type: integer
+        strikeout_zone_count:
+          type: integer
+        strikeout_chase_count:
+          type: integer
+        strikeout_command_count:
+          type: integer
+    MLBPitchTypeGameStat:
+      allOf:
+        - $ref: "#/components/schemas/MLBPitchTypeStatsBase"
+        - type: object
+          properties:
+            game_id:
+              type: integer
+    MLBPitchTypeSeasonStat:
+      allOf:
+        - $ref: "#/components/schemas/MLBPitchTypeStatsBase"
+        - type: object
+          properties:
+            season:
+              type: integer
+            season_type:
+              type: string
+              enum:
+                - regular
+                - postseason
+            games_backfilled:
+              type: integer
+            season_pitch_count:
+              type: integer
+            last_game_date:
+              type: string
+              format: date
+              nullable: true
     Pagination:
       type: object
       properties:
@@ -1086,6 +1453,105 @@ components:
       style: form
       explode: true
       description: Filter by team IDs
+    GameIdsParam:
+      name: game_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      style: form
+      explode: true
+      description: Filter by game IDs
+    PitchTypeParam:
+      name: pitch_type
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Filter by pitch type code
+    RegularPostseasonParam:
+      name: season_type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - regular
+          - postseason
+      description: Filter by regular season or postseason
+    SortOrderParam:
+      name: sort_order
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+      description: Sort direction. Defaults to `asc`.
+    MLBPitchTypeGameSortByParam:
+      name: sort_by
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - pitch_count
+          - pitch_usage_percent
+          - zone_percent
+          - chase_percent
+          - command_percent
+          - swing_count
+          - whiff_percent
+          - contact_percent
+          - called_strike_count
+          - called_ball_count
+          - pa_count
+          - at_bat_count
+          - hit_count
+          - home_run_count
+          - walk_count
+          - strikeout_count
+          - total_bases
+          - damage_count
+          - ba
+          - slg
+          - woba
+          - xwoba
+      description: Attribute to sort by
+    MLBPitchTypeSeasonSortByParam:
+      name: sort_by
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - pitch_count
+          - pitch_usage_percent
+          - zone_percent
+          - chase_percent
+          - command_percent
+          - swing_count
+          - whiff_percent
+          - contact_percent
+          - called_strike_count
+          - called_ball_count
+          - pa_count
+          - at_bat_count
+          - hit_count
+          - home_run_count
+          - walk_count
+          - strikeout_count
+          - total_bases
+          - damage_count
+          - ba
+          - slg
+          - woba
+          - xwoba
+          - last_game_date
+      description: Attribute to sort by
   responses:
     UnauthorizedError:
       description: Unauthorized - Missing or invalid API key
@@ -1906,7 +2372,11 @@ paths:
   /mlb/v1/plays:
     get:
       summary: Get MLB play-by-play data
-      description: Returns play-by-play data for a specific game including game state, scoring plays, and batted ball details.
+      description: >
+        Returns play-by-play data for a specific game including game state,
+        scoring plays, and batted ball details. Plays are ordered by `order`
+        ascending by default. Set `sort_order=desc` to return the latest plays
+        first. Keep the same `sort_order` when following pagination cursors.
       tags:
         - MLB
       parameters:
@@ -1916,6 +2386,7 @@ paths:
           schema:
             type: integer
           description: The game ID (required)
+        - $ref: "#/components/parameters/SortOrderParam"
         - $ref: "#/components/parameters/CursorParam"
         - $ref: "#/components/parameters/PerPageParam"
       responses:
@@ -1943,7 +2414,7 @@ paths:
   /mlb/v1/plate_appearances:
     get:
       summary: Get MLB plate appearance data
-      description: Returns plate appearance data for a specific game. Each plate appearance includes the outcome and all individual pitches with detailed Statcast metrics. All plate appearances for the game are returned in a single response (no pagination).
+      description: Returns plate appearance data for a specific game. Each plate appearance includes the outcome and all individual pitches with detailed advanced pitch metrics. All plate appearances for the game are returned in a single response (no pagination).
       tags:
         - MLB
       parameters:
@@ -1965,6 +2436,168 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/MLBPlateAppearance"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/pitcher_pitch_type_game_stats:
+    get:
+      summary: Get MLB pitcher pitch type game stats
+      description: Returns per-game pitcher pitch-type usage, command, whiff/contact, and damage metrics.
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/GameIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+        - $ref: "#/components/parameters/RegularPostseasonParam"
+        - $ref: "#/components/parameters/PitchTypeParam"
+        - $ref: "#/components/parameters/MLBPitchTypeGameSortByParam"
+        - $ref: "#/components/parameters/SortOrderParam"
+      responses:
+        "200":
+          description: MLB pitcher pitch type game stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPitchTypeGameStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/hitter_pitch_type_game_stats:
+    get:
+      summary: Get MLB hitter pitch type game stats
+      description: Returns per-game hitter pitch-type usage, command, whiff/contact, and damage metrics.
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/GameIdsParam"
+        - $ref: "#/components/parameters/TeamIdsParam"
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by season year
+        - $ref: "#/components/parameters/RegularPostseasonParam"
+        - $ref: "#/components/parameters/PitchTypeParam"
+        - $ref: "#/components/parameters/MLBPitchTypeGameSortByParam"
+        - $ref: "#/components/parameters/SortOrderParam"
+      responses:
+        "200":
+          description: MLB hitter pitch type game stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPitchTypeGameStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/pitcher_pitch_type_season_stats:
+    get:
+      summary: Get MLB pitcher pitch type season stats
+      description: Returns season-level pitcher pitch-type usage, command, whiff/contact, and damage metrics.
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/SeasonParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/RegularPostseasonParam"
+        - $ref: "#/components/parameters/PitchTypeParam"
+        - $ref: "#/components/parameters/MLBPitchTypeSeasonSortByParam"
+        - $ref: "#/components/parameters/SortOrderParam"
+      responses:
+        "200":
+          description: MLB pitcher pitch type season stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPitchTypeSeasonStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/hitter_pitch_type_season_stats:
+    get:
+      summary: Get MLB hitter pitch type season stats
+      description: Returns season-level hitter pitch-type usage, command, whiff/contact, and damage metrics.
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/SeasonParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+        - $ref: "#/components/parameters/RegularPostseasonParam"
+        - $ref: "#/components/parameters/PitchTypeParam"
+        - $ref: "#/components/parameters/MLBPitchTypeSeasonSortByParam"
+        - $ref: "#/components/parameters/SortOrderParam"
+      responses:
+        "200":
+          description: MLB hitter pitch type season stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBPitchTypeSeasonStat"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":
@@ -2025,6 +2658,111 @@ paths:
           $ref: "#/components/responses/RateLimitError"
         "500":
           $ref: "#/components/responses/ServerError"
+  /mlb/v1/odds/markets:
+    get:
+      summary: Get all current MLB betting markets
+      description: |
+        Retrieve the current market catalog for one MLB game. This open-ended endpoint includes game, team, inning, player, comparison, milestone, and other market structures without requiring market names or keys to come from a fixed list.
+
+        Complete current catalogs are available for DraftKings and FanDuel. Sportsbooks supported by the simplified odds or player-props endpoints may not appear here until complete market catalogs are available.
+
+        Markets are paginated as complete units. Outcomes may have null prices while their status is `locked` or `suspended`. Use `/mlb/v1/odds/player_props` when you only need the simplified single-player over/under and milestone projection.
+      tags:
+        - MLB
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Game ID to retrieve markets for
+        - name: vendors
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by sportsbook vendors. Complete current catalogs are available for `draftkings` and `fanduel`.
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+      responses:
+        "200":
+          description: Current MLB betting markets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBBettingMarket"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /mlb/v1/odds/opening:
+    get:
+      summary: Get MLB opening betting odds
+      description: Retrieve historical opening betting odds. Coverage is limited to the most recently completed season and ongoing seasons where available. Requires GOAT tier.
+      tags:
+        - MLB
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - name: game_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+          description: Filter by game IDs
+        - name: dates
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: date
+          style: form
+          explode: true
+          description: Filter by game dates
+      responses:
+        "200":
+          description: Opening odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBOpeningBettingOdd"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
   /mlb/v1/odds/player_props:
     get:
       summary: Get MLB player prop betting odds
@@ -2038,7 +2776,13 @@ paths:
         - **over_under**: Traditional over/under markets where users can bet on whether a player will go over or under a specific line value
         - **milestone**: Milestone markets where users bet on whether a player will reach a specific achievement
 
-        Available vendors: draftkings, fanatics, fanduel, betmgm
+        Prop types are open-ended. Common examples include:
+        - Batter props: hits, home_runs, total_bases, rbis, stolen_bases, singles, doubles, triples, walks, strikeouts, runs_scored, and hits_runs_rbis
+        - Pitcher props: pitcher_strikeouts, pitcher_outs, pitcher_hits_allowed, pitcher_walks, pitcher_earned_runs, and pitcher_record_a_win
+
+        Newly available compatible single-player markets can appear without a documentation enum update. Use `/mlb/v1/odds/markets` for the complete current market catalog, including structures that do not fit this simplified response.
+
+        Available vendors: betmgm, betrivers, caesars, draftkings, fanatics, fanduel
       tags:
         - MLB
       parameters:
@@ -2059,7 +2803,7 @@ paths:
           required: false
           schema:
             type: string
-          description: "Filter by prop type. Supported types: hits, home_runs, total_bases, rbis, stolen_bases."
+          description: Filter by an open-ended prop type string.
         - name: vendors
           in: query
           required: false
@@ -2067,6 +2811,13 @@ paths:
             type: array
             items:
               type: string
+              enum:
+                - betmgm
+                - betrivers
+                - caesars
+                - draftkings
+                - fanatics
+                - fanduel
           style: form
           explode: true
           description: Filter by specific sportsbook vendors (e.g., draftkings, fanduel). If not provided, returns props from all available vendors.
@@ -2090,6 +2841,64 @@ paths:
           $ref: "#/components/responses/RateLimitError"
         "500":
           $ref: "#/components/responses/ServerError"
+  /mlb/v1/odds/player_props/opening:
+    get:
+      summary: Get MLB opening player prop odds
+      description: Retrieve historical opening player prop betting odds. Coverage is limited to the most recently completed season and ongoing seasons where available. Requires GOAT tier.
+      tags:
+        - MLB
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: The game ID to retrieve opening player props for
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter props for a specific player
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by prop type
+        - name: vendors
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by sportsbook vendors
+      responses:
+        "200":
+          description: Opening odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MLBOpeningPlayerProp"
+                  meta:
+                    $ref: "#/components/schemas/PlayerPropMeta"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
   /mlb/v1/lineups:
     get:
       summary: Get MLB game lineups

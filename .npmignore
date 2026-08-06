@@ -11,6 +11,8 @@ tsconfig.json
 # Development files
 .vscode/
 .idea/
+.claude/
+.github/
 *.swp
 *.swo
 
@@ -25,6 +27,13 @@ docs/
 *.test.ts
 *.spec.ts
 __tests__/
+test/
+dist-test/
+
+# Generation inputs are not required at runtime
+openapi.yml
+openapi/
+scripts/
 
 # Build artifacts not needed
 *.tsbuildinfo

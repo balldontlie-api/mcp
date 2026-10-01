@@ -13,6 +13,19 @@ components:
       in: header
       name: Authorization
   schemas:
+    CompetitionStatusState:
+      type: string
+      description: Normalized lifecycle state for cross-sport integrations. Classification may use the sport-specific lifecycle field and other available lifecycle context. `unknown` means the available lifecycle data cannot be safely classified.
+      enum:
+        - scheduled
+        - in_progress
+        - final
+        - postponed
+        - canceled
+        - delayed
+        - suspended
+        - abandoned
+        - unknown
     Error:
       type: object
       properties:
@@ -126,14 +139,16 @@ components:
     NCAAWBracket:
       type: object
       description: NCAA Women's Tournament bracket entry representing a single game
+      required:
+        - status_state
       properties:
         game_id:
           type: integer
           nullable: true
-          description: Associated game ID (references the games endpoint public ID)
+          description: Associated game ID for the related game
         season:
           type: integer
-          description: Season year (offset by -1 from database value)
+          description: Season starting year (e.g. 2025 for the 2025-26 season)
         round:
           type: integer
           description: Round ID (0=First Four/Play-in, 1=Round of 64, 2=Round of 32, 3=Sweet 16, 4=Elite 8, 5=Final Four, 6=Championship)
@@ -154,6 +169,10 @@ components:
           type: string
           nullable: true
           description: Game status (pre, in, post)
+        status_state:
+          allOf:
+            - $ref: "#/components/schemas/CompetitionStatusState"
+          description: Normalized lifecycle state derived from `status` and other available lifecycle context; `status` remains unchanged.
         status_detail:
           type: string
           nullable: true
@@ -214,6 +233,8 @@ components:
           type: string
     NCAAWGame:
       type: object
+      required:
+        - status_state
       properties:
         id:
           type: integer
@@ -226,6 +247,10 @@ components:
         status:
           type: string
           nullable: true
+        status_state:
+          allOf:
+            - $ref: "#/components/schemas/CompetitionStatusState"
+          description: Normalized lifecycle state derived from `status` and other available lifecycle context; `status` remains unchanged.
         period:
           type: integer
         period_detail:
@@ -1454,7 +1479,7 @@ paths:
         - NCAAW
       description: |
         Retrieve NCAA Women's Basketball tournament bracket data with optional filters (GOAT tier).
-        Season values are offset by -1 from database values.
+        Seasons are identified by their starting year (e.g. 2025 for the 2025-26 season).
 
         Round IDs:
         - 0: First Four/Play-in games
@@ -1474,7 +1499,7 @@ paths:
           required: false
           schema:
             type: integer
-          description: Filter by season (e.g. 2025 queries database for 2026)
+          description: Filter by season starting year (e.g. 2025 for the 2025-26 season)
         - name: round_id
           in: query
           required: false

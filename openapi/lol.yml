@@ -13,6 +13,19 @@ components:
       in: header
       name: Authorization
   schemas:
+    CompetitionStatusState:
+      type: string
+      description: Normalized lifecycle state for cross-sport integrations. Classification may use the sport-specific lifecycle field and other available lifecycle context. `unknown` means the available lifecycle data cannot be safely classified.
+      enum:
+        - scheduled
+        - in_progress
+        - final
+        - postponed
+        - canceled
+        - delayed
+        - suspended
+        - abandoned
+        - unknown
     Error:
       type: object
       properties:
@@ -77,6 +90,8 @@ components:
           type: boolean
     LOLMatch:
       type: object
+      required:
+        - status_state
       properties:
         id:
           type: integer
@@ -107,6 +122,10 @@ components:
         status:
           type: string
           nullable: true
+        status_state:
+          allOf:
+            - $ref: "#/components/schemas/CompetitionStatusState"
+          description: Normalized lifecycle state derived from `status` and other available lifecycle context; `status` remains unchanged.
         start_date:
           type: string
           format: date-time
@@ -117,6 +136,8 @@ components:
           nullable: true
     LOLMatchMap:
       type: object
+      required:
+        - status_state
       properties:
         id:
           type: integer
@@ -137,6 +158,10 @@ components:
         status:
           type: string
           nullable: true
+        status_state:
+          allOf:
+            - $ref: "#/components/schemas/CompetitionStatusState"
+          description: Normalized lifecycle state derived from `status` and other available lifecycle context; `status` remains unchanged.
         begin_at:
           type: string
           format: date-time
@@ -375,6 +400,8 @@ components:
           type: string
     LOLTournament:
       type: object
+      required:
+        - status_state
       properties:
         id:
           type: integer
@@ -401,6 +428,10 @@ components:
         status:
           type: string
           nullable: true
+        status_state:
+          allOf:
+            - $ref: "#/components/schemas/CompetitionStatusState"
+          description: Normalized lifecycle state derived from `status` and other available lifecycle context; `status` remains unchanged.
     LOLTournamentRoster:
       type: object
       properties:

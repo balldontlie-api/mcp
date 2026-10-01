@@ -13,6 +13,19 @@ components:
       in: header
       name: Authorization
   schemas:
+    CompetitionStatusState:
+      type: string
+      description: Normalized lifecycle state for cross-sport integrations. Classification may use the sport-specific lifecycle field and other available lifecycle context. `unknown` means the available lifecycle data cannot be safely classified.
+      enum:
+        - scheduled
+        - in_progress
+        - final
+        - postponed
+        - canceled
+        - delayed
+        - suspended
+        - abandoned
+        - unknown
     Error:
       type: object
       properties:
@@ -117,6 +130,8 @@ components:
           description: Player 2 wins in head-to-head
     WTAMatch:
       type: object
+      required:
+        - status_state
       properties:
         id:
           type: integer
@@ -191,10 +206,16 @@ components:
             - finished
             - in_progress
             - scheduled
+            - suspended
+            - canceled
             - walkover
             - retired
             - defaulted
-          description: "Match status: finished, in_progress, scheduled, walkover, retired, or defaulted"
+          description: "Match status: finished, in_progress, scheduled, suspended, canceled, walkover, retired, or defaulted"
+        status_state:
+          allOf:
+            - $ref: "#/components/schemas/CompetitionStatusState"
+          description: Normalized lifecycle state derived from `match_status` and other available lifecycle context; `match_status` remains unchanged.
         is_live:
           type: boolean
           description: Whether match is currently live
@@ -336,6 +357,39 @@ components:
           type: integer
           nullable: true
           description: Year player turned professional
+    WTAPlayerCareerStats:
+      type: object
+      properties:
+        player:
+          $ref: "#/components/schemas/WTAPlayer"
+        career_titles:
+          type: integer
+          nullable: true
+          description: Total career singles titles
+        career_prize_money:
+          type: number
+          nullable: true
+          description: Total career prize money
+        singles_wins:
+          type: integer
+          nullable: true
+          description: Career singles wins
+        singles_losses:
+          type: integer
+          nullable: true
+          description: Career singles losses
+        ytd_wins:
+          type: integer
+          nullable: true
+          description: Year-to-date singles wins
+        ytd_losses:
+          type: integer
+          nullable: true
+          description: Year-to-date singles losses
+        ytd_titles:
+          type: integer
+          nullable: true
+          description: Year-to-date singles titles
     WTARanking:
       type: object
       properties:
@@ -528,25 +582,25 @@ paths:
                     first_name: Aryna
                     last_name: Sabalenka
                     full_name: Aryna Sabalenka
-                    country: null
+                    country: Belarus
                     country_code: BLR
-                    birth_place: null
-                    age: null
-                    height_cm: null
+                    birth_place: Minsk, Belarus
+                    age: 28
+                    height_cm: 182
                     weight_kg: null
-                    plays: null
+                    plays: Right-Handed
                     turned_pro: null
                   - id: 2
                     first_name: Iga
                     last_name: Swiatek
                     full_name: Iga Swiatek
-                    country: null
+                    country: Poland
                     country_code: POL
-                    birth_place: null
-                    age: null
-                    height_cm: null
+                    birth_place: Warsaw, Poland
+                    age: 25
+                    height_cm: 176
                     weight_kg: null
-                    plays: null
+                    plays: Right-Handed
                     turned_pro: null
                 meta:
                   next_cursor: 2
@@ -588,13 +642,13 @@ paths:
                   first_name: Aryna
                   last_name: Sabalenka
                   full_name: Aryna Sabalenka
-                  country: null
+                  country: Belarus
                   country_code: BLR
-                  birth_place: null
-                  age: null
-                  height_cm: null
+                  birth_place: Minsk, Belarus
+                  age: 28
+                  height_cm: 182
                   weight_kg: null
-                  plays: null
+                  plays: Right-Handed
                   turned_pro: null
         "401":
           $ref: "#/components/responses/UnauthorizedError"
@@ -910,6 +964,7 @@ paths:
                     duration: null
                     number_of_sets: 2
                     match_status: finished
+                    status_state: final
                     is_live: false
                 meta:
                   next_cursor: 2
@@ -949,6 +1004,38 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         "404":
           $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /wta/v1/player_career_stats:
+    get:
+      summary: Get WTA player career statistics
+      description: Retrieve career statistics for WTA players. Requires GOAT tier.
+      tags:
+        - WTA Tennis
+      parameters:
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/PerPageParam"
+        - $ref: "#/components/parameters/PlayerIdsParam"
+      responses:
+        "200":
+          description: WTA player career statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WTAPlayerCareerStats"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
         "429":
           $ref: "#/components/responses/RateLimitError"
         "500":

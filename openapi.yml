@@ -106,6 +106,34 @@ paths:
     $ref: openapi/nba.yml#/paths/~1nba~1v1~1contracts~1players
   /nba/v1/contracts/players/aggregate:
     $ref: openapi/nba.yml#/paths/~1nba~1v1~1contracts~1players~1aggregate
+  /nba/v1/dfs/slates:
+    $ref: openapi/nba.yml#/paths/~1nba~1v1~1dfs~1slates
+  /nba/v1/dfs/slates/{id}:
+    $ref: openapi/nba.yml#/paths/~1nba~1v1~1dfs~1slates~1{id}
+  /nba/v1/dfs/draftables:
+    $ref: openapi/nba.yml#/paths/~1nba~1v1~1dfs~1draftables
+  /nfl/v1/fantasy/scoring_formats:
+    $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1fantasy~1scoring_formats
+  /nfl/v1/fantasy/projections:
+    $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1fantasy~1projections
+  /nfl/v1/fantasy/weekly_stats:
+    $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1fantasy~1weekly_stats
+  /nfl/v1/fantasy/rankings:
+    $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1fantasy~1rankings
+  /nfl/v1/fantasy/adp:
+    $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1fantasy~1adp
+  /nfl/v1/dfs/slates:
+    $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1dfs~1slates
+  /nfl/v1/dfs/slates/{id}:
+    $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1dfs~1slates~1{id}
+  /nfl/v1/dfs/draftables:
+    $ref: openapi/nfl.yml#/paths/~1nfl~1v1~1dfs~1draftables
+  /mlb/v1/dfs/slates:
+    $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1dfs~1slates
+  /mlb/v1/dfs/slates/{id}:
+    $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1dfs~1slates~1{id}
+  /mlb/v1/dfs/draftables:
+    $ref: openapi/mlb.yml#/paths/~1mlb~1v1~1dfs~1draftables
   /nba/v1/plays:
     $ref: openapi/nba.yml#/paths/~1nba~1v1~1plays
   /nfl/v1/teams:
@@ -884,8 +912,22 @@ paths:
     $ref: openapi/mls.yml#/paths/~1mls~1v1~1odds~1player_props~1opening
   /pga/v1/players:
     $ref: openapi/pga.yml#/paths/~1pga~1v1~1players
+  /pga/v1/tournaments:
+    $ref: openapi/pga.yml#/paths/~1pga~1v1~1tournaments
   /pga/v2/tournaments:
     $ref: openapi/pga.yml#/paths/~1pga~1v2~1tournaments
+  /pga/v2/tournament_competitors:
+    $ref: openapi/pga.yml#/paths/~1pga~1v2~1tournament_competitors
+  /pga/v2/tournament_results:
+    $ref: openapi/pga.yml#/paths/~1pga~1v2~1tournament_results
+  /pga/v2/rounds:
+    $ref: openapi/pga.yml#/paths/~1pga~1v2~1rounds
+  /pga/v2/tee_times:
+    $ref: openapi/pga.yml#/paths/~1pga~1v2~1tee_times
+  /pga/v2/matches:
+    $ref: openapi/pga.yml#/paths/~1pga~1v2~1matches
+  /pga/v2/match_holes:
+    $ref: openapi/pga.yml#/paths/~1pga~1v2~1match_holes
   /pga/v1/courses:
     $ref: openapi/pga.yml#/paths/~1pga~1v1~1courses
   /pga/v1/tournament_results:
@@ -952,6 +994,8 @@ paths:
     $ref: openapi/wta.yml#/paths/~1wta~1v1~1matches
   /wta/v1/matches/{id}:
     $ref: openapi/wta.yml#/paths/~1wta~1v1~1matches~1{id}
+  /wta/v1/player_career_stats:
+    $ref: openapi/wta.yml#/paths/~1wta~1v1~1player_career_stats
   /wta/v1/head_to_head:
     $ref: openapi/wta.yml#/paths/~1wta~1v1~1head_to_head
   /wta/v1/odds:

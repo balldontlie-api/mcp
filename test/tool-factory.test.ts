@@ -211,3 +211,26 @@ test("mutation annotations describe risk and billing portal is not read-only", (
   assert.equal(definition("account_create_checkout").annotations.destructiveHint, false);
   assert.equal(definition("account_get_billing_portal").annotations.readOnlyHint, false);
 });
+
+test("current season filters and open-ended prop types reach exact API query names", async () => {
+  const client = new RecordingClient();
+  await tool("nba_get_games", client).handler({ season_type: "playin", postseason: true });
+  assert.deepEqual(client.requests[0].query, [{ name: "season_type", value: "playin" }]);
+  await tool("nfl_get_betting_odds", client).handler({ season_types: [1, 3] });
+  assert.deepEqual(client.requests[1].query, [
+    { name: "season_types[]", value: "1" },
+    { name: "season_types[]", value: "3" },
+  ]);
+  await tool("nfl_get_player_props", client).handler({ game_id: 10, prop_type: "passing_tds_1q" });
+  assert.deepEqual(client.requests[2].query, [
+    { name: "game_id", value: "10" }, { name: "prop_type", value: "passing_tds_1q" },
+  ]);
+  assert.equal((definition("nfl_get_player_props").inputSchema.properties?.prop_type as any).enum, undefined);
+  assert.deepEqual(Object.keys(definition("nfl_get_plays").inputSchema.properties!), ["cursor", "per_page", "game_id"]);
+  await tool("pga_get_tournaments", client).handler({ tournament_ids: [123], include_format: true });
+  assert.deepEqual(client.requests[3].query, [
+    { name: "tournament_ids[]", value: "123" }, { name: "include_format", value: "true" },
+  ]);
+  assert.equal((definition("pga_get_tournaments").inputSchema.properties?.tournament_ids as any).items.minimum, 1);
+  assert.equal((definition("pga_get_tournaments").inputSchema.properties?.tournament_ids as any).items.maximum, 2147483647);
+});

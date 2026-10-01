@@ -371,6 +371,7 @@ components:
                 type: string
     PGATournament:
       type: object
+      required: [id, season, name, start_date, end_date, city, state, country, course_name, purse, status, status_state, champion, courses, rounds]
       properties:
         id:
           type: integer
@@ -413,6 +414,8 @@ components:
           type: string
           nullable: true
           description: Tournament status (COMPLETED, IN_PROGRESS, SCHEDULED, NOT_STARTED)
+        status_state:
+          $ref: "#/components/schemas/PGAStatusState"
         champion:
           $ref: "#/components/schemas/PGAPlayer"
           nullable: true
@@ -430,6 +433,7 @@ components:
             $ref: "#/components/schemas/PGATournamentRound"
     PGATournamentV2:
       type: object
+      required: [id, season, name, start_date, end_date, date_range, city, state, country, course_name, purse, status, status_state, champion, courses, rounds]
       properties:
         id:
           type: integer
@@ -477,6 +481,8 @@ components:
           type: string
           nullable: true
           description: Tournament status (COMPLETED, IN_PROGRESS, SCHEDULED, NOT_STARTED)
+        status_state:
+          $ref: "#/components/schemas/PGAStatusState"
         champion:
           $ref: "#/components/schemas/PGAPlayer"
           nullable: true
@@ -492,9 +498,36 @@ components:
             (typically weather or darkness). Empty array when no round data is available yet.
           items:
             $ref: "#/components/schemas/PGATournamentRound"
+        format_type:
+          $ref: "#/components/schemas/PGAFormatType"
+          nullable: true
+          description: Present only when include_format=true.
+    PGAStatusState:
+      type: string
+      description: Normalized lifecycle state for cross-sport integrations. Classification may use `status` and other available lifecycle context; `status` remains unchanged. `unknown` means the available lifecycle data cannot be safely classified.
+      enum:
+        - scheduled
+        - in_progress
+        - final
+        - postponed
+        - canceled
+        - delayed
+        - suspended
+        - abandoned
+        - unknown
+    PGAFormatType:
+      type: string
+      description: Tournament competition format.
+      enum:
+        - STROKE_PLAY
+        - TEAM_STROKE
+        - MATCH_PLAY
+        - TEAM_CUP
+        - UNKNOWN_SPECIAL_FORMAT
     PGATournamentRound:
       type: object
       description: State of a single round within a tournament
+      required: [round_number, status, status_state]
       properties:
         round_number:
           type: integer
@@ -510,9 +543,12 @@ components:
             - OFFICIAL
             - GROUPINGS_OFFICIAL
           description: Round status from the PGA Tour feed
+        status_state:
+          $ref: "#/components/schemas/PGAStatusState"
     PGATournamentCourse:
       type: object
       description: A course used in a tournament with the rounds it is played
+      required: [course, rounds]
       properties:
         course:
           $ref: "#/components/schemas/PGACourse"
@@ -521,6 +557,475 @@ components:
           description: Round numbers this course is used for (e.g., [1,2,3] for first 3 rounds)
           items:
             type: integer
+    PGAPlayerSummaryV2:
+      type: object
+      required: [id, first_name, last_name, display_name, country, country_code]
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        display_name:
+          type: string
+        country:
+          type: string
+          nullable: true
+        country_code:
+          type: string
+          nullable: true
+    PGACourseSummaryV2:
+      type: object
+      required: [id, name, city, state, country, par, yardage]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        city:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        par:
+          type: integer
+          nullable: true
+        yardage:
+          type: string
+          nullable: true
+    PGATournamentSummaryV2:
+      type: object
+      required: [id, name, format_type]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        format_type:
+          $ref: "#/components/schemas/PGAFormatType"
+          nullable: true
+    PGACompetitorTypeV2:
+      type: string
+      enum: [PLAYER, TEAM, CUP_TEAM, PAIRING]
+    PGACompetitorSummaryV2:
+      type: object
+      required: [id, type, display_name, parent_competitor_id, player]
+      properties:
+        id:
+          type: integer
+        type:
+          $ref: "#/components/schemas/PGACompetitorTypeV2"
+        display_name:
+          type: string
+        parent_competitor_id:
+          type: integer
+          nullable: true
+        player:
+          $ref: "#/components/schemas/PGAPlayerSummaryV2"
+          nullable: true
+    PGACompetitorMemberV2:
+      type: object
+      required: [player, display_order, role]
+      properties:
+        player:
+          $ref: "#/components/schemas/PGAPlayerSummaryV2"
+        display_order:
+          type: integer
+        role:
+          type: string
+          nullable: true
+    PGACupRosterMemberV2:
+      type: object
+      required: [player, display_name, role, display_order]
+      properties:
+        player:
+          $ref: "#/components/schemas/PGAPlayerSummaryV2"
+          nullable: true
+        display_name:
+          type: string
+          nullable: true
+        role:
+          type: string
+          nullable: true
+        display_order:
+          type: integer
+          nullable: true
+    PGATournamentCompetitorV2:
+      type: object
+      required: [id, tournament_id, type, display_name, short_name, country, country_code, team_name, team_color, parent_competitor_id, player, members, roster]
+      properties:
+        id:
+          type: integer
+        tournament_id:
+          type: integer
+        type:
+          $ref: "#/components/schemas/PGACompetitorTypeV2"
+        display_name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        country_code:
+          type: string
+          nullable: true
+        team_name:
+          type: string
+          nullable: true
+        team_color:
+          type: string
+          nullable: true
+        parent_competitor_id:
+          type: integer
+          nullable: true
+        player:
+          $ref: "#/components/schemas/PGAPlayerSummaryV2"
+          nullable: true
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/PGACompetitorMemberV2"
+        roster:
+          type: array
+          items:
+            $ref: "#/components/schemas/PGACupRosterMemberV2"
+    PGAResultRoundV2:
+      type: object
+      required: [id, round_number, round_format, score, par_relative_score, points, score_display, status, tee_time, starting_hole]
+      properties:
+        id:
+          type: integer
+        round_number:
+          type: integer
+        round_format:
+          type: string
+          nullable: true
+        score:
+          type: integer
+          nullable: true
+        par_relative_score:
+          type: integer
+          nullable: true
+        points:
+          type: number
+          nullable: true
+        score_display:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        tee_time:
+          type: string
+          format: date-time
+          nullable: true
+        starting_hole:
+          type: integer
+          nullable: true
+    PGATournamentResultV2:
+      type: object
+      required: [id, tournament, competitor, position, position_numeric, status, scoring, earnings, made_cut, thru, current_round, group_number, tee_time, course, result, rounds]
+      properties:
+        id:
+          type: integer
+        tournament:
+          $ref: "#/components/schemas/PGATournamentSummaryV2"
+        competitor:
+          $ref: "#/components/schemas/PGACompetitorSummaryV2"
+        position:
+          type: string
+          nullable: true
+        position_numeric:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        scoring:
+          type: object
+          required: [strokes, to_par, points, score_display]
+          properties:
+            strokes:
+              type: integer
+              nullable: true
+            to_par:
+              type: integer
+              nullable: true
+            points:
+              type: number
+              nullable: true
+            score_display:
+              type: string
+              nullable: true
+        earnings:
+          type: number
+          nullable: true
+        made_cut:
+          type: boolean
+          nullable: true
+        thru:
+          type: string
+          nullable: true
+        current_round:
+          type: integer
+          nullable: true
+        group_number:
+          type: integer
+          nullable: true
+        tee_time:
+          type: string
+          format: date-time
+          nullable: true
+        course:
+          $ref: "#/components/schemas/PGACourseSummaryV2"
+          nullable: true
+        result:
+          type: string
+          nullable: true
+        rounds:
+          type: array
+          items:
+            $ref: "#/components/schemas/PGAResultRoundV2"
+    PGATournamentRoundV2:
+      type: object
+      required: [id, tournament_id, round_number, status, status_state, round_format, course]
+      properties:
+        id:
+          type: integer
+        tournament_id:
+          type: integer
+        round_number:
+          type: integer
+        status:
+          type: string
+          nullable: true
+        status_state:
+          $ref: "#/components/schemas/PGAStatusState"
+        round_format:
+          type: string
+          nullable: true
+        course:
+          $ref: "#/components/schemas/PGACourseSummaryV2"
+          nullable: true
+    PGATeeParticipantV2:
+      type: object
+      required: [id, display_order, competitor, player]
+      properties:
+        id:
+          type: integer
+        display_order:
+          type: integer
+        competitor:
+          $ref: "#/components/schemas/PGACompetitorSummaryV2"
+        player:
+          $ref: "#/components/schemas/PGAPlayerSummaryV2"
+          nullable: true
+    PGATeeGroupV2:
+      type: object
+      required: [id, tournament_id, round_number, group_number, tee_time, start_tee, back_nine, round_format, status, state, course, match_id, participants]
+      properties:
+        id:
+          type: integer
+        tournament_id:
+          type: integer
+        round_number:
+          type: integer
+        group_number:
+          type: integer
+          nullable: true
+        tee_time:
+          type: string
+          format: date-time
+          nullable: true
+        start_tee:
+          type: integer
+          nullable: true
+        back_nine:
+          type: boolean
+        round_format:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        course:
+          $ref: "#/components/schemas/PGACourseSummaryV2"
+          nullable: true
+        match_id:
+          type: integer
+          nullable: true
+        participants:
+          type: array
+          items:
+            $ref: "#/components/schemas/PGATeeParticipantV2"
+    PGAMatchSideV2:
+      type: object
+      required: [id, side_index, competitor, team, score, score_numeric, status, result, points_awarded, seed, bracket_seed, record]
+      properties:
+        id:
+          type: integer
+        side_index:
+          type: integer
+        competitor:
+          $ref: "#/components/schemas/PGACompetitorSummaryV2"
+        team:
+          $ref: "#/components/schemas/PGACompetitorSummaryV2"
+          nullable: true
+        score:
+          type: string
+          nullable: true
+        score_numeric:
+          type: number
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        result:
+          type: string
+          nullable: true
+        points_awarded:
+          type: number
+          nullable: true
+        seed:
+          type: string
+          nullable: true
+        bracket_seed:
+          type: string
+          nullable: true
+        record:
+          type: string
+          nullable: true
+    PGATournamentMatchV2:
+      type: object
+      required: [id, tournament, round_number, round_display, round_format, bracket_number, bracket_name, title, display_score, match_score, status, thru, holes_played, tee_time, starting_tee, location, location_description, sides]
+      properties:
+        id:
+          type: integer
+        tournament:
+          $ref: "#/components/schemas/PGATournamentSummaryV2"
+        round_number:
+          type: integer
+        round_display:
+          type: string
+          nullable: true
+        round_format:
+          type: string
+          nullable: true
+        bracket_number:
+          type: integer
+          nullable: true
+        bracket_name:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        display_score:
+          type: string
+          nullable: true
+        match_score:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        thru:
+          type: string
+          nullable: true
+        holes_played:
+          type: integer
+          nullable: true
+        tee_time:
+          type: string
+          format: date-time
+          nullable: true
+        starting_tee:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        location_description:
+          type: string
+          nullable: true
+        sides:
+          type: array
+          items:
+            $ref: "#/components/schemas/PGAMatchSideV2"
+    PGAMatchHoleScoreV2:
+      type: object
+      required: [id, side_id, side_index, scope, competitor, player, course_hole_number, par, score, score_display, status, result]
+      properties:
+        id:
+          type: integer
+        side_id:
+          type: integer
+        side_index:
+          type: integer
+        scope:
+          type: string
+        competitor:
+          $ref: "#/components/schemas/PGACompetitorSummaryV2"
+          nullable: true
+        player:
+          $ref: "#/components/schemas/PGAPlayerSummaryV2"
+          nullable: true
+        course_hole_number:
+          type: integer
+          nullable: true
+        par:
+          type: integer
+          nullable: true
+        score:
+          type: integer
+          nullable: true
+        score_display:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        result:
+          type: string
+          nullable: true
+    PGAMatchHoleV2:
+      type: object
+      required: [id, match_id, hole_number, course_hole_number, par, status, display_value, scores]
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        hole_number:
+          type: integer
+        course_hole_number:
+          type: integer
+          nullable: true
+        par:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        display_value:
+          type: string
+          nullable: true
+        scores:
+          type: array
+          items:
+            $ref: "#/components/schemas/PGAMatchHoleScoreV2"
     PGATeeTime:
       type: object
       properties:
@@ -811,6 +1316,25 @@ components:
         maximum: 100
         default: 25
       description: Number of results per page
+    V2CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 2147483647
+      description: Cursor returned by the previous page.
+    V2PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+      description: Number of results per page.
     PlayerIdsParam:
       name: player_ids[]
       in: query
@@ -918,42 +1442,113 @@ paths:
           $ref: "#/components/responses/RateLimitError"
         "500":
           $ref: "#/components/responses/ServerError"
-  /pga/v2/tournaments:
+  /pga/v1/tournaments:
     get:
-      summary: Get PGA Tour tournaments
-      description: Retrieve PGA Tour tournaments with normalized date fields and optional filters. Free tier.
+      operationId: get_v1_tournaments
+      summary: Get PGA Tour tournaments (v1)
+      deprecated: true
+      description: Deprecated for new integrations. Use `/pga/v2/tournaments`, which provides normalized dates and optional format information. This v1 route remains operational for existing integrations. Free tier.
       tags:
-        - PGA Tour
+        - PGA Tour v1
       parameters:
         - $ref: "#/components/parameters/CursorParam"
         - $ref: "#/components/parameters/PerPageParam"
         - name: tournament_ids
           in: query
           required: false
+          style: form
+          explode: true
           schema:
             type: array
             items:
               type: integer
-          description: Filter by tournament IDs
+          description: Filter by tournament IDs.
         - name: season
           in: query
           required: false
           schema:
             type: integer
-          description: Filter by season year
+          description: Filter by season year.
         - name: status
           in: query
           required: false
           schema:
             type: string
-          description: Filter by status (COMPLETED, IN_PROGRESS, SCHEDULED, NOT_STARTED)
+          description: Filter by tournament status.
       responses:
         "200":
-          description: List of PGA Tour tournaments
+          description: List of PGA Tour tournaments in the v1 representation.
           content:
             application/json:
               schema:
                 type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGATournament"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /pga/v2/tournaments:
+    get:
+      operationId: get_tournaments
+      summary: Get PGA Tour tournaments
+      description: Retrieve tournaments with normalized date fields. Set include_format=true to add format_type without changing the default response shape. Free tier.
+      tags:
+        - PGA Tour v2
+      parameters:
+        - $ref: "#/components/parameters/V2CursorParam"
+        - $ref: "#/components/parameters/V2PerPageParam"
+        - name: tournament_ids[]
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: integer
+              minimum: 1
+              maximum: 2147483647
+          description: Filter by tournament IDs.
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+          description: Filter by season year.
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by tournament status.
+        - name: include_format
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Add format_type to each tournament. Omit this parameter to preserve the original v2 tournament shape.
+      responses:
+        "200":
+          description: List of PGA Tour tournaments.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
                 properties:
                   data:
                     type: array
@@ -961,6 +1556,607 @@ paths:
                       $ref: "#/components/schemas/PGATournamentV2"
                   meta:
                     $ref: "#/components/schemas/Pagination"
+              example:
+                data:
+                  - id: 40
+                    season: 2026
+                    name: Wyndham Championship
+                    start_date: "2026-08-06"
+                    end_date: "2026-08-09"
+                    date_range: Aug 6 - 9
+                    city: Greensboro
+                    state: North Carolina
+                    country: United States of America
+                    course_name: Sedgefield Country Club
+                    purse: "$8,500,000"
+                    status: COMPLETED
+                    status_state: final
+                    champion:
+                      id: 10
+                      first_name: Michael
+                      last_name: Brennan
+                      display_name: Michael Brennan
+                      country: United States
+                      country_code: USA
+                      height: 6'1"
+                      weight: null
+                      birth_date: Feb 9, 2002
+                      birthplace_city: Leesburg
+                      birthplace_state: Virginia
+                      birthplace_country: United States
+                      turned_pro: "2024"
+                      school: Wake Forest University
+                      residence_city: Jacksonville
+                      residence_state: Florida
+                      residence_country: United States
+                      owgr: 35
+                      active: true
+                    courses:
+                      - course:
+                          id: 18
+                          name: Sedgefield Country Club
+                          city: Greensboro
+                          state: North Carolina
+                          country: USA
+                          par: 70
+                          yardage: "7,131"
+                          established: "1926"
+                          architect: Donald Ross
+                          fairway_grass: Bermudagrass
+                          rough_grass: Bermudagrass
+                          green_grass: Bermudagrass
+                        rounds: []
+                    rounds:
+                      - round_number: 1
+                        status: OFFICIAL
+                        status_state: final
+                      - round_number: 2
+                        status: OFFICIAL
+                        status_state: final
+                      - round_number: 3
+                        status: OFFICIAL
+                        status_state: final
+                      - round_number: 4
+                        status: OFFICIAL
+                        status_state: final
+                    format_type: STROKE_PLAY
+                meta:
+                  next_cursor: 40
+                  per_page: 1
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /pga/v2/tournament_competitors:
+    get:
+      operationId: get_v2_tournament_competitors
+      summary: Get tournament competitors
+      description: Retrieve players, teams, cup teams, and pairings for one tournament. Requires GOAT tier.
+      tags:
+        - PGA Tour v2
+      parameters:
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+          description: Tournament ID.
+        - name: competitor_types[]
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/PGACompetitorTypeV2"
+          description: Filter by competitor type.
+        - $ref: "#/components/parameters/V2CursorParam"
+        - $ref: "#/components/parameters/V2PerPageParam"
+      responses:
+        "200":
+          description: Tournament competitors.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGATournamentCompetitorV2"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+              example:
+                data:
+                  - id: 1836
+                    tournament_id: 85
+                    type: PAIRING
+                    display_name: Scottie Scheffler / Russell Henley
+                    short_name: S. Scheffler / R. Henley
+                    country: null
+                    country_code: null
+                    team_name: United States
+                    team_color: "#ED0000"
+                    parent_competitor_id: 340910
+                    player: null
+                    members:
+                      - player:
+                          id: 185
+                          first_name: Scottie
+                          last_name: Scheffler
+                          display_name: Scottie Scheffler
+                          country: United States
+                          country_code: USA
+                        display_order: 1
+                        role: member
+                      - player:
+                          id: 75
+                          first_name: Russell
+                          last_name: Henley
+                          display_name: Russell Henley
+                          country: United States
+                          country_code: USA
+                        display_order: 2
+                        role: member
+                    roster: []
+                meta:
+                  next_cursor: 1836
+                  per_page: 1
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /pga/v2/tournament_results:
+    get:
+      operationId: get_v2_tournament_results
+      summary: Get format-aware tournament results
+      description: Retrieve the primary result population for one tournament. PLAYER rows are returned for stroke and match play, TEAM rows for team stroke, and CUP_TEAM rows for team cup. Requires ALL-STAR tier.
+      tags:
+        - PGA Tour v2
+      parameters:
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+          description: Tournament ID.
+        - name: competitor_ids[]
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: integer
+              minimum: 1
+              maximum: 2147483647
+          description: Filter by competitor IDs returned by tournament_competitors.
+        - $ref: "#/components/parameters/V2CursorParam"
+        - $ref: "#/components/parameters/V2PerPageParam"
+      responses:
+        "200":
+          description: Format-aware tournament results.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGATournamentResultV2"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+              example:
+                data:
+                  - id: 236228
+                    tournament:
+                      id: 94
+                      name: Grant Thornton Invitational
+                      format_type: TEAM_STROKE
+                    competitor:
+                      id: 62906
+                      type: TEAM
+                      display_name: Coughlin / Novak
+                      parent_competitor_id: null
+                      player: null
+                    position: "1"
+                    position_numeric: 1
+                    status: "1"
+                    scoring:
+                      strokes: 188
+                      to_par: -28
+                      points: null
+                      score_display: "-28"
+                    earnings: null
+                    made_cut: null
+                    thru: null
+                    current_round: null
+                    group_number: null
+                    tee_time: null
+                    course: null
+                    result: null
+                    rounds:
+                      - id: 732997
+                        round_number: 1
+                        round_format: TEAM_STROKE
+                        score: 57
+                        par_relative_score: null
+                        points: null
+                        score_display: "57"
+                        status: null
+                        tee_time: null
+                        starting_hole: null
+                      - id: 732998
+                        round_number: 2
+                        round_format: TEAM_STROKE
+                        score: 68
+                        par_relative_score: null
+                        points: null
+                        score_display: "68"
+                        status: null
+                        tee_time: null
+                        starting_hole: null
+                      - id: 732999
+                        round_number: 3
+                        round_format: TEAM_STROKE
+                        score: 63
+                        par_relative_score: null
+                        points: null
+                        score_display: "63"
+                        status: null
+                        tee_time: null
+                        starting_hole: null
+                meta:
+                  next_cursor: 236228
+                  per_page: 1
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /pga/v2/rounds:
+    get:
+      operationId: get_v2_rounds
+      summary: Get tournament rounds
+      description: Retrieve every known round and its round-specific format for one tournament. Free tier. This endpoint is not paginated.
+      tags:
+        - PGA Tour v2
+      parameters:
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+          description: Tournament ID.
+      responses:
+        "200":
+          description: Tournament rounds.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGATournamentRoundV2"
+              example:
+                data:
+                  - id: 58
+                    tournament_id: 94
+                    round_number: 1
+                    status: OFFICIAL
+                    status_state: final
+                    round_format: TEAM_STROKE
+                    course: null
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /pga/v2/tee_times:
+    get:
+      operationId: get_v2_tee_times
+      summary: Get format-aware tee groups
+      description: Retrieve tee groups with complete participant arrays. Pairings and match relationships are preserved when available. Requires GOAT tier.
+      tags:
+        - PGA Tour v2
+      parameters:
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+          description: Tournament ID.
+        - name: round_number
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+          description: Filter by round number.
+        - $ref: "#/components/parameters/V2CursorParam"
+        - $ref: "#/components/parameters/V2PerPageParam"
+      responses:
+        "200":
+          description: Tee groups.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGATeeGroupV2"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+              example:
+                data:
+                  - id: 4112600
+                    tournament_id: 85
+                    round_number: 1
+                    group_number: null
+                    tee_time: "2025-09-26T11:10:00.000Z"
+                    start_tee: 1
+                    back_nine: false
+                    round_format: ALTERNATE_SHOT
+                    status: Final
+                    state: null
+                    course: null
+                    match_id: 313
+                    participants:
+                      - id: 11388499
+                        display_order: 1
+                        competitor:
+                          id: 67701
+                          type: PAIRING
+                          display_name: Bryson DeChambeau / Justin Thomas
+                          parent_competitor_id: 340910
+                          player: null
+                        player: null
+                      - id: 11388500
+                        display_order: 2
+                        competitor:
+                          id: 80997
+                          type: PAIRING
+                          display_name: Jon Rahm / Tyrrell Hatton
+                          parent_competitor_id: 340911
+                          player: null
+                        player: null
+                meta:
+                  next_cursor: 4112600
+                  per_page: 1
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /pga/v2/matches:
+    get:
+      operationId: get_v2_matches
+      summary: Get tournament matches
+      description: Retrieve match-play or team-cup matches with complete side arrays. Returns an empty data array when matches do not apply or are not available. Requires ALL-STAR tier.
+      tags:
+        - PGA Tour v2
+      parameters:
+        - name: tournament_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+          description: Tournament ID.
+        - name: round_number
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+          description: Filter by round number.
+        - $ref: "#/components/parameters/V2CursorParam"
+        - $ref: "#/components/parameters/V2PerPageParam"
+      responses:
+        "200":
+          description: Tournament matches.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGATournamentMatchV2"
+                  meta:
+                    $ref: "#/components/schemas/Pagination"
+              example:
+                data:
+                  - id: 313
+                    tournament:
+                      id: 85
+                      name: Ryder Cup
+                      format_type: TEAM_CUP
+                    round_number: 1
+                    round_display: Friday Foursomes
+                    round_format: ALTERNATE_SHOT
+                    bracket_number: null
+                    bracket_name: null
+                    title: Match 1
+                    display_score: 4 & 3
+                    match_score: 4 & 3
+                    status: Final
+                    thru: null
+                    holes_played: null
+                    tee_time: "1969-12-31T23:59:59.000Z"
+                    starting_tee: "1"
+                    location: Round Complete
+                    location_description: null
+                    sides:
+                      - id: 626
+                        side_index: 1
+                        competitor:
+                          id: 67701
+                          type: PAIRING
+                          display_name: Bryson DeChambeau / Justin Thomas
+                          parent_competitor_id: 340910
+                          player: null
+                        team:
+                          id: 340910
+                          type: CUP_TEAM
+                          display_name: USA
+                          parent_competitor_id: null
+                          player: null
+                        score: 4 DN
+                        score_numeric: null
+                        status: UNKNOWN
+                        result: UNKNOWN
+                        points_awarded: null
+                        seed: null
+                        bracket_seed: null
+                        record: null
+                      - id: 627
+                        side_index: 2
+                        competitor:
+                          id: 80997
+                          type: PAIRING
+                          display_name: Jon Rahm / Tyrrell Hatton
+                          parent_competitor_id: 340911
+                          player: null
+                        team:
+                          id: 340911
+                          type: CUP_TEAM
+                          display_name: Europe
+                          parent_competitor_id: null
+                          player: null
+                        score: 4 UP
+                        score_numeric: null
+                        status: WINS
+                        result: WINS
+                        points_awarded: null
+                        seed: null
+                        bracket_seed: null
+                        record: null
+                meta:
+                  next_cursor: 313
+                  per_page: 1
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /pga/v2/match_holes:
+    get:
+      operationId: get_v2_match_holes
+      summary: Get match hole scores
+      description: Retrieve hole-by-hole side and player scoring for one match. Requires GOAT tier. This endpoint is not paginated.
+      tags:
+        - PGA Tour v2
+      parameters:
+        - name: match_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+          description: Match ID returned by matches.
+      responses:
+        "200":
+          description: Match hole scores.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PGAMatchHoleV2"
+              example:
+                data:
+                  - id: 5608
+                    match_id: 313
+                    hole_number: 1
+                    course_hole_number: 1
+                    par: 4
+                    status: PLAYED
+                    display_value: 1UP
+                    scores:
+                      - id: 13015
+                        side_id: 626
+                        side_index: 1
+                        scope: team
+                        competitor:
+                          id: 67701
+                          type: PAIRING
+                          display_name: Bryson DeChambeau / Justin Thomas
+                          parent_competitor_id: 340910
+                          player: null
+                        player: null
+                        course_hole_number: 1
+                        par: 4
+                        score: 3
+                        score_display: "3"
+                        status: BIRDIE
+                        result: null
+                      - id: 13016
+                        side_id: 627
+                        side_index: 2
+                        scope: team
+                        competitor:
+                          id: 80997
+                          type: PAIRING
+                          display_name: Jon Rahm / Tyrrell Hatton
+                          parent_competitor_id: 340911
+                          player: null
+                        player: null
+                        course_hole_number: 1
+                        par: 4
+                        score: 4
+                        score_display: "4"
+                        status: PAR
+                        result: null
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":
@@ -1017,7 +2213,8 @@ paths:
   /pga/v1/tournament_results:
     get:
       summary: Get PGA tournament results
-      description: Retrieve tournament leaderboard/results. Requires ALL-STAR tier.
+      deprecated: true
+      description: Deprecated for new integrations. Use `/pga/v2/tournament_results` for format-aware player, team, and cup-team results. This v1 route remains operational for existing integrations. Requires ALL-STAR tier.
       tags:
         - PGA Tour
       parameters:
@@ -1063,7 +2260,8 @@ paths:
   /pga/v1/tournament_field:
     get:
       summary: Get PGA tournament field
-      description: Retrieve tournament field entries showing which players are in a tournament. Requires GOAT tier.
+      deprecated: true
+      description: Deprecated for new integrations. Use `/pga/v2/tournament_competitors` for players, teams, pairings, and cup rosters. This v1 route remains operational for existing integrations. Requires GOAT tier.
       tags:
         - PGA Tour
       parameters:
@@ -1106,7 +2304,8 @@ paths:
   /pga/v1/tee_times:
     get:
       summary: Get PGA tee times
-      description: Retrieve tee time groupings for a tournament. Shows which players are grouped together, their tee times, starting tees, and course assignments. Requires GOAT tier.
+      deprecated: true
+      description: Deprecated for new integrations. Use `/pga/v2/tee_times` for format-aware tee groups and complete participant arrays. This v1 route remains operational for existing integrations. Requires GOAT tier.
       tags:
         - PGA Tour
       parameters:

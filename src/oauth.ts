@@ -28,7 +28,7 @@ export function oauthRouter(tools: Map<string, MCPTool>) {
   const metadataURL = `${
     new URL(resource).origin
   }/.well-known/oauth-protected-resource/oauth/mcp`;
-  const challenge = `Bearer resource_metadata="${metadataURL}", scope="sports:read"`;
+  const challenge = `Bearer resource_metadata="${metadataURL}", scope="sports:read", error="invalid_token", error_description="Sign in to BALLDONTLIE to continue"`;
   const sports = new Map(
     [...tools].filter(
       ([, tool]) =>
@@ -106,7 +106,11 @@ export function oauthRouter(tools: Map<string, MCPTool>) {
       .json({
         jsonrpc: "2.0",
         id: id ?? null,
-        error: { code: -32001, message: "Authorization required" },
+        result: {
+          content: [{ type: "text", text: "Sign in to BALLDONTLIE to continue." }],
+          isError: true,
+          _meta: { "mcp/www_authenticate": [challenge] },
+        },
       });
   router.get("/.well-known/oauth-protected-resource/oauth/mcp", (_req, res) =>
     res.json({

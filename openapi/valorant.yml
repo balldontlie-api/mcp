@@ -18,6 +18,22 @@ components:
       in: header
       name: Authorization
   schemas:
+    CompetitionStatusState:
+      type: string
+      description: >-
+        Normalized lifecycle state for cross-sport integrations. Classification may use the sport-specific lifecycle
+        field and other available lifecycle context. `unknown` means the available lifecycle data cannot be safely
+        classified.
+      enum:
+        - scheduled
+        - in_progress
+        - final
+        - postponed
+        - canceled
+        - delayed
+        - suspended
+        - abandoned
+        - unknown
     PaginationMeta:
       type: object
       additionalProperties: false
@@ -639,6 +655,7 @@ components:
         - points
         - live_coverage
         - live_updates
+        - status_state
       properties:
         id:
           type: number
@@ -664,6 +681,12 @@ components:
           anyOf:
             - type: string
             - type: 'null'
+        status_state:
+          allOf:
+            - $ref: '#/components/schemas/CompetitionStatusState'
+          description: >-
+            Normalized lifecycle state derived from `status` and other available lifecycle context; `status` remains
+            unchanged.
         team1:
           anyOf:
             - $ref: '#/components/schemas/TeamRef'
@@ -717,6 +740,7 @@ components:
         - winner_score
         - loser_score
         - overtime_count
+        - status_state
       properties:
         id:
           type: number
@@ -737,6 +761,12 @@ components:
           anyOf:
             - type: string
             - type: 'null'
+        status_state:
+          allOf:
+            - $ref: '#/components/schemas/CompetitionStatusState'
+          description: >-
+            Normalized lifecycle state derived from `status` and other available lifecycle context; `status` remains
+            unchanged.
         winner:
           anyOf:
             - $ref: '#/components/schemas/TeamRef'
@@ -2419,6 +2449,7 @@ components:
         - status
         - region
         - series
+        - status_state
       properties:
         id:
           type: number
@@ -2452,6 +2483,12 @@ components:
           anyOf:
             - type: string
             - type: 'null'
+        status_state:
+          allOf:
+            - $ref: '#/components/schemas/CompetitionStatusState'
+          description: >-
+            Normalized lifecycle state derived from `status` and other available lifecycle context; `status` remains
+            unchanged.
         region:
           anyOf:
             - $ref: '#/components/schemas/RegionRef'
@@ -2553,6 +2590,7 @@ components:
         - sequence
         - subgroup
         - promotion_team_count
+        - status_state
       properties:
         id:
           type: number
@@ -2566,6 +2604,12 @@ components:
           anyOf:
             - type: string
             - type: 'null'
+        status_state:
+          allOf:
+            - $ref: '#/components/schemas/CompetitionStatusState'
+          description: >-
+            Normalized lifecycle state derived from `status` and other available lifecycle context; `status` remains
+            unchanged.
         start_at:
           anyOf:
             - type: string
@@ -4423,6 +4467,7 @@ paths:
                         prize_pool: 0
                         event_type: lan
                         status: upcoming
+                        status_state: scheduled
                         region:
                           id: 1
                           name: North America
@@ -4480,6 +4525,7 @@ paths:
                         name: 'VALORANT Challengers 2026 Americas: Last Chance Qualifier Group Stage'
                         format: group
                         status: upcoming
+                        status_state: scheduled
                         start_at: '2026-07-28T19:00:00.000Z'
                         end_at: '2026-07-29T04:00:00.000Z'
                         sequence: 1
@@ -4490,6 +4536,7 @@ paths:
                         name: 'VALORANT Challengers 2026 Americas: Last Chance Qualifier Playoffs'
                         format: playoff
                         status: upcoming
+                        status_state: scheduled
                         start_at: '2026-07-28T19:00:00.000Z'
                         end_at: '2026-07-29T22:00:00.000Z'
                         sequence: 2
@@ -4942,6 +4989,7 @@ paths:
                         start_at: '2026-07-22T18:15:00.000Z'
                         end_at: '2026-07-22T19:40:48.000Z'
                         status: finished
+                        status_state: final
                         team1:
                           id: 1734
                           name: Twisted Minds Orchid
@@ -5018,6 +5066,7 @@ paths:
                         game_number: 1
                         begin_at: '2026-07-22T18:16:23.000Z'
                         status: finished
+                        status_state: final
                         winner:
                           id: 1734
                           name: Twisted Minds Orchid
@@ -5037,6 +5086,7 @@ paths:
                         game_number: 2
                         begin_at: '2026-07-22T19:10:23.000Z'
                         status: finished
+                        status_state: final
                         winner:
                           id: 1734
                           name: Twisted Minds Orchid
@@ -5113,6 +5163,7 @@ paths:
                           start_at: '2026-07-23T17:30:00.000Z'
                           end_at: null
                           status: current
+                          status_state: in_progress
                           team1:
                             id: 30
                             name: Gentle Mates

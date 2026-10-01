@@ -1,3 +1,4 @@
+import { allOperationDefinitions } from "../src/operation-registry.js";
 import assert from "node:assert/strict";
 import { AddressInfo } from "node:net";
 import test from "node:test";
@@ -115,8 +116,8 @@ test("initialize and tools/list require a validated key", async () => {
     assert.equal(initialized.body.result.serverInfo.version, "1.2.0");
     const listed = await rpc(baseUrl, "tools/list", undefined, "Bearer valid");
     assert.equal(listed.status, 200);
-    assert.equal(listed.body.result.tools.length, 505);
-    assert.equal(new Set(listed.body.result.tools.map((tool: any) => tool.name)).size, 505);
+    assert.equal(listed.body.result.tools.length, allOperationDefinitions.length);
+    assert.equal(new Set(listed.body.result.tools.map((tool: any) => tool.name)).size, allOperationDefinitions.length);
     const rotation = listed.body.result.tools.find(
       (tool: any) => tool.name === "account_rotate_api_key",
     );
@@ -145,7 +146,7 @@ test("API docs use plain HTTP auth failures and expose annotations only after va
     assert.equal(valid.status, 200);
     const body = await valid.json() as any;
     const tools = Object.values(body.tools).flat() as any[];
-    assert.equal(tools.length, 505);
+    assert.equal(tools.length, allOperationDefinitions.length);
     assert.equal(body.usage.sensitiveAccountToolsEnabled, false);
     assert.ok(tools.every((tool) => tool.annotations));
   });

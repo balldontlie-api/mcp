@@ -2,7 +2,7 @@
 
 Remote Model Context Protocol server for the BALLDONTLIE sports API. The tool catalog is generated from the vendored public OpenAPI specifications so endpoint methods, paths, parameters, and constraints stay aligned with the API source.
 
-The current generated surface contains 505 tools from 27 specifications: Account, ATP, Bundesliga, college baseball, Counter-Strike, Dota 2, EPL, F1, FIFA World Cup, La Liga, Ligue 1, League of Legends, MLB, MLS, MMA, NBA, NCAAB, NCAAF, NCAAW, NFL, NHL, PGA, Serie A, UCL, Valorant, WNBA, and WTA. `/health` reports the authoritative runtime count and deployed revision.
+The current generated surface contains 529 tools from 27 specifications: Account, ATP, Bundesliga, college baseball, Counter-Strike, Dota 2, EPL, F1, FIFA World Cup, La Liga, Ligue 1, League of Legends, MLB, MLS, MMA, NBA, NCAAB, NCAAF, NCAAW, NFL, NHL, PGA, Serie A, UCL, Valorant, WNBA, and WTA. `/health` reports the authoritative runtime count and deployed revision.
 
 ## Authentication
 

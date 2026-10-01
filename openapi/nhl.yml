@@ -13,6 +13,19 @@ components:
       in: header
       name: Authorization
   schemas:
+    CompetitionStatusState:
+      type: string
+      description: Normalized lifecycle state for cross-sport integrations. Classification may use the sport-specific lifecycle field and other available lifecycle context. `unknown` means the available lifecycle data cannot be safely classified.
+      enum:
+        - scheduled
+        - in_progress
+        - final
+        - postponed
+        - canceled
+        - delayed
+        - suspended
+        - abandoned
+        - unknown
     Error:
       type: object
       properties:
@@ -268,6 +281,8 @@ components:
           nullable: true
     NHLGame:
       type: object
+      required:
+        - status_state
       properties:
         id:
           type: integer
@@ -304,6 +319,10 @@ components:
         game_state:
           type: string
           nullable: true
+        status_state:
+          allOf:
+            - $ref: "#/components/schemas/CompetitionStatusState"
+          description: Normalized lifecycle state derived from `game_state` and other available lifecycle context; `game_state` remains unchanged.
         period:
           type: integer
           nullable: true
@@ -334,6 +353,31 @@ components:
         time_remaining:
           type: string
           nullable: true
+        situation:
+          type: object
+          nullable: true
+          description: Goalie presence and skater counts at the event. Null when unavailable or during a shootout. Counts exclude goalies and do not imply a power-play label.
+          required: [away_goalie_present, away_skaters, home_skaters, home_goalie_present]
+          properties:
+            away_goalie_present:
+              type: boolean
+              description: Whether the away goalie is on the ice. False means absent.
+            away_skaters:
+              type: integer
+              minimum: 0
+              maximum: 6
+            home_skaters:
+              type: integer
+              minimum: 0
+              maximum: 6
+            home_goalie_present:
+              type: boolean
+              description: Whether the home goalie is on the ice. False means absent.
+          example:
+            away_goalie_present: false
+            away_skaters: 6
+            home_skaters: 5
+            home_goalie_present: true
         type:
           type: string
           description: Play type (e.g., faceoff, shot-on-goal, goal, hit, penalty)
@@ -346,7 +390,16 @@ components:
         details:
           type: object
           additionalProperties: true
-          description: Play-specific details (coordinates, player IDs, etc.)
+          description: >-
+            Play-specific details (coordinates and player/team IDs).
+            goalieInNetId identifies the defending goalie when available;
+            a missing or null value alone does not establish an empty net.
+            For goal, shot-on-goal and missed-shot, eventOwnerTeamId identifies
+            the shooting team when available. Match it to the game home/away
+            team IDs and inspect the opposite team's goalie-presence field in
+            situation. Do not apply this ownership rule to blocked-shot;
+            an unmatched or missing team ID leaves the defending side unknown.
+            No goalie-substitution timeline is provided.
     NHLPlayer:
       type: object
       properties:

@@ -13,6 +13,313 @@ components:
       in: header
       name: Authorization
   schemas:
+    CompetitionStatusState:
+      type: string
+      description: Normalized lifecycle state for cross-sport integrations. Classification may use the sport-specific lifecycle field and other available lifecycle context. `unknown` means the available lifecycle data cannot be safely classified.
+      enum:
+        - scheduled
+        - in_progress
+        - final
+        - postponed
+        - canceled
+        - delayed
+        - suspended
+        - abandoned
+        - unknown
+    DfsSlate:
+      type: object
+      description: A provider-neutral DFS lineup pool and its lineup rules.
+      required:
+        - id
+        - sport
+        - provider
+        - format
+        - scope
+        - style
+        - salary_cap
+        - event_count
+        - starts_at
+        - last_event_starts_at
+        - status
+        - allow_late_swap
+        - active
+        - updated_at
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        sport:
+          type: string
+        provider:
+          type: string
+        format:
+          type: string
+          enum: [salary_cap, tiers, snake_draft]
+        scope:
+          type: string
+          enum: [single_event, multi_event]
+        style:
+          type: string
+        salary_cap:
+          type: integer
+          minimum: 0
+          nullable: true
+        event_count:
+          type: integer
+          minimum: 1
+        starts_at:
+          type: string
+          format: date-time
+        last_event_starts_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+        allow_late_swap:
+          type: boolean
+          nullable: true
+        active:
+          type: boolean
+        updated_at:
+          type: string
+          format: date-time
+    DfsSlateEvent:
+      type: object
+      description: A real game included in a DFS slate.
+      required:
+        - id
+        - game_id
+        - name
+        - starts_at
+        - away_team_abbreviation
+        - home_team_abbreviation
+        - active
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        game_id:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: BALLDONTLIE game ID when a reference is available.
+        name:
+          type: string
+        starts_at:
+          type: string
+          format: date-time
+        away_team_abbreviation:
+          type: string
+          nullable: true
+        home_team_abbreviation:
+          type: string
+          nullable: true
+        active:
+          type: boolean
+    DfsRosterSlot:
+      type: object
+      description: A lineup position required by a DFS slate.
+      required:
+        - id
+        - name
+        - description
+        - instructions
+        - required_count
+        - display_order
+        - active
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        instructions:
+          type: string
+          nullable: true
+        required_count:
+          type: integer
+          minimum: 1
+        display_order:
+          type: integer
+          minimum: 0
+        active:
+          type: boolean
+    DfsSlateDetail:
+      allOf:
+        - $ref: "#/components/schemas/DfsSlate"
+        - type: object
+          required:
+            - events
+            - roster_slots
+          properties:
+            events:
+              type: array
+              items:
+                $ref: "#/components/schemas/DfsSlateEvent"
+            roster_slots:
+              type: array
+              items:
+                $ref: "#/components/schemas/DfsRosterSlot"
+    DfsDraftable:
+      type: object
+      description: A player or team that can be selected for a slate roster slot.
+      required:
+        - id
+        - slate_id
+        - slate_event_id
+        - roster_slot_id
+        - game_id
+        - player_id
+        - team_id
+        - entity_type
+        - first_name
+        - last_name
+        - display_name
+        - short_name
+        - position
+        - salary
+        - status
+        - is_swappable
+        - is_disabled
+        - team_abbreviation
+        - active
+        - updated_at
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        slate_id:
+          type: integer
+          minimum: 1
+        slate_event_id:
+          type: integer
+          minimum: 1
+        roster_slot_id:
+          type: integer
+          minimum: 1
+        game_id:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: BALLDONTLIE game ID when a reference is available.
+        player_id:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: BALLDONTLIE player ID when a reference is available.
+        team_id:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: BALLDONTLIE team ID when a reference is available.
+        entity_type:
+          type: string
+          enum: [player, team]
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        display_name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+        position:
+          type: string
+          nullable: true
+        salary:
+          type: integer
+          minimum: 0
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        is_swappable:
+          type: boolean
+          nullable: true
+        is_disabled:
+          type: boolean
+          nullable: true
+        team_abbreviation:
+          type: string
+          nullable: true
+        active:
+          type: boolean
+        updated_at:
+          type: string
+          format: date-time
+    DfsPagination:
+      type: object
+      required:
+        - per_page
+      properties:
+        prev_cursor:
+          type: integer
+          minimum: 1
+          description: Present when the request supplied a cursor.
+        next_cursor:
+          type: integer
+          minimum: 1
+          description: Present when another page may be available.
+        per_page:
+          type: integer
+          minimum: 1
+          maximum: 100
+    DfsSlateListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/DfsSlate"
+        meta:
+          $ref: "#/components/schemas/DfsPagination"
+    DfsSlateDetailResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/DfsSlateDetail"
+    DfsDraftableListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/DfsDraftable"
+        meta:
+          $ref: "#/components/schemas/DfsPagination"
+    DfsValidationError:
+      type: object
+      required: [errors]
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - param
+              - error
+            properties:
+              param:
+                type: string
+              error:
+                type: string
+    DfsServerError:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          const: Internal Server Error
     Error:
       type: object
       properties:
@@ -550,6 +857,8 @@ components:
           description: Opening odds timestamp
     NBABoxScore:
       type: object
+      required:
+        - status_state
       properties:
         date:
           type: string
@@ -558,6 +867,10 @@ components:
           type: integer
         status:
           type: string
+        status_state:
+          allOf:
+            - $ref: "#/components/schemas/CompetitionStatusState"
+          description: Normalized lifecycle state derived from `status` and other available lifecycle context; `status` remains unchanged.
         period:
           type: integer
         time:
@@ -837,6 +1150,8 @@ components:
             - $ref: "#/components/schemas/NBATeam"
     NBAGame:
       type: object
+      required:
+        - status_state
       properties:
         id:
           type: integer
@@ -848,6 +1163,10 @@ components:
         status:
           type: string
           nullable: true
+        status_state:
+          allOf:
+            - $ref: "#/components/schemas/CompetitionStatusState"
+          description: Normalized lifecycle state derived from `status` and other available lifecycle context; `status` remains unchanged.
         period:
           type: integer
           nullable: true
@@ -1342,6 +1661,151 @@ components:
           type: integer
           description: Total number of results returned
   parameters:
+    DfsSlateIdsParam:
+      name: slate_ids[]
+      in: query
+      required: false
+      description: Filter by DFS slate IDs.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+    DfsProvidersParam:
+      name: providers[]
+      in: query
+      required: false
+      description: Filter by provider identifier, such as draftkings.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          minLength: 1
+          maxLength: 100
+    DfsFormatsParam:
+      name: formats[]
+      in: query
+      required: false
+      description: Filter by lineup format.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          enum: [salary_cap, tiers, snake_draft]
+    DfsScopesParam:
+      name: scopes[]
+      in: query
+      required: false
+      description: Filter by single-game or multi-game scope.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          enum: [single_event, multi_event]
+    DfsActiveParam:
+      name: active
+      in: query
+      required: false
+      description: Return current records by default; set false for inactive history.
+      schema:
+        type: boolean
+        default: true
+    DfsStartDateParam:
+      name: start_date
+      in: query
+      required: false
+      description: Include slates whose event window overlaps this date or later.
+      schema:
+        type: string
+        format: date
+    DfsEndDateParam:
+      name: end_date
+      in: query
+      required: false
+      description: Include slates whose event window overlaps this date or earlier.
+      schema:
+        type: string
+        format: date
+    DfsCursorParam:
+      name: cursor
+      in: query
+      required: false
+      description: Cursor returned by the previous page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 9007199254740991
+    DfsPerPageParam:
+      name: per_page
+      in: query
+      required: false
+      description: Maximum records to return.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    DfsGameIdsParam:
+      name: game_ids[]
+      in: query
+      required: false
+      description: Filter by BALLDONTLIE game IDs.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+    DfsPlayerIdsParam:
+      name: player_ids[]
+      in: query
+      required: false
+      description: Filter by BALLDONTLIE player IDs.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+    DfsTeamIdsParam:
+      name: team_ids[]
+      in: query
+      required: false
+      description: Filter by BALLDONTLIE team IDs.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+    DfsPositionsParam:
+      name: positions[]
+      in: query
+      required: false
+      description: Filter by provider roster position.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          minLength: 1
+          maxLength: 100
     CursorParam:
       name: cursor
       in: query
@@ -1407,6 +1871,39 @@ components:
       explode: true
       description: Filter by team IDs
   responses:
+    DfsBadRequest:
+      description: Invalid DFS request parameters.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DfsValidationError"
+    DfsUnauthorized:
+      description: Missing API key or GOAT access.
+      content:
+        text/plain:
+          schema:
+            type: string
+            const: Unauthorized
+    DfsNotFound:
+      description: DFS slate not found.
+      content:
+        text/plain:
+          schema:
+            type: string
+            const: Not Found
+    DfsRateLimited:
+      description: Request limit exceeded.
+      content:
+        text/html:
+          schema:
+            type: string
+            const: Too many requests, please try again later.
+    DfsServerFailure:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DfsServerError"
     UnauthorizedError:
       description: Unauthorized - Missing or invalid API key
       content:
@@ -1608,12 +2105,13 @@ paths:
           style: form
           explode: true
           description: Filter by seasons
-        - name: postseason
+        - name: season_type
           in: query
           required: false
           schema:
-            type: boolean
-          description: Filter by postseason games
+            type: string
+            enum: [preseason, regular, ist, playin, playoffs]
+          description: Filter by season type. When omitted, all non-preseason game types are returned.
         - name: start_date
           in: query
           required: false
@@ -1710,12 +2208,13 @@ paths:
           style: form
           explode: true
           description: Filter by seasons
-        - name: postseason
+        - name: season_type
           in: query
           required: false
           schema:
-            type: boolean
-          description: Filter by postseason stats
+            type: string
+            enum: [preseason, regular, ist, playin, playoffs]
+          description: Filter by season type. When omitted, all non-preseason game types are returned unless game_ids[] is supplied.
         - name: start_date
           in: query
           required: false
@@ -2067,6 +2566,14 @@ paths:
       summary: Get live NBA box scores
       tags:
         - NBA
+      parameters:
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [preseason, regular, ist, playin, playoffs]
+          description: Filter by season type. When omitted, all non-preseason game types are returned.
       responses:
         "200":
           description: Live NBA box scores
@@ -2100,6 +2607,13 @@ paths:
             type: string
             format: date
           description: Date in YYYY-MM-DD format
+        - name: season_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [preseason, regular, ist, playin, playoffs]
+          description: Filter by season type. When omitted, all non-preseason game types are returned.
       responses:
         "200":
           description: NBA box scores for date
@@ -2232,7 +2746,7 @@ paths:
   /nba/v2/odds:
     get:
       summary: Get NBA betting odds
-      description: Retrieve betting odds for NBA games. Either dates or game_ids is required.
+      description: Retrieve betting odds for NBA games, including preseason games when odds are available. Either dates or game_ids is required.
       tags:
         - NBA
       parameters:
@@ -2551,12 +3065,6 @@ paths:
           style: form
           explode: true
           description: Filter by seasons
-        - name: postseason
-          in: query
-          required: false
-          schema:
-            type: boolean
-          description: Filter for postseason games only
         - name: period
           in: query
           required: false
@@ -2699,6 +3207,113 @@ paths:
           $ref: "#/components/responses/RateLimitError"
         "500":
           $ref: "#/components/responses/ServerError"
+  /nba/v1/dfs/slates:
+    get:
+      summary: Get NBA DFS slates
+      description: |
+        Returns provider-neutral daily fantasy lineup pools and rules. A slate identifies
+        its format, event window, salary cap, and whether it covers one or multiple games.
+        Use the slate detail endpoint for included events and roster slots, then request
+        draftables for selectable players or teams and their slate-specific salaries.
+        Requires GOAT tier. Current slates are returned by default; use active=false for
+        inactive historical snapshots.
+      tags:
+        - NBA
+      parameters:
+        - $ref: "#/components/parameters/DfsSlateIdsParam"
+        - $ref: "#/components/parameters/DfsProvidersParam"
+        - $ref: "#/components/parameters/DfsFormatsParam"
+        - $ref: "#/components/parameters/DfsScopesParam"
+        - $ref: "#/components/parameters/DfsActiveParam"
+        - $ref: "#/components/parameters/DfsStartDateParam"
+        - $ref: "#/components/parameters/DfsEndDateParam"
+        - $ref: "#/components/parameters/DfsCursorParam"
+        - $ref: "#/components/parameters/DfsPerPageParam"
+      responses:
+        "200":
+          description: Paginated DFS slates.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DfsSlateListResponse"
+        "400":
+          $ref: "#/components/responses/DfsBadRequest"
+        "401":
+          $ref: "#/components/responses/DfsUnauthorized"
+        "429":
+          $ref: "#/components/responses/DfsRateLimited"
+        "500":
+          $ref: "#/components/responses/DfsServerFailure"
+  /nba/v1/dfs/slates/{id}:
+    get:
+      summary: Get a NBA DFS slate
+      description: |
+        Returns one slate with its included real-game events and lineup roster slots.
+        Event game_id values use BALLDONTLIE game IDs when a reference is available.
+        The active flags preserve the state of historical slate members. Requires GOAT tier.
+      tags:
+        - NBA
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: DFS slate ID.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 9007199254740991
+      responses:
+        "200":
+          description: DFS slate detail.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DfsSlateDetailResponse"
+        "400":
+          $ref: "#/components/responses/DfsBadRequest"
+        "401":
+          $ref: "#/components/responses/DfsUnauthorized"
+        "404":
+          $ref: "#/components/responses/DfsNotFound"
+        "429":
+          $ref: "#/components/responses/DfsRateLimited"
+        "500":
+          $ref: "#/components/responses/DfsServerFailure"
+  /nba/v1/dfs/draftables:
+    get:
+      summary: Get NBA DFS draftables
+      description: |
+        Returns players or teams that can be selected for a slate roster slot, including
+        position, salary, availability, and linked BALLDONTLIE entities when available.
+        game_id, player_id, or team_id can be null when no reference is available.
+        Current draftables are returned by default; use active=false for inactive history.
+        Requires GOAT tier.
+      tags:
+        - NBA
+      parameters:
+        - $ref: "#/components/parameters/DfsSlateIdsParam"
+        - $ref: "#/components/parameters/DfsGameIdsParam"
+        - $ref: "#/components/parameters/DfsPlayerIdsParam"
+        - $ref: "#/components/parameters/DfsTeamIdsParam"
+        - $ref: "#/components/parameters/DfsPositionsParam"
+        - $ref: "#/components/parameters/DfsActiveParam"
+        - $ref: "#/components/parameters/DfsCursorParam"
+        - $ref: "#/components/parameters/DfsPerPageParam"
+      responses:
+        "200":
+          description: Paginated DFS draftables.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DfsDraftableListResponse"
+        "400":
+          $ref: "#/components/responses/DfsBadRequest"
+        "401":
+          $ref: "#/components/responses/DfsUnauthorized"
+        "429":
+          $ref: "#/components/responses/DfsRateLimited"
+        "500":
+          $ref: "#/components/responses/DfsServerFailure"
   /nba/v1/plays:
     get:
       summary: Get NBA play-by-play data

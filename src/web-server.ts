@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import "./tracer.js";
+import { oauthRouter } from "./oauth.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import express, { NextFunction, Request, Response } from "express";
@@ -107,6 +108,7 @@ export function createServer(dependencies: ServerDependencies = {}): CreatedServ
   app.disable("x-powered-by");
   app.set("trust proxy", config.TRUST_PROXY_HOPS);
   app.use(express.json());
+  app.use(oauthRouter(tools));
 
   const validateCredential = async (
     req: Request,

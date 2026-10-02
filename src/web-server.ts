@@ -110,6 +110,10 @@ export function createServer(dependencies: ServerDependencies = {}): CreatedServ
   app.use(express.json());
   app.use(oauthRouter(tools));
 
+  app.get("/.well-known/openai-apps-challenge", (_req: Request, res: Response) => {
+    res.type("text/plain").send("Q8PemDVaHBTuuqYfvXNPvrAALXfRuFHnLdW0V-aW_Z8");
+  });
+
   const validateCredential = async (
     req: Request,
     authorization: string,
